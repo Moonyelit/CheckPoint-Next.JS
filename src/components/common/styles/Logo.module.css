@@ -1,0 +1,37 @@
+.logoLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Lorsque la souris survole le logo */
+.logoLink:hover {
+  opacity: 0.9;
+}
+
+/* Conteneur pour le texte du logo en deux lignes */
+.textContainer {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Karantina', cursive; 
+  font-weight: bold;
+  letter-spacing: 0.15em;
+  line-height: 1;
+}
+
+/* Style du texte "Check" */
+.checkText {
+  font-size: 5rem; 
+  color: var(--bleu-crystal-normal); 
+  line-height: 1;
+  margin-bottom: -1rem;
+}
+
+/* Style du texte "Point" */
+.pointText {
+  font-size: 5rem; 
+  color: var(--black); 
+  line-height: 1;
+}

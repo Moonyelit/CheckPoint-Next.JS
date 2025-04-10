@@ -1,26 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Karantina&display=swap');
 @import "tailwindcss";
 
+/* FONTS */
+.font-karantina {
+  font-family: 'Karantina', cursive;
+}
+
+/* GLOBAL STYLES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* COULEURS */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Grayscale */
+  --gris-clair: #EDE3DD;
+  --gris-fonce: #BFB5AF;
+  --gris-classique: #E8DDD5;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Bleus */
+  --bleu-fonce: #748599;
+  --bleu-clair: #A8BBC5;
+  --bleu-classique: #7FA3B8;
+  --bleu-clair-crystal: #2FD7FD;
+  --bleu-crystal-normal: #23ABFA;
+  --bleu-crystal-fonce: #0C60B9;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Roses */
+  --pink: #EEA7B4;
+  --pink-clair: #FFE2DC;
+
+  /* Autres couleurs */
+  --black: #1D1D1D;
+  --white: #F5F5F5;
+  --green: #A0E58E;
+  --abandonnee: #414549;
+
+  /* Dégradés */
+  --gradient-gold: linear-gradient(90deg, #937C40 0%, #FFFFFF 50%, #937C40 100%);
+  --gradient-checkpoint: linear-gradient(90deg, #748599 0%, #A8BBC5 100%);
+  --gradient-crystal: linear-gradient(90deg, #2FD7FD 0%, #0C60B9 100%);
+  --gris-nav-bar: #BFB5AF;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--gradient-checkpoint);
+  font-family: var(--font-base);
+  color: var(--black);
 }
+
+/* NAVBAR */
+.navbar {
+  background-color: var(--gris-fonce);
+}
+
+
