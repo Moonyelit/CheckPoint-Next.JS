@@ -1,13 +1,21 @@
 'use client'
 import Link from 'next/link'
 import React from 'react'
+import Image from 'next/image'
 import styles from './styles/Logo.module.css'
-import CrystalEmbed from './CrystalEmbed'
+// import Crystals3D from './Crystals3D'  // Commente le crystal 3D pour l'instant
 
 export default function Logo() {
   return (
     <Link href="/" className={styles.logoLink}>
-      <CrystalEmbed />
+      {/* Utilisation du GIF à la place du modèle 3D */}
+      <Image 
+        src="/images/crystalGIF.gif" 
+        alt="Animation du crystal" 
+        width={80} 
+        height={80}
+        className={styles.crystalGif}
+      />
       <div className={styles.textContainer}>
         <span className={styles.checkText}>Check</span>
         <span className={styles.pointText}>Point</span>

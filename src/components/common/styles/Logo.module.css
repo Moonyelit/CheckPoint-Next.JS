@@ -23,7 +23,7 @@
 
 /* Style du texte "Check" */
 .checkText {
-  font-size: 5rem; 
+  font-size: 48px; 
   color: var(--bleu-crystal-normal); 
   line-height: 1;
   margin-bottom: -1rem;
@@ -31,7 +31,7 @@
 
 /* Style du texte "Point" */
 .pointText {
-  font-size: 5rem; 
+  font-size: 48px; 
   color: var(--black); 
-  line-height: 1;
+  line-height: 1.3;
 }

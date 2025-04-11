@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/globals.css'; // Chemin corrigé vers le fichier CSS
+import '../styles/globals.css'; 
 import Navbar from '@/components/common/Navbar';
 
 export default function Home() {
