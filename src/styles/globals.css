@@ -1,8 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Karantina&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Karantina&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=DM+Sans:wght@700;900&display=swap');
 @import "tailwindcss";
-@import 'boxicons/css/boxicons.min.css';
-
+@import "boxicons/css/boxicons.min.css";
 
 /* GLOBAL STYLES */
 * {
@@ -14,35 +13,40 @@
 /* COULEURS */
 :root {
   /* Grayscale */
-  --gris-clair: #EDE3DD;
-  --gris-fonce: #BFB5AF;
-  --gris-fonce-2: #8F8883;
-  --gris-classique: #E8DDD5;
+  --gris-clair: #ede3dd;
+  --gris-fonce: #bfb5af;
+  --gris-fonce-2: #8f8883;
+  --gris-classique: #e8ddd5;
 
   /* Bleus */
   --bleu-fonce: #748599;
-  --bleu-clair: #A8BBC5;
-  --bleu-classique: #7FA3B8;
-  --bleu-clair-crystal: #2FD7FD;
-  --bleu-crystal-normal: #23ABFA;
-  --bleu-crystal-fonce: #0C60B9;
+  --bleu-clair: #a8bbc5;
+  --bleu-classique: #7fa3b8;
+  --bleu-clair-crystal: #2fd7fd;
+  --bleu-crystal-normal: #23abfa;
+  --bleu-crystal-fonce: #0c60b9;
 
   /* Roses */
-  --pink: #EEA7B4;
-  --pink-clair: #FFE2DC;
+  --pink: #eea7b4;
+  --pink-clair: #ffe2dc;
 
   /* Autres couleurs */
-  --black: #1D1D1D;
-  --white: #F5F5F5;
-  --green: #A0E58E;
+  --black: #1d1d1d;
+  --white: #f5f5f5;
+  --green: #a0e58e;
   --abandonnee: #414549;
 
   /* Dégradés */
-  --gradient-gold: linear-gradient(90deg, #937C40 0%, #FFFFFF 50%, #937C40 100%);
-  --gradient-checkpoint: linear-gradient(90deg, #748599 0%, #A8BBC5 100%);
-  --gradient-crystal: linear-gradient(90deg, #2FD7FD 0%, #0C60B9 100%);
-  --gris-nav-bar: #BFB5AF;
-  --gris-nav-bar-fonce: #8F8883; 
+  --gradient-gold: linear-gradient(
+    90deg,
+    #937c40 0%,
+    #ffffff 50%,
+    #937c40 100%
+  );
+  --gradient-checkpoint: linear-gradient(90deg, #748599 0%, #a8bbc5 100%);
+  --gradient-crystal: linear-gradient(90deg, #2fd7fd 0%, #0c60b9 100%);
+  --gris-nav-bar: #bfb5af;
+  --gris-nav-bar-fonce: #8f8883;
 }
 
 body {
