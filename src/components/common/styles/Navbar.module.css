@@ -17,6 +17,7 @@
   font-size: 20px;
   background-color: var(--gris-nav-bar);
   z-index: 1;
+  margin-top: 2% 0 0 0;
 }
 
 /* Zone gauche : logo + menu */

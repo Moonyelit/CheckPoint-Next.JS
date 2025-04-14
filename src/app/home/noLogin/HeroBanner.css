@@ -1,0 +1,41 @@
+/* HeroBanner.css */
+.hero-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 80vh;
+    padding: 2rem;
+    background-image: url('/images/Animate/Nier.gif');
+    background-size: cover;
+    background-position: center;
+}
+  
+.hero-content {
+    flex: 1;
+    margin-right: 2rem;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-content p {
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  
+  .hero-carousel {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .hero-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px; /* exemple */
+  }
+  
