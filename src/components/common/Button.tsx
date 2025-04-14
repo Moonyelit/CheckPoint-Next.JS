@@ -1,3 +1,4 @@
+"use client";
 import React from 'react';
 // Importation du CSS spécifique au bouton
 import './styles/Button.css';
