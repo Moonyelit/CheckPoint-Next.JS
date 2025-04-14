@@ -1,131 +1,206 @@
-/* components/BurgerMenu.module.css */
+/* Ce fichier est activé pour les écrans à 950px et moins */
+.burgerContainer {
+  display: none;
+}
 
-/* Icône burger */
-.burgerIcon {
-    width: 2rem;
-    height: 2rem;
+@media only screen and (max-width: 950px) {
+  .burgerContainer {
+    display: block;
+    position: relative;
+    z-index: 3;
+  }
+
+  /* Groupe d'icônes en haut à droite */
+  .iconGroup {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1.8rem;
+    color: var(--white);
     cursor: pointer;
-    z-index: 1100; /* Pour être au-dessus de l'overlay */
+    position: relative; /* Pour le positionnement du pseudo-élément */
   }
   
-  /* Chaque ligne de l'icône */
-  .line {
-    height: 4px;
-    background: var(--black);
-    border-radius: 2px;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+  /* Forme biseautée sous les icônes */
+  .iconGroup::before {
+    content: "";
+    width: 50vh;
+    height: 400%;
+    background-color: var(--gris-nav-bar-fonce);
+    transform: skew(-45deg, 0deg);
+    position: absolute;
+    left: -2rem;
+    z-index: -1;
   }
   
-  /* Animation : première ligne */
-  .line1Open {
-    transform: translateY(8px) rotate(45deg);
+  /* Masquer la forme biseautée en dessous de 360px */
+  @media only screen and (max-width: 360px) {
+    .iconGroup::before {
+      display: none;
+    }
+  }
+
+  .iconGroup i:hover {
+    transform: scale(1.2);
+    transition: transform 0.3s ease;
+  }
+
+  /* Style commun pour l'icône de fermeture */
+  .closeIcon {
+    position: absolute;
+    font-size: 2rem;
+    color: var(--white);
+    cursor: pointer;
+    z-index: 6;
   }
   
-  /* Animation : deuxième ligne cachée */
-  .line2Open {
-    opacity: 0;
+  /* Position de la croix dans le menu de navigation (overlay à droite) */
+  .menuOverlay .closeIcon {
+    top: 10px;
+    right: 10px;
   }
   
-  /* Animation : troisième ligne */
-  .line3Open {
-    transform: translateY(-8px) rotate(-45deg);
+  /* Pour le menu d'authentification, la croix passe en haut à droite */
+  .authOverlay .closeIcon {
+    top: 10px;
+    right: 10px;
   }
-  
-  /* Overlay du menu burger */
+
+  /* Overlay du menu burger pour les liens de navigation */
   .menuOverlay {
     position: fixed;
     top: 0;
-    right: -100%;
-    width: 100%;
-    height: 100%;
-    background: var(--gris-nav-bar);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: right 0.5s ease;
-    z-index: 1000;
-  }
-  
-  /* Quand le menu est ouvert */
-  .menuOpen {
     right: 0;
-  }
-  
-  /* Contenu du menu */
-  .menuNav {
+    width: 70%;
+    height: 100vh;
+    background: var(--gris-nav-bar-fonce);
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.4s forwards;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    z-index: 5;
   }
-  
-  /* Liens de navigation */
-  .navLinks {
+
+  /* Animation de fermeture pour le menu de navigation */
+  @keyframes slideOut {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .menuOverlayExit {
+    animation: slideOut 0.4s forwards;
+  }
+
+  /* Liste des liens de navigation */
+  .menuList {
     list-style: none;
     padding: 0;
+    margin: 0;
     text-align: center;
   }
   
-  .navLinks li {
-    margin: 1rem 0;
+  .menuList li {
+    margin: 20px 0;
+    font-size: 1.5rem;
   }
   
-  .navLinks li a {
+  .menuList li a {
     text-decoration: none;
-    font-size: 2rem;
+    color: var(--white);
     font-weight: bold;
-    color: var(--black);
     transition: color 0.3s ease;
   }
   
-  .navLinks li a:hover {
-    color: var(--white);
+  /* Effet au clic pour les liens (pseudo-classe active) */
+  .menuList li a:active {
+    color: var(--black);
   }
   
-  /* Auth-navigation : sans la forme biseautée */
-  .authNavigation {
-    margin-top: 2rem;
+  /* Conserver le style Home en bleu */
+  .home {
+    color: var(--bleu-crystal-normal) !important;
+    transition: color 0.3s ease;
+  }
+  
+  .home:active {
+    color: var(--bleu-crystal-normal) !important;
+  }
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  /* Overlay du menu d'authentification pour "S’inscrire" et "Connexion" */
+  .authOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 70%;
+    height: 100vh;
+    background: var(--gris-nav-bar-fonce);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    animation: slideInLeft 0.4s forwards;
     display: flex;
     align-items: center;
-    gap: 20px;
+    justify-content: center;
+    z-index: 5;
+  }
+
+  /* Animation de fermeture pour le menu d'authentification */
+  @keyframes slideOutLeft {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  .authOverlayExit {
+    animation: slideOutLeft 0.4s forwards;
+  }
+
+  @keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  /* Liste des liens d'authentification */
+  .authList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
   }
   
-  .authNavigation a {
+  .authList li {
+    margin: 20px 0;
+    font-size: 1.5rem;
+  }
+  
+  .authList li a {
     text-decoration: none;
+    color: var(--white);
     font-weight: bold;
-    color: var(--black);
     transition: color 0.3s ease;
   }
   
-  .authNavigation a:hover {
-    color: var(--white);
-  }
-  
-  .authNavigation i {
-    font-size: 2rem;
+  .authList li a:active {
     color: var(--black);
-    transition: transform 0.3s ease, color 0.3s ease;
   }
-  
-  .authNavigation i:hover {
-    transform: scale(1.2);
-    color: var(--white);
-  }
-  
-/* Afficher le menu principal uniquement pour les écrans desktop */
-@media (max-width: 950px) {
-    .navLinks {
-      display: none;
-    }
-  }
-  
-  /* Masquer le menu burger pour les écrans desktop */
-  @media (min-width: 950px) {
-    .burgerIcon,
-    .menuOverlay {
-      display: none;
-    }
-  }
-  
+}

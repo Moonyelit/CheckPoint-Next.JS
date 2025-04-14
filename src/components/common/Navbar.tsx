@@ -1,9 +1,9 @@
 import Logo from "@/components/common/Logo";
+import BurgerMenu from "@/components/common/BurgerMenu";
+
 import Link from "next/link";
 import styles from "./styles/Navbar.module.css";
-import '../../styles/globals.css'; // Import global styles
-
-
+import '../../styles/globals.css'; 
 
 export default function Navbar() {
   return (
@@ -13,8 +13,7 @@ export default function Navbar() {
         <Logo />
       </div>
 
-      {/* Partie droite : icône recherche + liens auth */}
-
+      {/* Partie droite sur écran desktop */}
       <div className={styles["right-navigation"]}>
         <ul className={styles.navLinks}>
           <li>
@@ -43,6 +42,9 @@ export default function Navbar() {
           </Link>
         </div>
       </div>
+
+      {/* Le Burger Menu s'affiche uniquement sous 950px */}
+      <BurgerMenu />
     </nav>
   );
 }

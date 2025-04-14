@@ -123,3 +123,11 @@
   transform: scale(1.2);
   color: var(--black);
 }
+
+@media only screen and (max-width: 950px) {
+  .navLinks,
+  .auth-navigation {
+    display: none;
+  }
+}
+

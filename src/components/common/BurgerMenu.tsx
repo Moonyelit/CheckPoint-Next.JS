@@ -1,63 +1,121 @@
 "use client";
 
-// components/BurgerMenu.tsx
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import styles from "./styles/BurgerMenu.module.css";
 
-export default function BurgerMenu() {
-  const [isOpen, setIsOpen] = useState(false);
+const BurgerMenu: React.FC = () => {
+  // États pour le menu de navigation
+  const [navMenuOpen, setNavMenuOpen] = useState(false);
+  const [navMenuClosing, setNavMenuClosing] = useState(false);
+  
+  // États pour le menu d'authentification
+  const [authMenuOpen, setAuthMenuOpen] = useState(false);
+  const [authMenuClosing, setAuthMenuClosing] = useState(false);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  const animationDuration = 400; // durée en ms (0.4s)
 
-  // Fermer le menu si la fenêtre est redimensionnée au-delà de 950px
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 950) {
-        setIsOpen(false);
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const openNavMenu = () => {
+    if (authMenuOpen) closeAuthMenu();
+    setNavMenuOpen(true);
+    setNavMenuClosing(false);
+  };
+
+  const closeNavMenu = () => {
+    setNavMenuClosing(true);
+    setTimeout(() => {
+      setNavMenuOpen(false);
+      setNavMenuClosing(false);
+    }, animationDuration);
+  };
+
+  const toggleNavMenu = () => {
+    if (navMenuOpen && !navMenuClosing) {
+      closeNavMenu();
+    } else {
+      openNavMenu();
+    }
+  };
+
+  const openAuthMenu = () => {
+    if (navMenuOpen) closeNavMenu();
+    setAuthMenuOpen(true);
+    setAuthMenuClosing(false);
+  };
+
+  const closeAuthMenu = () => {
+    setAuthMenuClosing(true);
+    setTimeout(() => {
+      setAuthMenuOpen(false);
+      setAuthMenuClosing(false);
+    }, animationDuration);
+  };
+
+  const toggleAuthMenu = () => {
+    if (authMenuOpen && !authMenuClosing) {
+      closeAuthMenu();
+    } else {
+      openAuthMenu();
+    }
+  };
 
   return (
-    <div>
-      {/* Icône burger */}
-      <div className={styles.burgerIcon} onClick={toggleMenu}>
-        <div className={isOpen ? `${styles.line} ${styles.line1Open}` : styles.line}></div>
-        <div className={isOpen ? `${styles.line} ${styles.line2Open}` : styles.line}></div>
-        <div className={isOpen ? `${styles.line} ${styles.line3Open}` : styles.line}></div>
+    <div className={styles.burgerContainer}>
+      <div className={styles.iconGroup}>
+        <i className="bx bx-search" />
+        <i className="bx bx-user-circle" onClick={toggleAuthMenu} />
+        <i className="bx bx-menu" onClick={toggleNavMenu} />
       </div>
 
-      {/* Menu overlay regroupant les liens et la partie auth */}
-      <div className={isOpen ? `${styles.menuOverlay} ${styles.menuOpen}` : styles.menuOverlay}>
-        <nav className={styles.menuNav}>
-          <ul className={styles.navLinks}>
-            <li>
-              <Link href="/" onClick={() => setIsOpen(false)}>Home</Link>
+      {navMenuOpen && (
+        <div
+          className={`${styles.menuOverlay} ${navMenuClosing ? styles.menuOverlayExit : ""}`}
+          onClick={toggleNavMenu}
+        >
+          {/* Icône croix pour fermer le menu de navigation */}
+          <div className={styles.closeIcon} onClick={toggleNavMenu}>
+            <i className="bx bx-x" />
+          </div>
+          <ul className={styles.menuList} onClick={(e) => e.stopPropagation()}>
+            <li onClick={toggleNavMenu}>
+              <Link href="/" className={styles.home}>
+                Home
+              </Link>
             </li>
-            <li>
-              <Link href="/games" onClick={() => setIsOpen(false)}>Jeux</Link>
+            <li onClick={toggleNavMenu}>
+              <Link href="/games">Jeux</Link>
             </li>
-            <li>
-              <Link href="/lists" onClick={() => setIsOpen(false)}>Listes</Link>
+            <li onClick={toggleNavMenu}>
+              <Link href="/lists">Listes</Link>
             </li>
-            <li>
-              <Link href="/challenges" onClick={() => setIsOpen(false)}>Challenges</Link>
+            <li onClick={toggleNavMenu}>
+              <Link href="/challenges">Challenges</Link>
             </li>
           </ul>
-          <div className={styles.authNavigation}>
-            <i className="bx bx-search"></i>
-            <Link href="/inscription" onClick={() => setIsOpen(false)} className={styles.authLink}>
-              S’inscrire
-            </Link>
-            <Link href="/login" onClick={() => setIsOpen(false)} className={styles.authLink}>
-              Connexion
-            </Link>
+        </div>
+      )}
+
+      {authMenuOpen && (
+        <div
+          className={`${styles.authOverlay} ${authMenuClosing ? styles.authOverlayExit : ""}`}
+          onClick={toggleAuthMenu}
+        >
+          {/* Icône croix pour fermer le menu d'authentification */}
+          <div className={styles.closeIcon} onClick={toggleAuthMenu}>
+            <i className="bx bx-x" />
           </div>
-        </nav>
-      </div>
+          <ul className={styles.authList} onClick={(e) => e.stopPropagation()}>
+            <li onClick={toggleAuthMenu}>
+              <Link href="/inscription">S’inscrire</Link>
+            </li>
+            <li onClick={toggleAuthMenu}>
+              <Link href="/login">Connexion</Link>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default BurgerMenu;
