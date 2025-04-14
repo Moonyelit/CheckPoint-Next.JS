@@ -1,0 +1,45 @@
+/* Button.css */
+
+/* Style de base du bouton */
+.btn-custom {
+  /* Dimensions et display */
+  display: flex;
+  flex-direction: column;
+  width: 291px;
+  height: 88px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  /* Couleurs */
+  background: var(--gris-clair);
+  color: var(--black);
+  text-align: center;
+
+  /* Typographie */
+  font-family: "DM Sans", sans-serif;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: normal;
+  letter-spacing: -1.8px;
+
+  /* Box shadow et coins arrondis */
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+
+  /* Transition pour l'animation */
+  transition: background 400ms ease-out, color 400ms ease-out;
+}
+
+/* Hover */
+.btn-custom:hover {
+  background: var(--gradient-crystal);
+  color: var(--white);
+}
+
+/* Optionnel: Style pour le clic (active) */
+.btn-custom:active {
+  opacity: 0.9;
+}
