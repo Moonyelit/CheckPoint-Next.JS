@@ -46,7 +46,36 @@
     transition: transform 0.3s ease;
   }
 
-  /* Style commun pour l'icône de fermeture */
+  /* Hamburger custom (trois barres) */
+  .hamburger {
+    width: 30px;
+    height: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+  .hamburger span {
+    display: block;
+    height: 3px;
+    background-color: var(--white);
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+
+  /* Transformation de la hamburger en croix lors de l'ouverture */
+  .hamburger.open span:nth-child(1) {
+    transform: translateY(11px) rotate(45deg);
+  }
+  .hamburger.open span:nth-child(2) {
+    opacity: 0;
+  }
+  .hamburger.open span:nth-child(3) {
+    transform: translateY(-11px) rotate(-45deg);
+  }
+  
+  /* Style commun pour l'icône de fermeture des overlays */
   .closeIcon {
     position: absolute;
     font-size: 2rem;
@@ -55,13 +84,27 @@
     z-index: 6;
   }
   
+  /* Ajout d'une animation de rotation sur la croix au clic */
+  .closeIcon:active {
+    animation: rotateCross 0.4s forwards;
+  }
+  
+  @keyframes rotateCross {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
   /* Position de la croix dans le menu de navigation (overlay à droite) */
   .menuOverlay .closeIcon {
     top: 10px;
     right: 10px;
   }
   
-  /* Pour le menu d'authentification, la croix passe en haut à droite */
+  /* Pour le menu d'authentification, la croix est également en haut à droite */
   .authOverlay .closeIcon {
     top: 10px;
     right: 10px;
@@ -92,7 +135,7 @@
       transform: translateX(100%);
     }
   }
-
+  
   .menuOverlayExit {
     animation: slideOut 0.4s forwards;
   }
@@ -104,30 +147,25 @@
     margin: 0;
     text-align: center;
   }
-  
   .menuList li {
     margin: 20px 0;
     font-size: 1.5rem;
   }
-  
   .menuList li a {
     text-decoration: none;
     color: var(--white);
     font-weight: bold;
     transition: color 0.3s ease;
   }
-  
-  /* Effet au clic pour les liens (pseudo-classe active) */
+  /* Effet au clic pour les liens */
   .menuList li a:active {
     color: var(--black);
   }
-  
   /* Conserver le style Home en bleu */
   .home {
     color: var(--bleu-crystal-normal) !important;
     transition: color 0.3s ease;
   }
-  
   .home:active {
     color: var(--bleu-crystal-normal) !important;
   }
@@ -166,7 +204,7 @@
       transform: translateX(-100%);
     }
   }
-
+  
   .authOverlayExit {
     animation: slideOutLeft 0.4s forwards;
   }
@@ -187,19 +225,16 @@
     margin: 0;
     text-align: center;
   }
-  
   .authList li {
     margin: 20px 0;
     font-size: 1.5rem;
   }
-  
   .authList li a {
     text-decoration: none;
     color: var(--white);
     font-weight: bold;
     transition: color 0.3s ease;
   }
-  
   .authList li a:active {
     color: var(--black);
   }

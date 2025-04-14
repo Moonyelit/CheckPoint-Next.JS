@@ -64,7 +64,15 @@ const BurgerMenu: React.FC = () => {
       <div className={styles.iconGroup}>
         <i className="bx bx-search" />
         <i className="bx bx-user-circle" onClick={toggleAuthMenu} />
-        <i className="bx bx-menu" onClick={toggleNavMenu} />
+        {/* Remplacement de l'icône burger par notre hamburger custom */}
+        <div
+          className={`${styles.hamburger} ${navMenuOpen ? styles.open : ""}`}
+          onClick={toggleNavMenu}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
       </div>
 
       {navMenuOpen && (
