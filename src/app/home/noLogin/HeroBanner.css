@@ -172,11 +172,55 @@
   100% { transform: scale(0.25) translateX(0); opacity: 0; }
 }
 
-/* D’autres animations définies dans votre snippet peuvent être ajoutées ici */
+
+@media (max-width: 1245px) {
+  .box {
+    width: 14rem;
+    height: 40vh;
+  }
+
+  /* Carte immédiatement à droite */
+.box.right {
+  transform: scale(0.85);
+  z-index: 2;
+  left: 150%;
+}
+
+/* Carte immédiatement à gauche */
+.box.left {
+  transform: scale(0.85);
+  z-index: 2;
+  left: -150%;
+}
+
+/* Carte de droite « cachée » (partiellement visible) */
+.box.right-hidden {
+  transform: scale(0.75);
+  z-index: 1;
+  left: 200%;
+}
+
+/* Carte de gauche « cachée » (partiellement visible) */
+.box.left-hidden {
+  transform: scale(0.75);
+  z-index: 1;
+  left: -200%;
+}
+}
+
 
 /* Masquer les cartes en dessous de 950px */
 @media (max-width: 950px) {
-  .cards-wrapper {
+  .hero-right {
     display: none;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-content button {
+    align-self: center;
   }
 }

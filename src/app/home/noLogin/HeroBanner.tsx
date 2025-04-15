@@ -74,12 +74,12 @@ export default function HeroBanner() {
   // Gestionnaire de swipe
   const handlers = useSwipeable({
     onSwipedLeft: () => {
-      setActiveIndex((prev) => (prev + 1) % total); // Swipe vers la gauche
+      setActiveIndex((prev) => (prev + 1) % total);
     },
     onSwipedRight: () => {
-      setActiveIndex((prev) => (prev - 1 + total) % total); // Swipe vers la droite
+      setActiveIndex((prev) => (prev - 1 + total) % total); 
     },
-    trackMouse: true, // Permet de suivre les mouvements de la souris
+    trackMouse: true, 
   });
 
   const prevCard = () => {
