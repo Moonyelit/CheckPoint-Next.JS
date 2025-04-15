@@ -43,13 +43,11 @@
     #ffffff 50%,
     #937c40 100%
   );
-  --gradient-checkpoint: linear-gradient(90deg, #748599 0%, #a8bbc5 100%);
+  --gradient-checkpoint: linear-gradient(0deg, #748599 0%, #a8bbc5 100%);
   --gradient-crystal: linear-gradient(90deg, #2fd7fd 0%, #0c60b9 100%);
   --gris-nav-bar: #bfb5af;
   --gris-nav-bar-fonce: #8f8883;
   --gris-button: linear-gradient(180deg, #ddcbc0 0%, var(--gris-clair, #ede3dd) 100%);
-
-
 
 }
 

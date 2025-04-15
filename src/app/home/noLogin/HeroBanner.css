@@ -9,7 +9,6 @@
   background-size: cover;
   background-position: top;
   margin-top: -7rem;
-
 }
 
 .hero-overlay {
@@ -23,7 +22,7 @@
   justify-content: center;
   flex-direction: row;
   background: linear-gradient(180deg, rgba(116, 133, 153, 0) 0%, rgba(138, 159, 180, 1) 100%), 
-              linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(138, 159, 180, 0.5) 100%);
+              linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(138, 159, 180, 1) 100%);
 
 }
 
@@ -211,16 +210,28 @@
 
 /* Masquer les cartes en dessous de 950px */
 @media (max-width: 950px) {
-  .hero-right {
-    display: none;
+  .hero-overlay {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5rem;
   }
 
   .hero-content {
     display: flex;
     flex-direction: column;
+    width: 80%;
   }
 
   .hero-content button {
     align-self: center;
+  }
+
+  .hero-right {
+    margin:-5rem 8rem 0 0;
+  }
+
+  .box {
+    width: 12rem;
+    height: 30vh;
   }
 }

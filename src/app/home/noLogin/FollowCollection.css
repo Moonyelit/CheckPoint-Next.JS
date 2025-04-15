@@ -1,0 +1,65 @@
+.followCollection {
+    display: flex;
+    position: relative;
+    margin: -1.5rem 5%;
+    padding: 0 4rem;
+    gap: 10rem;
+    align-items: center;
+    background: linear-gradient(180deg, var(--gris-fonce) 0%, var(--gris-clair) 58.74%);
+    border-radius: 3.5rem;
+    opacity: 1;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    height: 80vh;
+    overflow: hidden;
+}
+
+.gameContainer {
+    width: 60%;
+    position: relative;
+}
+
+.gameImage {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.gameContainer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.69;
+    z-index: 2;
+    pointer-events: none;
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--gris-fonce) 0%, var(--gris-clair) 58.74%);
+}
+
+.content {
+    width: 50%;
+    color: var(--black);
+}
+
+.title {
+    text-align: right;
+    font-family: Karantina;
+    font-size: 75px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 5rem;
+}
+
+.description {
+    font-family: "DM Sans";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    letter-spacing: -0.24px;
+    text-align: justify;
+
+}
