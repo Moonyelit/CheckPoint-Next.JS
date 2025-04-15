@@ -1,11 +1,3 @@
-.box-sizing-global {
-  box-sizing: border-box;
-}
-.box-sizing-global::after,
-.box-sizing-global::before {
-  box-sizing: inherit;
-}
-
 .main-navbar {
   position: relative;
   display: flex;
@@ -16,11 +8,23 @@
   overflow: hidden;
   font-size: 20px;
   background-color: var(--gris-nav-bar);
-  z-index: 1;
-  margin-top: 2% 0 0 0;
+  z-index: 100;
+  margin-top: 1rem; 
+  transition: margin-top 0.3s ease, position 0.3s ease;
+  box-shadow: 0px 0px 1rem 0px rgba(0, 0, 0, 0.50);
+
 }
 
-/* Zone gauche : logo + menu */
+/* Classe sticky : lorsque l'utilisateur scroll, on retire la marge et on fixe la navbar */
+.sticky {
+  margin-top: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+/* Tes autres styles restent inchangés... */
 .left-navigation {
   display: flex;
   align-items: center;
@@ -29,7 +33,6 @@
   z-index: 2;
 }
 
-/* Navigation : liens + sections auth*/
 .right-navigation {
   display: flex;
   align-items: center;
@@ -38,7 +41,6 @@
   gap: 20px;
 }
 
-/* Liens Navigation : espacement, style */
 .navLinks {
   display: flex;
   gap: 20px;
@@ -46,8 +48,6 @@
   padding-left: 20px;
   align-items: center;
 }
-
-/* Liens Navigation : police, décoration, poids, couleur */
 
 .navLinks li a {
   text-decoration: none;
@@ -62,7 +62,6 @@
   transition: color 0.4s ease;
 }
 
-/*Home link*/
 .home {
   font-family: "DM Sans";
   font-size: 24px;
@@ -78,7 +77,6 @@
   color: var(--black) !important;
 }
 
-/* Auth-navigation : Forme biseautée : alignement horizontal et */
 .auth-navigation {
   display: flex;
   align-items: center;
@@ -89,7 +87,6 @@
   padding: 10px 20px;
 }
 
-/* Forme biseautée à droite : couleur et forme */
 .auth-navigation::before {
   content: "";
   width: 50vh;
@@ -113,7 +110,6 @@
   color: var(--black) !important;
 }
 
-/* Icône de recherche */
 :global(.bx-search) {
   font-size: 2rem;
   color: var(--white);
@@ -131,4 +127,3 @@
     display: none;
   }
 }
-
