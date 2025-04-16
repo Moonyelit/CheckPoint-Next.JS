@@ -1,8 +1,8 @@
-.followTrophy{
+.followTrophy {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
   gap: 2rem;
   margin: 1rem auto;
   position: relative;
@@ -10,108 +10,134 @@
 }
 
 .TitleStyle {
-    position: relative;
-    width: 100%;
-    height: 10em; 
-  }
+  position: relative;
+  width: 100%;
+  height: 10em;
+}
 
 .shapeLeft {
-    position: absolute;
-    width: clamp(75%, 80%, 85%);
-    height: clamp(60%, 80%, 90%);  
-    background: linear-gradient(90deg, #EDE3DD 0%, #BFB5AF 100%);
-    box-shadow: 7px 12px 10.6px rgba(0, 0, 0, 0.25);
-    left: 0;
-  
-    clip-path: polygon(
-      0 0,       /* coin haut gauche */
-      70% 0,    /* coin haut droit */
-      100% 100%,  /* coin bas droit */
-      0 100%     /* coin bas gauche */
-    );
-  }
+  position: absolute;
+  width: clamp(75%, 80%, 85%);
+  height: clamp(60%, 80%, 90%);
+  background: linear-gradient(90deg, #ede3dd 0%, #bfb5af 100%);
+  box-shadow: 7px 12px 10.6px rgba(0, 0, 0, 0.25);
+  left: 0;
 
-.titleTrophy{
-position: absolute;
-top: 50%;
-left: 6rem;
-margin: 0;
-text-align: justify;
-transform: translateY(-50%);
- }
+  clip-path: polygon(
+    0 0,
+    /* coin haut gauche */ 70% 0,
+    /* coin haut droit */ 100% 100%,
+    /* coin bas droit */ 0 100% /* coin bas gauche */
+  );
+}
+
+.titleTrophy {
+  position: absolute;
+  top: 50%;
+  left: 6rem;
+  margin: 0;
+  text-align: justify;
+  transform: translateY(-50%);
+}
 
 .shapeRight {
   position: absolute;
   width: clamp(30%, 40%, 50%);
   height: clamp(60%, 80%, 90%);
-  background: linear-gradient(90deg, #EDE3DD 0%, #BFB5AF 100%);
+  background: linear-gradient(90deg, #ede3dd 0%, #bfb5af 100%);
   box-shadow: -7px 12px 10.6px rgba(0, 0, 0, 0.25);
   right: 0;
 
   clip-path: polygon(
-    100% 0,   /* coin haut gauche "miroir" */
-    0% 0,    /* coin haut droit */
-    60% 100%,   /* coin bas droit */
-    100% 100% /* coin bas gauche */
+    100% 0,
+    /* coin haut gauche "miroir" */ 0% 0,
+    /* coin haut droit */ 60% 100%,
+    /* coin bas droit */ 100% 100% /* coin bas gauche */
   );
 }
 
 .stripe {
-    position: absolute;
-    left: 0;        
-    width: 100%;
-    height: 10%;    
-    background: linear-gradient(270deg, #0C60B9 0%, #2FD7FD 122.48%);
-  }
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 10%;
+  background: linear-gradient(270deg, #0c60b9 0%, #2fd7fd 122.48%);
+}
 
-  .stripe1 { top: 30%; height: 20%;    
-  }
-.stripe2 { top: 60%; }
+.stripe1 {
+  top: 40%;
+  height: 20%;
+}
+.stripe2 {
+  top: 75%;
+}
+
+.trophyInfos{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.trophyParagraph {
+    flex: 1;
+    margin: 0 0 0 6rem;
+    text-align: justify;
+    gap: 1rem;
+}
+
+.trophyParagraph p {
+    margin-bottom: 1.5rem; 
+}
 
 @media (max-width: 768px) {
-    .shapeLeft {
-      /* Par exemple, réduire un peu la largeur pour laisser plus d'espace */
-      width: clamp(65%, 80%, 85%);
-      height: clamp(55%, 70%, 75%);
-      clip-path: polygon(
-        0 0,       /* coin haut gauche */
-        73% 0,    /* coin haut droit */
-        100% 100%,  /* coin bas droit */
-        0 100%     /* coin bas gauche */
-      );
-    }
-    .shapeRight {
-      width: clamp(25%, 35%, 40%);
-      height: clamp(55%, 70%, 75%);
-    }
+  .shapeLeft {
+    width: clamp(65%, 80%, 85%);
+    height: clamp(55%, 70%, 75%);
+    clip-path: polygon(
+      0 0,
+      /* coin haut gauche */ 73% 0,
+      /* coin haut droit */ 100% 100%,
+      /* coin bas droit */ 0 100% /* coin bas gauche */
+    );
+  }
+  .shapeRight {
+    width: clamp(25%, 35%, 40%);
+    height: clamp(55%, 70%, 75%);
+  }
 
-
-  .titleTrophy{
+  .titleTrophy {
     font-size: clamp(2rem, 5vw, 2.5rem);
     width: 40%;
     left: 5rem;
   }
 
+  .trophyInfos{
+    flex-direction: column;
+    align-items: center;
   }
 
-  @media (max-width: 480px) {
-    .TitleStyle {
-        position: relative;
-        width: 100%;
-        height: 10em; 
-      }
+  .trophyParagraph {
+    margin: 0 8%;
+    gap: 1rem;
+}
+}
 
-
-    .titleTrophy{
-        width: 40%;
-        left: 3rem;
-      }
+@media (max-width: 480px) {
+  .TitleStyle {
+    position: relative;
+    width: 100%;
+    height: 10em;
   }
 
-  @media (max-width: 480px) {
-    .titleTrophy{
-        font-size: clamp(1.5rem, 3vw, 2.5rem);
-
-      }
+  .titleTrophy {
+    width: 40%;
+    left: 3rem;
   }
+}
+
+@media (max-width: 480px) {
+  .titleTrophy {
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+  }
+}
 /* background: linear-gradient(270deg, #0C60B9 0%, #2FD7FD 122.48%); */
