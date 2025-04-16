@@ -1,5 +1,6 @@
 .followTrophy{
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center; 
   gap: 2rem;
@@ -8,10 +9,16 @@
   width: 100%;
 }
 
+.TitleStyle {
+    position: relative;
+    width: 100%;
+    height: 10em; 
+  }
+
 .shapeLeft {
     position: absolute;
-    width: 75%;
-    height: 100%;   
+    width: clamp(75%, 80%, 85%);
+    height: clamp(60%, 80%, 90%);  
     background: linear-gradient(90deg, #EDE3DD 0%, #BFB5AF 100%);
     box-shadow: 7px 12px 10.6px rgba(0, 0, 0, 0.25);
     left: 0;
@@ -35,52 +42,76 @@ transform: translateY(-50%);
 
 .shapeRight {
   position: absolute;
-  width: 40%;
-  height: 100%;
+  width: clamp(30%, 40%, 50%);
+  height: clamp(60%, 80%, 90%);
   background: linear-gradient(90deg, #EDE3DD 0%, #BFB5AF 100%);
   box-shadow: -7px 12px 10.6px rgba(0, 0, 0, 0.25);
   right: 0;
-  /* On retourne horizontalement la forme */
-  transform: scaleX(-1);
 
   clip-path: polygon(
-    100% 0, /* coin haut gauche */
-    0 0, /* coin haut droit */
-    0 0, /* coin bas droit */
-    0 185% /* coin bas gauche */    
+    100% 0,   /* coin haut gauche "miroir" */
+    0% 0,    /* coin haut droit */
+    60% 100%,   /* coin bas droit */
+    100% 100% /* coin bas gauche */
   );
 }
 
+.stripe {
+    position: absolute;
+    left: 0;        
+    width: 100%;
+    height: 10%;    
+    background: linear-gradient(270deg, #0C60B9 0%, #2FD7FD 122.48%);
+  }
 
-/* Forme droite */
+  .stripe1 { top: 30%; height: 20%;    
+  }
+.stripe2 { top: 60%; }
 
-/* position: absolute;
-width: 1415px;
-height: 114px;
-left: 972px;
-top: 1744px;
- */
+@media (max-width: 768px) {
+    .shapeLeft {
+      /* Par exemple, réduire un peu la largeur pour laisser plus d'espace */
+      width: clamp(65%, 80%, 85%);
+      height: clamp(55%, 70%, 75%);
+      clip-path: polygon(
+        0 0,       /* coin haut gauche */
+        73% 0,    /* coin haut droit */
+        100% 100%,  /* coin bas droit */
+        0 100%     /* coin bas gauche */
+      );
+    }
+    .shapeRight {
+      width: clamp(25%, 35%, 40%);
+      height: clamp(55%, 70%, 75%);
+    }
 
 
-/* Forme */
+  .titleTrophy{
+    font-size: clamp(2rem, 5vw, 2.5rem);
+    width: 40%;
+    left: 5rem;
+  }
 
-/* position: absolute;
-width: 1415px;
-height: 114px;
-left: 972px;
-top: 1858px;
+  }
 
-background: linear-gradient(90deg, #EDE3DD 0%, #BFB5AF 100%);
-box-shadow: 7px 12px 10.6px rgba(0, 0, 0, 0.25);
-transform: matrix(1, 0, 0, -1, 0, 0); */
+  @media (max-width: 480px) {
+    .TitleStyle {
+        position: relative;
+        width: 100%;
+        height: 10em; 
+      }
 
 
-/* Trait couleur */
+    .titleTrophy{
+        width: 40%;
+        left: 3rem;
+      }
+  }
 
-/* position: absolute;
-width: 411.5px;
-height: 57px;
-left: 1091.5px;
-top: 1793.5px;
+  @media (max-width: 480px) {
+    .titleTrophy{
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
 
-background: linear-gradient(270deg, #0C60B9 0%, #2FD7FD 122.48%); */
+      }
+  }
+/* background: linear-gradient(270deg, #0C60B9 0%, #2FD7FD 122.48%); */
