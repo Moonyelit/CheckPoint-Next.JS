@@ -99,8 +99,8 @@ export default function HeroBanner() {
       <div className="hero-overlay">
         <div className="hero-left">
           <div className="hero-content">
-            <h1>Parce que chaque partie mérite d&apos;être sauvegardée</h1>
-            <p>
+            <h1 className="Title1-Karantina">Parce que chaque partie mérite d&apos;être sauvegardée</h1>
+            <p className="Paragraphe1">
               La plateforme gamifiée pour suivre ta progression et gérer ta
               collection de jeux vidéo
             </p>

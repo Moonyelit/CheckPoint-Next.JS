@@ -10,6 +10,12 @@
   box-sizing: border-box;
 }
 
+body {
+  background: var(--gradient-checkpoint);
+  font-family: var(--font-base);
+  color: var(--black);
+}
+
 /* COULEURS */
 :root {
   /* Grayscale */
@@ -51,8 +57,34 @@
 
 }
 
-body {
-  background: var(--gradient-checkpoint);
-  font-family: var(--font-base);
-  color: var(--black);
+/************************** POLICES ***************************/
+
+/*KARANTINA*/
+.Title1-Karantina {
+  font-size: clamp(3rem, 5vw, 5rem);
+  font-family: "Karantina", sans-serif;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  line-height: 1;
 }
+
+.Title2-Karantina{
+  text-align: right;
+  font-family: Karantina, sans-serif;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 2rem 0;
+}
+
+/*PARAGRAPHE*/
+.Paragraphe1 {
+  font-size: clamp(0.875rem, 2vw, 1.125rem);
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+
+

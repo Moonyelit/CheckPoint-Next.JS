@@ -5,17 +5,17 @@ const FollowCollection = () => {
   return (
     <section className="followCollection">
       <div className="gameContainer">
-        <Image
-          src="/images/NoLogin/Game-Home.png"
-          alt="Games cover"
-          width={400}
-          height={300}
-          className="gameImage"
-        />
+      <Image
+  src="/images/NoLogin/Game-Home.png"
+  alt="Games cover"
+  fill              
+  style={{ objectFit: 'cover' }}
+  className="gameImage"
+/>
       </div>
       <div className="content">
-        <h2 className="title">Suivez votre collection de jeux personnelle</h2>
-        <p className="description">
+        <h2 className="Title2-Karantina title">Suivez votre collection de jeux personnelle</h2>
+        <p className="description Paragraphe1">
           Enregistrez vos jeux passés, en cours et à venir avec des
           fonctionnalités comme le suivi du temps, la journalisation et la
           gestion des plateformes.
