@@ -15,7 +15,6 @@
 
 }
 
-/* Classe sticky : lorsque l'utilisateur scroll, on retire la marge et on fixe la navbar */
 .sticky {
   margin-top: 0;
   position: fixed;
@@ -24,7 +23,6 @@
   z-index: 10;
 }
 
-/* Tes autres styles restent inchangés... */
 .left-navigation {
   display: flex;
   align-items: center;
@@ -69,7 +67,7 @@
   font-weight: 900;
   line-height: normal;
   letter-spacing: -1.2px;
-  color: var(--bleu-crystal-normal) !important;
+  color: var(--bleu-crystal-normal);
   transition: color 1s ease, transform 1s ease;
 }
 

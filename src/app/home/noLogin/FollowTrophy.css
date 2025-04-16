@@ -1,0 +1,86 @@
+.followTrophy{
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  gap: 2rem;
+  margin: 1rem auto;
+  position: relative;
+  width: 100%;
+}
+
+.shapeLeft {
+    position: absolute;
+    width: 75%;
+    height: 100%;   
+    background: linear-gradient(90deg, #EDE3DD 0%, #BFB5AF 100%);
+    box-shadow: 7px 12px 10.6px rgba(0, 0, 0, 0.25);
+    left: 0;
+  
+    clip-path: polygon(
+      0 0,       /* coin haut gauche */
+      70% 0,    /* coin haut droit */
+      100% 100%,  /* coin bas droit */
+      0 100%     /* coin bas gauche */
+    );
+  }
+
+.titleTrophy{
+position: absolute;
+top: 50%;
+left: 6rem;
+margin: 0;
+text-align: justify;
+transform: translateY(-50%);
+ }
+
+.shapeRight {
+  position: absolute;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, #EDE3DD 0%, #BFB5AF 100%);
+  box-shadow: -7px 12px 10.6px rgba(0, 0, 0, 0.25);
+  right: 0;
+  /* On retourne horizontalement la forme */
+  transform: scaleX(-1);
+
+  clip-path: polygon(
+    100% 0, /* coin haut gauche */
+    0 0, /* coin haut droit */
+    0 0, /* coin bas droit */
+    0 185% /* coin bas gauche */    
+  );
+}
+
+
+/* Forme droite */
+
+/* position: absolute;
+width: 1415px;
+height: 114px;
+left: 972px;
+top: 1744px;
+ */
+
+
+/* Forme */
+
+/* position: absolute;
+width: 1415px;
+height: 114px;
+left: 972px;
+top: 1858px;
+
+background: linear-gradient(90deg, #EDE3DD 0%, #BFB5AF 100%);
+box-shadow: 7px 12px 10.6px rgba(0, 0, 0, 0.25);
+transform: matrix(1, 0, 0, -1, 0, 0); */
+
+
+/* Trait couleur */
+
+/* position: absolute;
+width: 411.5px;
+height: 57px;
+left: 1091.5px;
+top: 1793.5px;
+
+background: linear-gradient(270deg, #0C60B9 0%, #2FD7FD 122.48%); */

@@ -14,7 +14,7 @@ const FollowCollection = () => {
 />
       </div>
       <div className="content">
-        <h2 className="Title2-Karantina title">Suivez votre collection de jeux personnelle</h2>
+        <h2 className="Title2-Karantina titleCollection">Suivez votre collection de jeux personnelle</h2>
         <p className="description Paragraphe1">
           Enregistrez vos jeux passés, en cours et à venir avec des
           fonctionnalités comme le suivi du temps, la journalisation et la
