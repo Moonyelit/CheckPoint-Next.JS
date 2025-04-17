@@ -7,6 +7,15 @@
   margin: 1rem auto;
   position: relative;
   width: 100%;
+  background-image: 
+    linear-gradient(to bottom, rgba(133,151,167,1) 0%, transparent 20%),
+    linear-gradient(to top, rgba(116,133,153,1) 0%, transparent 20%),
+    url('/images/NoLogin/BackgroundTrophy.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 3rem 0; 
+  overflow-x: hidden;
 }
 
 .TitleStyle {
@@ -25,9 +34,10 @@
 
   clip-path: polygon(
     0 0,
-    /* coin haut gauche */ 70% 0,
-    /* coin haut droit */ 100% 100%,
-    /* coin bas droit */ 0 100% /* coin bas gauche */
+    /* coin haut gauche */ 
+    70% 0, /* coin haut droit */ 
+    100% 100%,/* coin bas droit */ 
+    0 100% /* coin bas gauche */
   );
 }
 
@@ -49,10 +59,10 @@
   right: 0;
 
   clip-path: polygon(
-    100% 0,
-    /* coin haut gauche "miroir" */ 0% 0,
-    /* coin haut droit */ 60% 100%,
-    /* coin bas droit */ 100% 100% /* coin bas gauche */
+    100% 0, /* coin haut gauche "miroir" */ 
+    0% 0, /* coin haut droit */ 
+    60% 100%, /* coin bas droit */ 
+    100% 100% /* coin bas gauche */
   );
 }
 
@@ -72,17 +82,30 @@
   top: 75%;
 }
 
-.trophyInfos{
+.trophyInfos {
     display: flex;
-    justify-content: center;
+    justify-content: space-between; 
     align-items: center;
+    position: relative;
+    width: 100%;
+    padding: 0 2rem;
+}
+
+.trophyImage {
+    position: relative;
+    width: 35%; 
+    height: auto;
+    right: -4rem;
+    transform: scale(1.2);
+    object-fit: contain;
 }
 
 .trophyParagraph {
     flex: 1;
-    margin: 0 0 0 6rem;
+    margin: 0 0 0 2rem;
     text-align: justify;
     gap: 1rem;
+    max-width: 60%; 
 }
 
 .trophyParagraph p {
@@ -94,10 +117,10 @@
     width: clamp(65%, 80%, 85%);
     height: clamp(55%, 70%, 75%);
     clip-path: polygon(
-      0 0,
-      /* coin haut gauche */ 73% 0,
-      /* coin haut droit */ 100% 100%,
-      /* coin bas droit */ 0 100% /* coin bas gauche */
+      0 0, /* coin haut gauche */ 
+      73% 0, /* coin haut droit */ 
+      100% 100%, /* coin bas droit */ 
+      0 100% /* coin bas gauche */
     );
   }
   .shapeRight {
@@ -111,15 +134,25 @@
     left: 5rem;
   }
 
-  .trophyInfos{
+  .trophyInfos {
     flex-direction: column;
-    align-items: center;
+    padding: 0 1rem;
+  }
+
+  .trophyImage {
+    width: 70%; 
+    transform: scale(1);
+    order: 2; 
+    right: 0;
+    align-self: center;
   }
 
   .trophyParagraph {
-    margin: 0 8%;
-    gap: 1rem;
-}
+    max-width: 90%;
+    margin: 0;
+    order: 1; 
+    text-align: center;
+  }
 }
 
 @media (max-width: 480px) {
@@ -140,4 +173,3 @@
     font-size: clamp(1.5rem, 3vw, 2.5rem);
   }
 }
-/* background: linear-gradient(270deg, #0C60B9 0%, #2FD7FD 122.48%); */

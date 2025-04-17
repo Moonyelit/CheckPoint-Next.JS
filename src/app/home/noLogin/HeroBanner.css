@@ -21,9 +21,9 @@
   display: flex;
   justify-content: center;
   flex-direction: row;
-  background: linear-gradient(180deg, rgba(116, 133, 153, 0) 0%, rgba(138, 159, 180, 1) 100%), 
-              linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(138, 159, 180, 1) 100%);
-
+  background: 
+    linear-gradient(to top, rgba(147,165,179,1) 0%, transparent 75%),
+    linear-gradient(to bottom, rgba(147,165,179,0.1) 0%, rgba(147,165,179,0.1) 100%);
 }
 
 .hero-left {

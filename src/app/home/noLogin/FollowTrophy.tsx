@@ -36,7 +36,6 @@ const FollowTrophy = () => {
           height={500}
           className="trophyImage"
         />
-        <div></div>
       </div>
     </section>
   );
