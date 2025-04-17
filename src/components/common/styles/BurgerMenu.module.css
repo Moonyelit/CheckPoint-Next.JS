@@ -1,56 +1,131 @@
-/* Ce fichier est activé pour les écrans à 950px et moins */
+/* Variables CSS globales */
+:root {
+  --transition-speed: 0.3s;
+  --overlay-width: 70%;
+  --menu-item-size: 1.5rem;
+  --icon-size: 1.8rem;
+  --hamburger-width: 30px;
+  --hamburger-height: 25px;
+  --bar-height: 3px;
+}
+
+/* Styles de base */
 .burgerContainer {
   display: none;
 }
 
-@media only screen and (max-width: 950px) {
+.iconGroup {
+  display: none;
+}
+
+.hamburger {
+  display: none;
+}
+
+.menuOverlay,
+.authOverlay {
+  display: none;
+}
+
+/* Styles des listes */
+.menuList,
+.authList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.menuList li a,
+.authList li a {
+  text-decoration: none;
+  color: var(--white);
+  font-weight: bold;
+  transition: color var(--transition-speed) ease;
+  display: inline-block;
+  padding: 5px 7px;
+}
+
+/* Style Home */
+.home {
+  color: var(--bleu-crystal-normal) !important;
+  transition: color 0.3s ease;
+}
+
+.home:active {
+  color: var(--bleu-crystal-normal) !important;
+}
+
+/* Animations */
+@keyframes rotateCross {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOut {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOutLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* Media Queries */
+@media only screen and (max-width: 855px) {
   .burgerContainer {
     display: block;
     position: relative;
     z-index: 3;
   }
 
-  /* Groupe d'icônes en haut à droite */
   .iconGroup {
     display: flex;
-    gap: 16px;
+    gap: 14px;
     align-items: center;
     justify-content: flex-end;
-    font-size: 1.8rem;
+    font-size: var(--icon-size);
     color: var(--white);
     cursor: pointer;
-    position: relative; /* Pour le positionnement du pseudo-élément */
+    position: relative;
   }
-  
-  /* Forme biseautée sous les icônes */
+
   .iconGroup::before {
     content: "";
     width: 50vh;
     height: 400%;
     background-color: var(--gris-nav-bar-fonce);
-    transform: skew(-45deg, 0deg);
+    transform: skew(-45deg, 0deg) translateZ(0);
     position: absolute;
     left: -2rem;
     z-index: -1;
+    will-change: transform;
   }
-  
-  /* Masquer la forme biseautée en dessous de 360px */
-  @media only screen and (max-width: 360px) {
-    .iconGroup::before {
-      display: none;
-    }
+
+  .iconGroup i {
+    transition: transform var(--transition-speed) ease;
   }
 
   .iconGroup i:hover {
     transform: scale(1.2);
-    transition: transform 0.3s ease;
   }
 
-  /* Hamburger custom (trois barres) */
+  /* Styles du hamburger */
   .hamburger {
-    width: 30px;
-    height: 25px;
     display: flex;
+    width: var(--hamburger-width);
+    height: var(--hamburger-height);
     flex-direction: column;
     justify-content: space-between;
     cursor: pointer;
@@ -58,10 +133,13 @@
 
   .hamburger span {
     display: block;
-    height: 3px;
+    height: var(--bar-height);
+    width: 100%;
     background-color: var(--white);
     border-radius: 2px;
-    transition: all 0.3s ease;
+    transition: all var(--transition-speed) ease;
+    transform-origin: center;
+    will-change: transform, opacity;
   }
 
   /* Transformation de la hamburger en croix lors de l'ouverture */
@@ -89,15 +167,6 @@
     animation: rotateCross 0.4s forwards;
   }
   
-  @keyframes rotateCross {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
   /* Position de la croix dans le menu de navigation (overlay à droite) */
   .menuOverlay .closeIcon {
     top: 10px;
@@ -115,7 +184,7 @@
     position: fixed;
     top: 0;
     right: 0;
-    width: 70%;
+    width: var(--overlay-width);
     height: 100vh;
     background: var(--gris-nav-bar-fonce);
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
@@ -124,18 +193,10 @@
     align-items: center;
     justify-content: center;
     z-index: 5;
+    will-change: transform;
   }
 
   /* Animation de fermeture pour le menu de navigation */
-  @keyframes slideOut {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(100%);
-    }
-  }
-  
   .menuOverlayExit {
     animation: slideOut 0.4s forwards;
   }
@@ -149,13 +210,15 @@
   }
   .menuList li {
     margin: 20px 0;
-    font-size: 1.5rem;
+    font-size: var(--menu-item-size);
   }
   .menuList li a {
     text-decoration: none;
     color: var(--white);
     font-weight: bold;
-    transition: color 0.3s ease;
+    transition: color var(--transition-speed) ease;
+    display: inline-block; /* Meilleure accessibilité */
+    padding: 5px 10px; /* Zone de clic plus grande */
   }
   /* Effet au clic pour les liens */
   .menuList li a:active {
@@ -163,20 +226,11 @@
   }
   /* Conserver le style Home en bleu */
   .home {
-    color: var(--bleu-crystal-normal) !important;
+    color: var(--bleu-crystal-fonce) !important;
     transition: color 0.3s ease;
   }
   .home:active {
-    color: var(--bleu-crystal-normal) !important;
-  }
-
-  @keyframes slideIn {
-    from {
-      transform: translateX(100%);
-    }
-    to {
-      transform: translateX(0);
-    }
+    color: var(--bleu-crystal-fonce) !important;
   }
 
   /* Overlay du menu d'authentification pour "S’inscrire" et "Connexion" */
@@ -184,7 +238,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    width: 70%;
+    width: var(--overlay-width);
     height: 100vh;
     background: var(--gris-nav-bar-fonce);
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
@@ -193,29 +247,12 @@
     align-items: center;
     justify-content: center;
     z-index: 5;
+    will-change: transform;
   }
 
   /* Animation de fermeture pour le menu d'authentification */
-  @keyframes slideOutLeft {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-100%);
-    }
-  }
-  
   .authOverlayExit {
     animation: slideOutLeft 0.4s forwards;
-  }
-
-  @keyframes slideInLeft {
-    from {
-      transform: translateX(-100%);
-    }
-    to {
-      transform: translateX(0);
-    }
   }
 
   /* Liste des liens d'authentification */
@@ -227,15 +264,28 @@
   }
   .authList li {
     margin: 20px 0;
-    font-size: 1.5rem;
+    font-size: var(--menu-item-size);
   }
   .authList li a {
     text-decoration: none;
     color: var(--white);
     font-weight: bold;
-    transition: color 0.3s ease;
+    transition: color var(--transition-speed) ease;
+    display: inline-block; /* Meilleure accessibilité */
+    padding: 5px 10px; /* Zone de clic plus grande */
   }
   .authList li a:active {
     color: var(--black);
+  }
+}
+
+/* Media query pour les petits écrans */
+@media only screen and (max-width: 360px) {
+  :root {
+    --overlay-width: 100%;
+  }
+
+  .iconGroup::before {
+    display: none;
   }
 }

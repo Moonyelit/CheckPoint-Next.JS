@@ -5,7 +5,10 @@
   width: 100%;
   height: 100vh;
   position: relative;
-  background-image: url("/images/Animate/Nier.gif");
+  background-image: 
+  linear-gradient(to bottom, rgba(133,151,167,1) 0%, transparent 20%),
+  linear-gradient(to top, rgba(116,133,153,1) 0%, transparent 40%),
+  url("/images/Animate/Nier.gif");
   background-size: cover;
   background-position: top;
   margin-top: -8rem;
@@ -23,7 +26,8 @@
   flex-direction: row;
   background: 
     linear-gradient(to top, rgba(147,165,179,1) 0%, transparent 75%),
-    linear-gradient(to bottom, rgba(147,165,179,0.1) 0%, rgba(147,165,179,0.1) 100%);
+    linear-gradient(to bottom, rgba(147,165,179,0.1) 0%, rgba(147,165,179,1) 100%);
+    ;
 }
 
 .hero-left {
@@ -47,7 +51,7 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  margin: 7rem 9rem 0 0;
+  margin: 10rem 9rem 0 0;
 }
 
 /* ----------------- Styles du Carousel ----------------- */
@@ -68,8 +72,8 @@
 
 /* Style de base pour chaque carte (classe .box) */
 .box {
-  width: 20rem;
-  height: 35rem;
+  width: 18rem;
+  height: 30rem;
   box-shadow: 0px 0px 2rem 0px #6a6a6a;
   background-color: white;
   display: flex;
@@ -161,7 +165,7 @@
 @media (max-width: 1245px) {
   .box {
     width: 14rem;
-    height: 40vh;
+    height: 22rem;
   }
 
   /* Carte immédiatement à droite */
@@ -211,12 +215,13 @@
   }
 
   .hero-left {
-    margin: 40vh 0 0 0;
+    margin: 150vh 0 0 0;
   }
 
   .hero-right {
-    margin-bottom: -10rem;
+    margin: 0rem 9rem 90vh 0;
   }
+
 
   .box {
     width: 12rem;

@@ -4,8 +4,8 @@
 .btn-custom {
     display: flex;
     flex-direction: column;
-    width: 10em;
-    height: 3em;
+    width: 8em;
+    height: 2.5em;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -14,7 +14,7 @@
     color: var(--black);
     text-align: center;
     font-family: "DM Sans", sans-serif;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-style: normal;
     font-weight: 900;
     line-height: normal;
@@ -35,8 +35,8 @@
 .btn-custom-inverse {
     display: flex;
     flex-direction: column;
-    width: 10em;
-    height: 3em;
+    width: 8em;
+    height: 2.5em;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -45,7 +45,7 @@
     color: var(--white);
     text-align: center;
     font-family: "DM Sans", sans-serif;
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-style: normal;
     font-weight: 900;
     line-height: normal;
@@ -60,4 +60,14 @@
 }
 .btn-custom-inverse:active {
     opacity: 0.9;
+}
+
+/* Media Queries pour les écrans plus grands */
+@media screen and (min-width: 768px) {
+    .btn-custom,
+    .btn-custom-inverse {
+        width: 10em;
+        height: 3em;
+        font-size: 1.5em;
+    }
 }

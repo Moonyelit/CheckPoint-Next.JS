@@ -10,6 +10,7 @@
   background-image: 
     linear-gradient(to bottom, rgba(133,151,167,1) 0%, transparent 20%),
     linear-gradient(to top, rgba(116,133,153,1) 0%, transparent 20%),
+
     url('/images/NoLogin/BackgroundTrophy.png');
   background-size: cover;
   background-position: center;
@@ -129,9 +130,8 @@
   }
 
   .titleTrophy {
-    font-size: clamp(2rem, 5vw, 2.5rem);
-    width: 40%;
-    left: 5rem;
+    width: 42%;
+    left: 5rem;;
   }
 
   .trophyInfos {
@@ -165,11 +165,5 @@
   .titleTrophy {
     width: 40%;
     left: 3rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .titleTrophy {
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
   }
 }

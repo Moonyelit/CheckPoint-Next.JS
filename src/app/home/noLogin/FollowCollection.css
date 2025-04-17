@@ -67,7 +67,7 @@
       align-items: center;
       padding: 0; 
       background: linear-gradient(180deg, var(--gris-fonce) 0%, var(--gris-clair) 100%);
-
+      margin-bottom: 1rem;
     }
     
     .gameContainer {
@@ -95,9 +95,9 @@
     }
   }
   
-  @media (max-width: 425px) {
+  @media (max-width: 480px) {
     .followCollection {
-      margin-top: -6rem;
+      margin-top: -2rem;
     }
   }
   
