@@ -6,6 +6,7 @@ import HeroBanner from '@/app/home/noLogin/HeroBanner';
 import FollowCollection from '@/app/home/noLogin/FollowCollection';
 import FollowTrophy from '@/app/home/noLogin/FollowTrophy';
 import NewFunctionality from './home/noLogin/NewFunctionality';
+import Footer from '@/components/common/Footer';
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <FollowCollection />
       <FollowTrophy />
       <NewFunctionality />
+      <Footer />
     </>
   );
 }
