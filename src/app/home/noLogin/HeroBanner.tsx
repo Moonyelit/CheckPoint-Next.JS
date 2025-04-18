@@ -1,98 +1,58 @@
 // src/app/home/noLogin/HeroBanner.tsx
 "use client";
-import React, { useState } from "react";
-import { useSwipeable } from "react-swipeable"; // Import de react-swipeable
+
+import React, { useState, useEffect } from "react";
+import { useSwipeable } from "react-swipeable";
 import Button from "@/components/common/Button";
 import GameCard from "./GameCard";
+import api from "@/lib/api";
 import "./HeroBanner.css";
 
-const cardsData = [
-  {
-    title: "Balatro",
-    subtitle: "20 February 2024",
-    imageUrl: "/images/games/balatro.jpg",
-    alt: "Balatro",
-  },
-  {
-    title: "Monster Hunter Wilds",
-    subtitle: "Réservez votre chasse",
-    imageUrl: "/images/games/monster-hunter-wilds.jpg",
-    alt: "Monster Hunter Wilds",
-  },
-  {
-    title: "Split Fiction",
-    subtitle: "En développement",
-    imageUrl: "/images/games/split-fiction.jpg",
-    alt: "Split Fiction",
-  },
-  {
-    title: "Split Fiction",
-    subtitle: "En développement",
-    imageUrl: "/images/games/split-fiction.jpg",
-    alt: "Split Fiction",
-  },
-  {
-    title: "Split Fiction",
-    subtitle: "En développement",
-    imageUrl: "/images/games/split-fiction.jpg",
-    alt: "Split Fiction",
-  },
-];
-
-function getCardClass(
-  cardIndex: number,
-  activeIndex: number,
-  total: number
-): string {
-  const relative = (cardIndex - activeIndex + total) % total;
-  if (total === 4) {
-    switch (relative) {
-      case 0:
-        return "box active";
-      case 1:
-        return "box right";
-      case 2:
-        return "box right-hidden";
-      case 3:
-        return "box left";
-      default:
-        return "box box--hide";
-    }
-  }
-  if (relative === 0) return "box active";
-  if (relative === 1) return "box right";
-  if (relative === total - 1) return "box left";
-  if (relative === 2) return "box right-hidden";
-  if (relative === total - 2) return "box left-hidden";
-  return "box box--hide";
+interface Game {
+  id: number;
+  title: string;
+  coverUrl: string;
+  releaseDate: string;
 }
 
 export default function HeroBanner() {
+  const [cardsData, setCardsData] = useState<Game[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const total = cardsData.length;
 
-  // Gestionnaire de swipe
+  useEffect(() => {
+    const fetchTopGames = async () => {
+      try {
+        const year = 2025;
+        const { data } = await api.get(`/games/top/${year}`, {
+          params: { limit: 5 }
+        });
+        setCardsData(data);
+      } catch (err) {
+        console.error('Erreur axios top games :', err);
+      }
+    };
+    fetchTopGames();
+  }, []);
+
   const handlers = useSwipeable({
-    onSwipedLeft: () => {
-      setActiveIndex((prev) => (prev + 1) % total);
-    },
-    onSwipedRight: () => {
-      setActiveIndex((prev) => (prev - 1 + total) % total); 
-    },
-    trackMouse: true, 
+    onSwipedLeft:  () => setActiveIndex((i) => (i + 1) % total),
+    onSwipedRight: () => setActiveIndex((i) => (i - 1 + total) % total),
+    trackMouse: true,
   });
 
-  const prevCard = () => {
-    setActiveIndex((prev) => (prev - 1 + total) % total);
-  };
+  const prevCard = () => setActiveIndex((i) => (i - 1 + total) % total);
+  const nextCard = () => setActiveIndex((i) => (i + 1) % total);
 
-  const nextCard = () => {
-    setActiveIndex((prev) => (prev + 1) % total);
-  };
-
-  const handleCardClick = (index: number) => {
-    setActiveIndex(index);
-  };
+  function getCardClass(idx: number): string {
+    const relative = (idx - activeIndex + total) % total;
+    if (relative === 0) return "box active";
+    if (relative === 1) return "box right";
+    if (relative === total - 1) return "box left";
+    if (relative === 2) return "box right-hidden";
+    if (relative === total - 2) return "box left-hidden";
+    return "box box--hide";
+  }
 
   return (
     <section className="hero-container">
@@ -107,32 +67,27 @@ export default function HeroBanner() {
             <Button label="S'inscrire" />
           </div>
         </div>
-
         <div className="hero-right">
           <div className="cards-wrapper" {...handlers}>
             <div className="cards__container">
-              {cardsData.map((card, index) => (
+              {cardsData.map((game, idx) => (
                 <div
-                  key={index}
-                  className={getCardClass(index, activeIndex, total)}
-                  onClick={() => handleCardClick(index)}
+                  key={game.id}
+                  className={getCardClass(idx)}
+                  onClick={() => setActiveIndex(idx)}
                 >
                   <GameCard
-                    title={card.title}
-                    subtitle={card.subtitle}
-                    imageUrl={card.imageUrl}
-                    alt={card.alt}
+                    title={game.title}
+                    subtitle={new Date(game.releaseDate).toLocaleDateString("fr-FR")}
+                    imageUrl={game.coverUrl}
+                    alt={game.title}
                   />
                 </div>
               ))}
             </div>
             <div className="carousel-controls">
-              <button onClick={prevCard} className="button">
-                &lt;
-              </button>
-              <button onClick={nextCard} className="button">
-                &gt;
-              </button>
+              <button onClick={prevCard} className="button">&lt;</button>
+              <button onClick={nextCard} className="button">&gt;</button>
             </div>
           </div>
         </div>
