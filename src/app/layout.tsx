@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Checkout",
   icons: {
-    icon: "/public/images/crystalGIF.gif",
+    icon: "/images/Logo/Crystal.png", 
   },
   description: "La plateforme gamifiée pour suivre ta progression et gérer ta collection de jeux vidéo",
 };
