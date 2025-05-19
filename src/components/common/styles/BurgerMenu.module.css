@@ -1,5 +1,5 @@
 /* Variables CSS globales */
-:root {
+.burgerMenuRoot {
   --transition-speed: 0.3s;
   --overlay-width: 70%;
   --menu-item-size: 1.5rem;
@@ -233,7 +233,7 @@
     color: var(--bleu-crystal-fonce) !important;
   }
 
-  /* Overlay du menu d'authentification pour "S’inscrire" et "Connexion" */
+  /* Overlay du menu d'authentification pour "S'inscrire" et "Connexion" */
   .authOverlay {
     position: fixed;
     top: 0;
@@ -281,7 +281,7 @@
 
 /* Media query pour les petits écrans */
 @media only screen and (max-width: 360px) {
-  :root {
+  .burgerMenuRoot {
     --overlay-width: 100%;
   }
 

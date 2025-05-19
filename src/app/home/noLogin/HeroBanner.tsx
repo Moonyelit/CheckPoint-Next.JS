@@ -24,7 +24,7 @@ export default function HeroBanner() {
     const fetchTopGames = async () => {
       try {
         const year = 2025;
-        const { data } = await api.get(`/games/top/${year}`, {
+        const { data } = await api.get(`/api/games/top/${year}`, {
           params: { limit: 5 }
         });
         setCardsData(data);
