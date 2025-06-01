@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
-import '../../styles/globals.css'
+import './styles/Crystals3D.scss'
 
 export default function Crystals3D() {
   return (
@@ -16,7 +16,7 @@ export default function Crystals3D() {
         
         <CrystalsModel />
 
-        {/* Limiter la rotation à l’horizontale */}
+        {/* Limiter la rotation à l'horizontale */}
         <OrbitControls
           enableZoom={false}
           minPolarAngle={Math.PI / 2}

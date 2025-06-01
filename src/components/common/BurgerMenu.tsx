@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import styles from "./styles/BurgerMenu.module.css";
+import "./styles/BurgerMenu.scss";
 
 const BurgerMenu: React.FC = () => {
   // États pour le menu de navigation
@@ -60,13 +60,13 @@ const BurgerMenu: React.FC = () => {
   };
 
   return (
-    <div className={styles.burgerContainer}>
-      <div className={styles.iconGroup}>
+    <div className="burgerContainer">
+      <div className="iconGroup">
         <i className="bx bx-search" />
         <i className="bx bx-user-circle" onClick={toggleAuthMenu} />
         {/* Remplacement de l'icône burger par notre hamburger custom */}
         <div
-          className={`${styles.hamburger} ${navMenuOpen ? styles.open : ""}`}
+          className={`hamburger ${navMenuOpen ? "open" : ""}`}
           onClick={toggleNavMenu}
         >
           <span></span>
@@ -77,16 +77,16 @@ const BurgerMenu: React.FC = () => {
 
       {navMenuOpen && (
         <div
-          className={`${styles.menuOverlay} ${navMenuClosing ? styles.menuOverlayExit : ""}`}
+          className={`menuOverlay ${navMenuClosing ? "menuOverlayExit" : ""}`}
           onClick={toggleNavMenu}
         >
           {/* Icône croix pour fermer le menu de navigation */}
-          <div className={styles.closeIcon} onClick={toggleNavMenu}>
+          <div className="closeIcon" onClick={toggleNavMenu}>
             <i className="bx bx-x" />
           </div>
-          <ul className={styles.menuList} onClick={(e) => e.stopPropagation()}>
+          <ul className="menuList" onClick={(e) => e.stopPropagation()}>
             <li onClick={toggleNavMenu}>
-              <Link href="/" className={styles.home}>
+              <Link href="/" className="home">
                 Home
               </Link>
             </li>
@@ -105,16 +105,16 @@ const BurgerMenu: React.FC = () => {
 
       {authMenuOpen && (
         <div
-          className={`${styles.authOverlay} ${authMenuClosing ? styles.authOverlayExit : ""}`}
+          className={`authOverlay ${authMenuClosing ? "authOverlayExit" : ""}`}
           onClick={toggleAuthMenu}
         >
           {/* Icône croix pour fermer le menu d'authentification */}
-          <div className={styles.closeIcon} onClick={toggleAuthMenu}>
+          <div className="closeIcon" onClick={toggleAuthMenu}>
             <i className="bx bx-x" />
           </div>
-          <ul className={styles.authList} onClick={(e) => e.stopPropagation()}>
+          <ul className="authList" onClick={(e) => e.stopPropagation()}>
             <li onClick={toggleAuthMenu}>
-              <Link href="/inscription">S’inscrire</Link>
+              <Link href="/inscription">S&apos;inscrire</Link>
             </li>
             <li onClick={toggleAuthMenu}>
               <Link href="/login">Connexion</Link>

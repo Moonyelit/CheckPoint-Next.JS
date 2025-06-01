@@ -1,22 +1,17 @@
 "use client";
 import React from 'react';
-import '../styles/globals.css'; 
-import Navbar from '@/components/common/Navbar';
-import HeroBanner from '@/app/home/noLogin/HeroBanner';
-import FollowCollection from '@/app/home/noLogin/FollowCollection';
-import FollowTrophy from '@/app/home/noLogin/FollowTrophy';
-import NewFunctionality from './home/noLogin/NewFunctionality';
-import Footer from '@/components/common/Footer';
+import HeroBanner from './home/noLogin/components/HeroBanner';
+import FollowCollection from './home/noLogin/components/FollowCollection';
+import FollowTrophy from './home/noLogin/components/FollowTrophy';
+import NewFunctionality from './home/noLogin/components/NewFunctionality';
 
 export default function Home() {
   return (
-    <>
-      <Navbar />
+    <main>
       <HeroBanner />
       <FollowCollection />
       <FollowTrophy />
       <NewFunctionality />
-      <Footer />
-    </>
+    </main>
   );
 }

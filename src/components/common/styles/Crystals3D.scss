@@ -1,7 +1,9 @@
+@import '../../../../styles/mixins';
+
 .embedWrapper {
   position: relative;
   width: 100%;
-  max-width: 400px; /* Ajuste selon tes besoins */
+  max-width: 400px;
   height: 300px;
   overflow: hidden;
 }
@@ -16,4 +18,4 @@
   font-size: 0.8rem;
   margin: 5px;
   color: #4A4A4A;
-}
+} 

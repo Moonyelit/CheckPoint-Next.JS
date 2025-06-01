@@ -1,5 +1,5 @@
 import Image from "next/image";
-import "./FollowTrophy.css";
+import "./FollowTrophy.scss";
 
 const FollowTrophy = () => {
   return (

@@ -1,20 +1,21 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import Logo from "@/components/common/Logo";
 import BurgerMenu from "@/components/common/BurgerMenu";
 import Link from "next/link";
-import styles from "./styles/Navbar.module.css";
-import '../../styles/globals.css'; 
+import "./styles/Navbar.scss";
+import '../../styles/globals.scss'; 
 
 export default function Navbar() {
-  const [isSticky, setIsSticky] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      // Dès qu'on dépasse 10 pixels, la navbar devient sticky
       if (window.scrollY > 10) {
-        setIsSticky(true);
+        setIsScrolled(true);
       } else {
-        setIsSticky(false);
+        setIsScrolled(false);
       }
     };
 
@@ -23,17 +24,17 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className={`${styles["main-navbar"]} ${isSticky ? styles.sticky : ''}`}>
+    <nav className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`}>
       {/* Partie gauche : logo */}
-      <div className={styles["left-navigation"]}>
+      <div className="navbar-left">
         <Logo />
       </div>
 
       {/* Partie droite : liens et auth */}
-      <div className={styles["right-navigation"]}>
-        <ul className={styles.navLinks}>
+      <div className="navbar-right">
+        <ul className="navbar-right-links">
           <li>
-            <Link href="/" className={styles.home}>
+            <Link href="/" className="navbar-right-links-home">
               Home
             </Link>
           </li>
@@ -47,12 +48,12 @@ export default function Navbar() {
             <Link href="/challenges">Challenges</Link>
           </li>
         </ul>
-        <div className={styles["auth-navigation"]}>
-          <i className="bx bx-search"></i>
-          <Link href="/inscription" className={styles.authLink}>
-            S’inscrire
+        <div className="navbar-right-auth">
+          <i className="bx bx-search navbar-right-auth-search"></i>
+          <Link href="/inscription" className="navbar-right-auth-link">
+            S&apos;inscrire
           </Link>
-          <Link href="/login" className={styles.authLink}>
+          <Link href="/login" className="navbar-right-auth-link">
             Connexion
           </Link>
         </div>

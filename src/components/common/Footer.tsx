@@ -1,12 +1,12 @@
-import styles from "./styles/Footer.module.css";
-import '../../styles/globals.css';
+import "./styles/Footer.scss";
+import '../../styles/globals.scss';
 import classNames from 'classnames';
 
 const Footer = () => {
   return (
-    <footer className={classNames(styles.footer, 'Paragraphe1')}>
-      <div className={styles.footerContent}>
-        <ul className={styles.footerLinks}>
+    <footer className={classNames("footer", 'Paragraphe1')}>
+      <div className="footerContent">
+        <ul className="footerLinks">
           <li>Contact</li>
           <li>|</li>
           <li>L&apos;équipe</li>
@@ -15,7 +15,7 @@ const Footer = () => {
           <li>|</li>
           <li>Politique de confidentialité</li>
         </ul>
-        <div className={styles.copyright}>
+        <div className="copyright">
           <li>© 2025 CheckPoint v.1.0 </li>
           <li>|</li>
           <li>Game database powered by IGDB</li>

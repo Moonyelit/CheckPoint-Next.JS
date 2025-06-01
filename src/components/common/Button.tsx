@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 // Importation du CSS spécifique au bouton
-import './styles/Button.css';
+import './styles/Button.scss';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /**

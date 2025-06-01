@@ -1,0 +1,369 @@
+@use '@/styles/mixins' as *;
+@use '../../../styles/variables' as vars;
+
+.burgerContainer {
+  position: relative;
+  z-index: 1000;
+  // Masqué par défaut sur desktop
+  display: none;
+
+  // Visible uniquement sur tablette et mobile (768px et moins)
+  @include respond-to('medium') {
+    display: block;
+  }
+
+  .iconGroup {
+    @include flex(row, flex-start, center);
+    gap: 20px;
+    position: relative;
+    margin-right: 1rem;
+    z-index: 2;
+    padding: 10px 20px;
+    color: var(--white);
+    cursor: pointer;
+
+    &::before {
+      content: "";
+      width: 50rem;
+      height: 300%;
+      background-image: var(--gris-fonce-overlay);
+      transform: skew(-45deg, 0deg);
+      position: absolute;
+      left: -2rem;
+      z-index: -1;
+      @include transition(all, 0.3s, ease);
+    }
+
+    &:hover::before {
+      background-image: var(--checkpoint);
+    }
+
+    // Icônes communes
+    i {
+      font-size: 1.5rem;
+      cursor: pointer;
+      @include transition(transform, 0.2s, ease);
+
+      &:hover {
+        transform: scale(1.1);
+        color: var(--bleu-clair-crystal);
+      }
+    }
+
+    // Hamburger custom
+    .hamburger {
+      width: 30px;
+      height: 24px;
+      position: relative;
+      cursor: pointer;
+      @include transition(all, 0.3s, ease);
+
+      span {
+        display: block;
+        position: absolute;
+        height: 3px;
+        width: 100%;
+        background: var(--white);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        @include transition(all, 0.25s, ease-in-out);
+
+        &:nth-child(1) {
+          top: 0px;
+        }
+
+        &:nth-child(2) {
+          top: 10px;
+        }
+
+        &:nth-child(3) {
+          top: 20px;
+        }
+      }
+
+      &.open {
+        span {
+          &:nth-child(1) {
+            top: 10px;
+            transform: rotate(135deg);
+          }
+
+          &:nth-child(2) {
+            opacity: 0;
+            left: -60px;
+          }
+
+          &:nth-child(3) {
+            top: 10px;
+            transform: rotate(-135deg);
+          }
+        }
+      }
+
+      &:hover span {
+        background: var(--bleu-clair-crystal);
+      }
+    }
+  }
+
+  // Menu overlay pour la navigation
+  .menuOverlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    @include flex(column, center, center);
+    z-index: 999;
+    backdrop-filter: blur(10px);
+    animation: slideInRight 0.4s ease-out;
+
+    &.menuOverlayExit {
+      animation: slideOutRight 0.4s ease-out;
+    }
+
+    .closeIcon {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-size: 2.5rem;
+      color: var(--white);
+      cursor: pointer;
+      @include transition(all, 0.2s, ease);
+
+      &:hover {
+        color: var(--bleu-clair-crystal);
+        transform: rotate(90deg) scale(1.2);
+      }
+    }
+
+    .menuList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      @include flex(column, center, center);
+      gap: 2rem;
+
+      li {
+        transform: translateX(100px);
+        opacity: 0;
+        animation: slideInItem 0.6s ease-out forwards;
+
+        @for $i from 1 through 4 {
+          &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.1}s;
+          }
+        }
+
+        a {
+          font-size: 2rem;
+          font-weight: 600;
+          color: var(--white);
+          text-decoration: none;
+          padding: 15px 30px;
+          border-radius: 10px;
+          @include transition(all, 0.3s, ease);
+          display: block;
+          text-align: center;
+          background: transparent;
+          border: 2px solid transparent;
+
+          &:hover, &.home {
+            background: var(--checkpoint);
+            border: 2px solid var(--bleu-clair-crystal);
+            transform: scale(1.05);
+            @include box-shadow(0, 10px, 30px, 0, rgba(35, 171, 250, 0.3));
+          }
+        }
+      }
+    }
+  }
+
+  // Menu overlay pour l'authentification
+  .authOverlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 400px;
+    height: 100vh;
+    background: var(--gris-fonce-overlay);
+    @include flex(column, center, center);
+    z-index: 999;
+    backdrop-filter: blur(15px);
+    border-left: 3px solid var(--bleu-clair-crystal);
+    animation: slideInAuth 0.4s ease-out;
+
+    @include respond-to('medium') {
+      width: 100vw;
+    }
+
+    &.authOverlayExit {
+      animation: slideOutAuth 0.4s ease-out;
+    }
+
+    .closeIcon {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      font-size: 2rem;
+      color: var(--white);
+      cursor: pointer;
+      @include transition(all, 0.2s, ease);
+
+      &:hover {
+        color: var(--bleu-clair-crystal);
+        transform: rotate(90deg) scale(1.2);
+      }
+    }
+
+    .authList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      @include flex(column, center, center);
+      gap: 2rem;
+      width: 80%;
+
+      li {
+        width: 100%;
+        transform: translateX(50px);
+        opacity: 0;
+        animation: slideInAuth 0.6s ease-out forwards;
+
+        &:nth-child(1) {
+          animation-delay: 0.2s;
+        }
+
+        &:nth-child(2) {
+          animation-delay: 0.3s;
+        }
+
+        a {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--white);
+          text-decoration: none;
+          padding: 15px 25px;
+          border-radius: 25px;
+          @include transition(all, 0.3s, ease);
+          display: block;
+          text-align: center;
+          background: var(--bleu-fonce);
+          border: 2px solid var(--bleu-clair);
+          width: 100%;
+          box-sizing: border-box;
+
+          &:hover {
+            background: var(--bleu-clair-crystal);
+            color: var(--black);
+            transform: translateY(-3px);
+            @include box-shadow(0, 10px, 25px, 0, rgba(35, 171, 250, 0.4));
+          }
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slideInAuth {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutAuth {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInItem {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// Responsive design
+@include respond-to('medium') {
+  .burgerContainer {
+    .iconGroup {
+      gap: 15px;
+      padding: 8px 15px;
+
+      &::before {
+        width: 40rem;
+        left: -1.5rem;
+      }
+
+      i {
+        font-size: 1.3rem;
+      }
+
+      .hamburger {
+        width: 25px;
+        height: 20px;
+
+        span {
+          height: 2px;
+
+          &:nth-child(2) {
+            top: 8px;
+          }
+
+          &:nth-child(3) {
+            top: 16px;
+          }
+        }
+
+        &.open span {
+          &:nth-child(1), &:nth-child(3) {
+            top: 8px;
+          }
+        }
+      }
+    }
+
+    .menuOverlay .menuList li a {
+      font-size: 1.5rem;
+      padding: 12px 25px;
+    }
+  }
+}
+
+

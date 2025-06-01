@@ -1,6 +1,8 @@
+@use "tailwindcss";
+@use './mixins' as *;
+
 @import url("https://fonts.googleapis.com/css2?family=Karantina&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=DM+Sans:wght@700;900&display=swap");
-@import "tailwindcss";
 @import "boxicons/css/boxicons.min.css";
 
 /* GLOBAL STYLES */
@@ -17,8 +19,7 @@ html, body {
 
 #__next {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  @include flex(column);
 }
 
 main {
@@ -73,6 +74,11 @@ body {
     #ddcbc0 0%,
     var(--gris-clair, #ede3dd) 100%
   );
+
+  /* Tailles de police standard */
+  --font-size-small: 12px;
+  --font-size-medium: 16px;
+  --font-size-large: 24px;
 }
 
 /************************** POLICES ***************************/
@@ -93,24 +99,20 @@ body {
   font-weight: 700;
   line-height: normal;
   margin: 2rem 0;
-}
 
-@media (max-width: 768px) {
-  .Title2-Karantina {
+  @include respond-to('medium') {
     font-size: clamp(2rem, 5vw, 2.5rem);
   }
-}
 
-@media (max-width: 480px) {
-  .Title2-Karantina {
+  @include respond-to('small') {
     font-size: clamp(1.5rem, 3vw, 2.5rem);
   }
 }
 
 /*PARAGRAPHE*/
 .Paragraphe1 {
-  font-size: clamp(0.875rem, 2vw, 1.125rem);
+  font-size: clamp(1rem, 2vw, 1.125rem);
   font-family: "DM Sans", sans-serif;
   line-height: 1.6;
   margin-bottom: 1.5rem;
-}
+} 

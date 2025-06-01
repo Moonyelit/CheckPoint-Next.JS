@@ -1,5 +1,5 @@
 import Image from "next/image";
-import "./NewFunctionality.css";
+import "./NewFunctionality.scss";
 
 const NewFunctionality = () => {
   return (
@@ -43,9 +43,9 @@ const NewFunctionality = () => {
               </li>
             </ul>
 
-            <p>
+            <p className="Paragraphe1">
               Inscrivez-vous dès maintenant pour gérer votre progression et
-              profiter d’un site en constante évolution, avec de nombreuses
+              profiter d&apos;un site en constante évolution, avec de nombreuses
               nouveautés à venir.
             </p>
           </div>

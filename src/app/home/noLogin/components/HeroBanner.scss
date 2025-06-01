@@ -1,0 +1,179 @@
+@import '../../../../styles/mixins';
+@import '../../../../styles/variables.scss';
+
+/* ----------------- Mise en page globale du Hero ----------------- */
+.hero-container {
+  height: 100vh;
+  background-image: linear-gradient(
+      to top,
+      rgba(147, 165, 179, 1) 0%,
+      transparent 75%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(147, 165, 179, 0.1) 0%,
+      rgba(147, 165, 179, 1) 100%
+    ),
+    url("/images/Animate/Nier.gif");
+  background-size: cover;
+  padding-block:  8rem; //Pour que le background dépasse de la navbar
+}
+
+.hero-content-container {
+  position: relative;
+  z-index: 2;
+  height: 100%;;
+  @include flex(row, center);
+}
+
+.hero-left {
+  flex: 1;
+  @include flex(row, center, center);
+}
+
+.hero-content {
+  color: var(--white);
+  max-width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-right {
+  flex: 1;
+  @include flex(row, center, center);
+  position: relative;
+  margin: 10rem 5rem 0 0;
+}
+
+/* ----------------- Styles du Carousel ----------------- */
+.cards-wrapper {
+  @include flex(column, center, center);
+}
+
+.cards__container {
+  @include flex(row, center, center);
+  height: 25em;
+  position: relative;
+  width: 100%;
+}
+
+/* Style de base pour chaque carte */
+.box {
+  width: clamp(12rem, 20vw, 18rem);
+  height: clamp(20rem, 35vw, 30rem);
+  @include box-shadow(0px, 0px, 2rem, 0px, #6a6a6a);
+  background-color: var(--white);
+  position: absolute;
+  @include transition(all, 0.4s, cubic-bezier(0.25, 0.8, 0.25, 1));
+  border-radius: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    @include box-shadow(0px, 0px, 3rem, 0px, #4a4a4a);
+    transform: translateY(-5px) scale(1.02);
+  }
+
+  &.active {
+    transform: scale(1);
+    z-index: 3;
+    left: 0;
+    
+    &:hover {
+      transform: scale(1.02) translateY(-5px);
+    }
+  }
+
+  &.right {
+    transform: scale(0.85);
+    z-index: 2;
+    left: 150%;
+  }
+
+  &.left {
+    transform: scale(0.85);
+    z-index: 2;
+    left: -150%;
+  }
+
+  &.right-hidden {
+    transform: scale(0.75);
+    z-index: 1;
+    left: 250%;
+  }
+
+  &.left-hidden {
+    transform: scale(0.75);
+    z-index: 1;
+    left: -250%;
+  }
+
+  &.box--hide {
+    display: none;
+  }
+}
+
+/* ----------------- Contrôles du Carousel ----------------- */
+.carousel-controls {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.button {
+  margin: 0 1%;
+  width: 2rem;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: var(--white);
+
+  &--inactive {
+    opacity: 0.2;
+  }
+}
+
+/* ----------------- Media Queries ----------------- */
+@include respond-to('large') {
+  .box {
+
+    &.right {
+      left: 135%;
+    }
+
+    &.left {
+      left: -135%;
+    }
+
+    &.right-hidden {
+      left: 200%;
+    }
+
+    &.left-hidden {
+      left: -200%;
+    }
+  }
+
+  .hero-overlay {
+    @include flex(column);
+  }
+
+  .hero-content {
+    @include flex(column);
+
+    button {
+      align-self: center;
+    }
+  }
+}
+
+@include respond-to('medium') {
+  .hero-content-container {
+    @include flex(column);
+  }
+
+  .hero-right {
+    @include flex(row, center, center);
+    margin-block: 0.5rem;
+    margin-left: -3.5rem;
+  }
+} 

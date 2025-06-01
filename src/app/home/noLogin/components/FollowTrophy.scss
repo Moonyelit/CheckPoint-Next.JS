@@ -1,8 +1,8 @@
+@import '../../../../styles/mixins';
+@import '../../../../styles/variables.scss';
+
 .followTrophy {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  @include flex(column, center, center);
   gap: 2rem;
   margin: 1rem auto;
   position: relative;
@@ -10,12 +10,11 @@
   background-image: 
     linear-gradient(to bottom, rgba(133,151,167,1) 0%, transparent 20%),
     linear-gradient(to top, rgba(116,133,153,1) 0%, transparent 20%),
-
     url('/images/NoLogin/BackgroundTrophy.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 3rem 0; 
+  padding: 3rem 0;
   overflow-x: hidden;
 }
 
@@ -30,15 +29,14 @@
   width: clamp(75%, 80%, 85%);
   height: clamp(60%, 80%, 90%);
   background: linear-gradient(90deg, #ede3dd 0%, #bfb5af 100%);
-  box-shadow: 7px 12px 10.6px rgba(0, 0, 0, 0.25);
+  @include box-shadow(7px, 12px, 10.6px, 0, rgba(0, 0, 0, 0.25));
   left: 0;
 
   clip-path: polygon(
     0 0,
-    /* coin haut gauche */ 
-    70% 0, /* coin haut droit */ 
-    100% 100%,/* coin bas droit */ 
-    0 100% /* coin bas gauche */
+    70% 0,
+    100% 100%,
+    0 100%
   );
 }
 
@@ -56,14 +54,14 @@
   width: clamp(30%, 40%, 50%);
   height: clamp(60%, 80%, 90%);
   background: linear-gradient(90deg, #ede3dd 0%, #bfb5af 100%);
-  box-shadow: -7px 12px 10.6px rgba(0, 0, 0, 0.25);
+  @include box-shadow(-7px, 12px, 10.6px, 0, rgba(0, 0, 0, 0.25));
   right: 0;
 
   clip-path: polygon(
-    100% 0, /* coin haut gauche "miroir" */ 
-    0% 0, /* coin haut droit */ 
-    60% 100%, /* coin bas droit */ 
-    100% 100% /* coin bas gauche */
+    100% 0,
+    0% 0,
+    60% 100%,
+    100% 100%
   );
 }
 
@@ -73,57 +71,58 @@
   width: 100%;
   height: 10%;
   background: linear-gradient(270deg, #0c60b9 0%, #2fd7fd 122.48%);
-}
 
-.stripe1 {
-  top: 40%;
-  height: 20%;
-}
-.stripe2 {
-  top: 75%;
+  &1 {
+    top: 40%;
+    height: 20%;
+  }
+
+  &2 {
+    top: 75%;
+  }
 }
 
 .trophyInfos {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    position: relative;
-    width: 100%;
-    padding: 0 2rem;
+  @include flex(row, space-between, center);
+  position: relative;
+  width: 100%;
+  padding: 0 2rem;
 }
 
 .trophyImage {
-    position: relative;
-    width: 35%; 
-    height: auto;
-    right: -4rem;
-    transform: scale(1.2);
-    object-fit: contain;
+  position: relative;
+  width: 35%;
+  height: auto;
+  right: -4rem;
+  transform: scale(1.2);
+  object-fit: contain;
 }
 
 .trophyParagraph {
-    flex: 1;
-    margin: 0 0 0 2rem;
-    text-align: justify;
-    gap: 1rem;
-    max-width: 60%; 
+  flex: 1;
+  margin: 0 0 0 2rem;
+  text-align: justify;
+  gap: 1rem;
+  max-width: 60%;
+
+  p {
+    margin-bottom: 1.5rem;
+  }
 }
 
-.trophyParagraph p {
-    margin-bottom: 1.5rem; 
-}
-
-@media (max-width: 768px) {
+/* Media Queries */
+@include respond-to('medium') {
   .shapeLeft {
     width: clamp(65%, 80%, 85%);
     height: clamp(55%, 70%, 75%);
     clip-path: polygon(
-      0 0, /* coin haut gauche */ 
-      73% 0, /* coin haut droit */ 
-      100% 100%, /* coin bas droit */ 
-      0 100% /* coin bas gauche */
+      0 0,
+      73% 0,
+      100% 100%,
+      0 100%
     );
   }
+
   .shapeRight {
     width: clamp(25%, 35%, 40%);
     height: clamp(55%, 70%, 75%);
@@ -131,18 +130,18 @@
 
   .titleTrophy {
     width: 42%;
-    left: 5rem;;
+    left: 5rem;
   }
 
   .trophyInfos {
-    flex-direction: column;
+    @include flex(column);
     padding: 0 1rem;
   }
 
   .trophyImage {
-    width: 70%; 
+    width: 70%;
     transform: scale(1);
-    order: 2; 
+    order: 2;
     right: 0;
     align-self: center;
   }
@@ -150,12 +149,12 @@
   .trophyParagraph {
     max-width: 90%;
     margin: 0;
-    order: 1; 
+    order: 1;
     text-align: center;
   }
 }
 
-@media (max-width: 480px) {
+@include respond-to('small') {
   .TitleStyle {
     position: relative;
     width: 100%;
@@ -166,4 +165,4 @@
     width: 40%;
     left: 3rem;
   }
-}
+} 

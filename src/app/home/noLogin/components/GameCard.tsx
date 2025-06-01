@@ -1,7 +1,8 @@
 // src/app/home/noLogin/GameCard.tsx
 "use client";
 import React from "react";
-import "./GameCard.css";
+import "./GameCard.scss";
+import Image from 'next/image';
 
 export interface GameCardProps {
   title: string;
@@ -13,7 +14,15 @@ export interface GameCardProps {
 export default function GameCard({ title, subtitle, imageUrl, alt }: GameCardProps) {
   return (
     <div className="game-card">
-      <img src={imageUrl} alt={alt} className="game-card-image" />
+      <div className="game-card-image">
+        <Image
+          src={imageUrl}
+          alt={alt}
+          width={300}
+          height={600}
+          style={{ objectFit: 'cover' }}
+        />
+      </div>
       <div className="game-card-info">
         <h3>{title}</h3>
         {subtitle && <p>{subtitle}</p>}

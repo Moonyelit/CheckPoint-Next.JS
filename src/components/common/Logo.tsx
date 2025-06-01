@@ -2,23 +2,23 @@
 import Link from 'next/link'
 import React from 'react'
 import Image from 'next/image'
-import styles from './styles/Logo.module.css'
+import './styles/Logo.scss'
 // import Crystals3D from './Crystals3D'  // Commente le crystal 3D pour l'instant
 
 export default function Logo() {
   return (
-    <Link href="/" className={styles.logoLink}>
+    <Link href="/" className="logoLink">
       {/* Utilisation du GIF à la place du modèle 3D */}
       <Image 
         src="/images/crystalGIF.gif" 
         alt="Animation du crystal" 
         width={80} 
         height={80}
-        className={styles.crystalGif}
+        className="crystalGif"
       />
-      <div className={styles.textContainer}>
-        <span className={styles.checkText}>Check</span>
-        <span className={styles.pointText}>Point</span>
+      <div className="textContainer">
+        <span className="checkText">Check</span>
+        <span className="pointText">Point</span>
       </div>
     </Link>
   )

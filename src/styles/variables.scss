@@ -1,0 +1,79 @@
+/* ================== SCSS Maps ================== */
+
+$breakpoints: (
+  'small': 576px,
+  'medium': 768px,
+  'large': 992px,
+  'xl': 1200px,
+  'xxl': 1750px
+);
+
+$colors: (
+  'white': #FFFFFF,
+  'black': #000000,
+  'gris-button': #E0E0E0,
+  'gris-nav-bar': #ede3dd,
+  'gris-nav-bar-fonce': #bfb5af,
+  'gris-clair': #ede3dd,
+  'gris-fonce': #bfb5af,
+  'gris-fonce-2': #8f8883,
+  'gris-classique': #e8ddd5,
+  'bleu-fonce': #748599,
+  'bleu-clair': #a8bbc5,
+  'bleu-classique': #7fa3b8,
+  'bleu-clair-crystal': #2fd7fd,
+  'bleu-crystal-normal': #23ABFA,
+  'bleu-crystal-fonce': #0c60b9,
+  'pink': #eea7b4,
+  'pink-clair': #ffe2dc,
+  'green': #a0e58e,
+  'abandonnee': #414549
+);
+
+$gradients: (
+  'gold': linear-gradient(90deg, #937c40 0%, #ffffff 50%, #937c40 100%),
+  'checkpoint': linear-gradient(0deg, #748599 0%, #a8bbc5 100%),
+  'crystal': linear-gradient(180deg, #000000 0%, #000000 100%),
+  'gris-button': linear-gradient(180deg, #ddcbc0 0%, #ede3dd 100%),
+  'gris-fonce-overlay': linear-gradient(0deg, rgba(143, 136, 131, 0.9) 0%, rgba(143, 136, 131, 0.9) 100%),
+);
+
+$fonts: ( 
+  'base': ('DM Sans', sans-serif),
+  'title': ('Karantina', cursive)
+);
+
+$font-sizes: (
+  'small': 12px,
+  'medium': 16px,
+  'large': 24px
+);
+
+/* ================== Variables CSS exposées ================== */
+
+:root {
+  // Couleurs
+  @each $name, $value in $colors {
+    --#{$name}: #{$value};
+  }
+
+  // Dégradés
+  @each $name, $gradient in $gradients {
+    --#{$name}: #{$gradient};
+  }
+
+  // Polices
+  @each $name, $font in $fonts {
+    --font-#{$name}: #{quote(#{join($font, ', ')})};
+  }
+
+  // Tailles de police
+  @each $name, $size in $font-sizes {
+    --font-size-#{$name}: #{$size};
+  }
+
+  // Breakpoints (optionnel pour JS/debug)
+  @each $name, $val in $breakpoints {
+    --breakpoint-#{$name}: #{$val};
+  }
+}
