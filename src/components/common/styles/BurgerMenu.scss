@@ -34,10 +34,6 @@
       @include transition(all, 0.3s, ease);
     }
 
-    &:hover::before {
-      background-image: var(--checkpoint);
-    }
-
     // Icônes communes
     i {
       font-size: 1.5rem;
@@ -46,7 +42,7 @@
 
       &:hover {
         transform: scale(1.1);
-        color: var(--bleu-clair-crystal);
+        color: var(--black);
       }
     }
 
@@ -102,7 +98,7 @@
       }
 
       &:hover span {
-        background: var(--bleu-clair-crystal);
+        background: var(--black);
       }
     }
   }
@@ -134,7 +130,7 @@
       @include transition(all, 0.2s, ease);
 
       &:hover {
-        color: var(--bleu-clair-crystal);
+        color: var(--black);
         transform: rotate(90deg) scale(1.2);
       }
     }
@@ -171,10 +167,9 @@
           border: 2px solid transparent;
 
           &:hover, &.home {
-            background: var(--checkpoint);
-            border: 2px solid var(--bleu-clair-crystal);
+            background: var(--crystal-overlay);
             transform: scale(1.05);
-            @include box-shadow(0, 10px, 30px, 0, rgba(35, 171, 250, 0.3));
+            @include box-shadow(0, 10px, 30px, 0, rgba(255, 255, 255, 0.3));
           }
         }
       }

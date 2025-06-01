@@ -32,20 +32,29 @@ export default function HeroBanner() {
     resumeDelay: 80000 // Reprend après 8 secondes d'inactivité
   });
 
-  // Récupération des 5 jeux les plus populaires de l'année 2025
+  // Récupération des 5 jeux populaires du moment (trending)
   useEffect(() => {
-    const fetchTopGames = async () => {
+    const fetchTrendingGames = async () => {
       try {
-        const year = 2025;
-        const { data } = await api.get(`/api/games/top/${year}`, {
-          params: { limit: 5 }
-        });
+        // Utilise directement l'URL complète pour éviter les problèmes de configuration
+        const data = await fetch('http://127.0.0.1:8000/api/games/trending?limit=5')
+          .then(res => res.json());
         setCardsData(data);
       } catch (err) {
-        console.error('Erreur axios top games :', err);
+        console.error('Erreur fetch trending games :', err);
+        // Fallback : essaie de récupérer les jeux de 2025 si trending échoue
+        try {
+          const year = 2025;
+          const { data: fallbackData } = await api.get(`/api/games/top/${year}`, {
+            params: { limit: 5 }
+          });
+          setCardsData(fallbackData);
+        } catch (fallbackErr) {
+          console.error('Erreur fallback :', fallbackErr);
+        }
       }
     };
-    fetchTopGames();
+    fetchTrendingGames();
   }, []);
 
   // Gestion des gestes de swipe pour le carrousel

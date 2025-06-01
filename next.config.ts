@@ -7,7 +7,14 @@ const nextConfig: NextConfig = {
     prependData: `@use "@/styles/mixins" as *;`,
   },
   images: {
-    domains: ['images.igdb.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.igdb.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
   },
   async redirects() {
     return [

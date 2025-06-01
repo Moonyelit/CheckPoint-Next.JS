@@ -9,7 +9,7 @@ $breakpoints: (
 );
 
 $colors: (
-  'white': #FFFFFF,
+  'white': rgb(255, 255, 255),
   'black': #000000,
   'gris-button': #E0E0E0,
   'gris-nav-bar': #ede3dd,
@@ -33,9 +33,9 @@ $colors: (
 $gradients: (
   'gold': linear-gradient(90deg, #937c40 0%, #ffffff 50%, #937c40 100%),
   'checkpoint': linear-gradient(0deg, #748599 0%, #a8bbc5 100%),
-  'crystal': linear-gradient(180deg, #000000 0%, #000000 100%),
   'gris-button': linear-gradient(180deg, #ddcbc0 0%, #ede3dd 100%),
   'gris-fonce-overlay': linear-gradient(0deg, rgba(143, 136, 131, 0.9) 0%, rgba(143, 136, 131, 0.9) 100%),
+  'crystal-overlay': linear-gradient(90deg, #2fd7fd 0%, #0c60b9 100%)
 );
 
 $fonts: ( 
