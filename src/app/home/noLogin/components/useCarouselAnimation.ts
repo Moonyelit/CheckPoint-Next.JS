@@ -7,51 +7,15 @@ export interface Game {
   releaseDate: string;
 } 
 
-//GameData
 import { useState, useEffect, useRef } from 'react';
-import api from "@/lib/api";
 
-export function useGameData() {
-  const [cardsData, setCardsData] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchTopGames = async () => {
-      try {
-        setLoading(true);
-        const year = 2025;
-        const { data } = await api.get(`/api/games/top/${year}`, {
-          params: { limit: 5 }
-        });
-        setCardsData(data);
-        setError(null);
-      } catch (err) {
-        console.error('Erreur axios top games :', err);
-        setError('Impossible de charger les jeux');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchTopGames();
-  }, []);
-
-  return {
-    cardsData,
-    loading,
-    error,
-    total: cardsData.length
-  };
-} 
-
-interface CarouselOptions {
-  autoPlayInterval?: number; // Durée entre chaque changement automatique (ms)
-  resumeDelay?: number; // Délai avant reprise après interaction (ms)
+interface CarouselConfig {
+  autoPlayInterval?: number;
+  resumeDelay?: number;
 }
 
-export function useCarouselAnimation(total: number, options: CarouselOptions = {}) {
-  const { autoPlayInterval = 4000, resumeDelay = 8000 } = options;
+export function useCarouselAnimation(total: number, config: CarouselConfig = {}) {
+  const { autoPlayInterval = 4000, resumeDelay = 8000 } = config;
   
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);

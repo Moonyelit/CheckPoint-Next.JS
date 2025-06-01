@@ -6,7 +6,6 @@ import { useSwipeable } from "react-swipeable";
 import Button from "@/components/common/Button";
 import GameCard from "./GameCard";
 import { useCarouselAnimation } from "./useCarouselAnimation";
-import api from "@/lib/api";
 import "./HeroBanner.scss";
 
 interface Game {
@@ -32,29 +31,49 @@ export default function HeroBanner() {
     resumeDelay: 80000 // Reprend après 8 secondes d'inactivité
   });
 
-  // Récupération des 5 jeux populaires du moment (trending)
+  // Récupération des 5 meilleurs jeux avec système de fallback simplifié
   useEffect(() => {
-    const fetchTrendingGames = async () => {
+    const fetchGames = async () => {
       try {
-        // Utilise directement l'URL complète pour éviter les problèmes de configuration
-        const data = await fetch('http://127.0.0.1:8000/api/games/trending?limit=5')
+        // 1er choix : Top 30 jeux de l'année (365 derniers jours, 100+ votes, note 75+)
+        console.log('🎮 Tentative de récupération des jeux de l\'année...');
+        const yearData = await fetch('http://127.0.0.1:8000/api/games/top100-year?limit=5')
           .then(res => res.json());
-        setCardsData(data);
+        
+        if (yearData && yearData.length > 0) {
+          console.log('✅ Jeux de l\'année récupérés :', yearData.map((g: Game) => g.title));
+          setCardsData(yearData);
+          return;
+        }
+        
+        throw new Error('Aucun jeu de l\'année trouvé');
+        
       } catch (err) {
-        console.error('Erreur fetch trending games :', err);
-        // Fallback : essaie de récupérer les jeux de 2025 si trending échoue
+        console.error('❌ Erreur jeux de l\'année :', err);
+        
+        // 2ème choix : Top 100 de tous les temps (50+ votes, note 85+)
         try {
-          const year = 2025;
-          const { data: fallbackData } = await api.get(`/api/games/top/${year}`, {
-            params: { limit: 5 }
-          });
-          setCardsData(fallbackData);
-        } catch (fallbackErr) {
-          console.error('Erreur fallback :', fallbackErr);
+          console.log('🏆 Fallback vers Top 100 de tous les temps...');
+          const top100Data = await fetch('http://127.0.0.1:8000/api/games/top100?limit=5')
+            .then(res => res.json());
+            
+          if (top100Data && top100Data.length > 0) {
+            console.log('✅ Top 100 récupéré :', top100Data.map((g: Game) => g.title));
+            setCardsData(top100Data);
+            return;
+          }
+          
+          throw new Error('Aucun jeu Top 100 trouvé');
+          
+        } catch (finalErr) {
+          console.error('❌ Échec total des deux endpoints de qualité :', finalErr);
+          // Aucun fallback supplémentaire - affichage vide si les deux endpoints échouent
+          setCardsData([]);
         }
       }
     };
-    fetchTrendingGames();
+    
+    fetchGames();
   }, []);
 
   // Gestion des gestes de swipe pour le carrousel
