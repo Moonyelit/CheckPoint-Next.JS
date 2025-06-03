@@ -134,7 +134,7 @@
   }
 
   .trophyInfos {
-    @include flex(column);
+    @include flex(column, center, none);
     padding: 0 1rem;
   }
 
