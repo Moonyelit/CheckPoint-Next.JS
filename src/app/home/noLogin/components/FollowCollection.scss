@@ -4,7 +4,7 @@
 .followCollection {
   @include flex(row, center, center);
   position: relative;
-  margin: -1.5rem 5% 5rem;
+  margin: 0rem 5% 5rem;
   padding: 0 4rem;
   gap: 4rem;
   background: linear-gradient(180deg, var(--gris-fonce) 0%, var(--gris-clair) 58.74%);

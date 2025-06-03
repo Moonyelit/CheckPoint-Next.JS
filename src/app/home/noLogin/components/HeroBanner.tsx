@@ -27,8 +27,8 @@ export default function HeroBanner() {
     goToIndex,
     getCardClass
   } = useCarouselAnimation(total, {
-    autoPlayInterval: 50000, // 5 secondes entre chaque carte
-    resumeDelay: 80000 // Reprend après 8 secondes d'inactivité
+    autoPlayInterval: 5000, // 5 secondes entre chaque carte
+    resumeDelay: 8000 // Reprend après 8 secondes d'inactivité
   });
 
   // Récupération des 5 meilleurs jeux avec système de fallback simplifié
