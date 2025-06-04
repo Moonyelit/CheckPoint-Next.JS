@@ -1,27 +1,32 @@
 @import '../../../../styles/mixins';
 @import '../../../../styles/variables.scss';
 
+
 .followTrophy {
   @include flex(column, center, center);
-  gap: 2rem;
-  margin: 1rem auto;
   position: relative;
   width: 100%;
-  background-image: 
-    linear-gradient(to bottom, rgba(133,151,167,1) 0%, transparent 20%),
-    linear-gradient(to top, rgba(116,133,153,1) 0%, transparent 20%),
+  overflow: hidden;
+  background-image: linear-gradient(
+      to top,
+      rgba(119, 136, 155, 0.7) 100%,
+
+      transparent 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(137, 155, 171, 0.1) 0%,
+    ),
     url('/images/NoLogin/BackgroundTrophy.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 3rem 0;
-  overflow-x: hidden;
 }
 
 .TitleStyle {
   position: relative;
   width: 100%;
-  height: 10em;
+  height: 8em;
 }
 
 .shapeLeft {
@@ -82,16 +87,21 @@
   }
 }
 
-.trophyInfos {
+.followTrophy-container {
+  height: 55vh;
   @include flex(row, space-between, center);
+}
+
+.trophyInfos {
+  @include flex(row, space-between, end);
   position: relative;
   width: 100%;
-  padding: 0 2rem;
+  gap: 2rem;
 }
 
 .trophyImage {
   position: relative;
-  width: 35%;
+  width: 100%;
   height: auto;
   right: -4rem;
   transform: scale(1.2);
@@ -100,11 +110,9 @@
 
 .trophyParagraph {
   flex: 1;
-  margin: 0 0 0 2rem;
   text-align: justify;
-  gap: 1rem;
-  max-width: 60%;
-
+  gap: 3rem;
+  min-width: 60%;
   p {
     margin-bottom: 1.5rem;
   }
@@ -139,7 +147,7 @@
   }
 
   .trophyImage {
-    width: 70%;
+    width: 100%;
     transform: scale(1);
     order: 2;
     right: 0;

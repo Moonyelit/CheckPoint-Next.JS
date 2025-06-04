@@ -1,10 +1,15 @@
 @import '../../../../styles/variables.scss';
 @import '../../../../styles/mixins';
 
+
 .followCollection {
+  @include flex(column, center, center);
+  height: 90vh;
+}
+
+.followCollection-container {
   @include flex(row, center, center);
   position: relative;
-  margin: 5%;
   padding: 0 4rem;
   gap: 4rem;
   background: linear-gradient(180deg, var(--gris-fonce) 0%, var(--gris-clair) 58.74%);
@@ -59,46 +64,41 @@
 }
 
 /* Media Queries */
-@include respond-to('large') {
-  .followCollection {
-    margin-block: 5rem;
-  }
-}
-
 @include respond-to('medium') {
-  .followCollection {
+
+  .followCollection-container {
+    margin: 0 auto;
     @include flex(column, center, center);
-    padding: 0;
-    background: linear-gradient(180deg, var(--gris-fonce) 0%, var(--gris-clair) 100%);
+    padding: 2rem;
   }
 
   .gameContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 60vh;
+    height: 100%;
+    z-index: 0;
+    filter: blur(1px);
+  }
 
-    &::after {
-      opacity: 0.8;
-      background:
-        linear-gradient(180deg, var(--gris-fonce) 0%, var(--gris-clair) 100%),
-        linear-gradient(180deg, var(--gris-fonce) 0%, var(--gris-clair) 90%);
-    }
+  .gameImage {
+    border-radius: 3.5rem;
   }
 
   .content {
-    position: absolute;
-    justify-content: center;
-    width: 90%;
+    width: 80%;
     text-align: center;
     z-index: 3;
+    position: relative;
   }
 
-  .titleCollection {
+  .title {
     text-align: center;
+    margin-bottom: 1.5rem;
   }
-}
 
-@include respond-to('small') {
-  .followCollection {
-    margin-top: 10rem;
+  .description {
+    text-align: center;
   }
 }

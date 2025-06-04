@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/layout.scss";
 import Navbar from '@/components/common/Navbar';
 import Footer from '@/components/common/Footer';
+import HydrationFix from '@/components/common/HydrationFix';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,6 +35,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col pt-[7%]`}
       >
+        <HydrationFix />
         <Navbar />
         <main className="flex-grow">
           {children}

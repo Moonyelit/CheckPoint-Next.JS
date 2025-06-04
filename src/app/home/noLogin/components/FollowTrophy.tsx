@@ -16,26 +16,33 @@ const FollowTrophy = () => {
         </div>
       </div>
 
-      <div className="trophyInfos Paragraphe1">
-        <div className="trophyParagraph">
-        <p>
-          Crée tes propres défis et partage-les avec la communauté. Affronte
-          d’autres joueurs, teste de nouvelles façons de jouer et prouve ton
-          talent.
-        </p>
+      <div className="followTrophy-container main-container">
+        <div className="trophyInfos Paragraphe1">
 
-        <p>
-          Chaque défi est une opportunité de redécouvrir tes jeux et de
-          repousser tes propres records !
-        </p>
+          <div className="trophyParagraph">
+            <p>
+              Crée tes propres défis et partage-les avec la communauté. Affronte
+              d’autres joueurs, teste de nouvelles façons de jouer et prouve ton
+              talent.
+            </p>
+
+            <p>
+              Chaque défi est une opportunité de redécouvrir tes jeux et de
+              repousser tes propres records !
+            </p>
+          </div>
+
+          <div className="trophyImage-container">
+          <Image
+            src="/images/NoLogin/Trophy.png"
+            alt="Trophy"
+            width={600}
+            height={500}
+            className="trophyImage"
+          />
+          </div>
+          
         </div>
-        <Image
-          src="/images/NoLogin/Trophy.png"
-          alt="Trophy"
-          width={600}
-          height={500}
-          className="trophyImage"
-        />
       </div>
     </section>
   );
