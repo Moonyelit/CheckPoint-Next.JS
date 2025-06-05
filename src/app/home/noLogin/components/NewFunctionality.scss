@@ -33,9 +33,6 @@
   .contentNewFunctionality {
     position: relative;
     z-index: 1;
-    height: 100%;
-    width: auto;
-    margin: -5rem 7% 0;
     @include flex(column, center);
     color: var(--white);
   }

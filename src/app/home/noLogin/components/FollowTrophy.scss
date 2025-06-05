@@ -7,15 +7,18 @@
   position: relative;
   width: 100%;
   overflow: hidden;
+  background-color: #8698a9;
   background-image: linear-gradient(
       to top,
-      rgba(119, 136, 155, 0.7) 100%,
-
+      #8698a9 0%,
+      rgba(134, 152, 169, 0.7) 50%,
       transparent 100%
     ),
     linear-gradient(
       to bottom,
-      rgba(137, 155, 171, 0.1) 0%,
+      #8698a9 0%,
+      rgba(134, 152, 169, 0.3) 30%,
+      transparent 60%
     ),
     url('/images/NoLogin/BackgroundTrophy.png');
   background-size: cover;
@@ -93,26 +96,31 @@
 }
 
 .trophyInfos {
-  @include flex(row, space-between, end);
+  @include flex(row, space-between, inherit);
   position: relative;
   width: 100%;
   gap: 2rem;
 }
 
+.trophyImage-container {
+  flex: 1;
+  max-width: 60%;
+  height: auto;
+}
+
 .trophyImage {
   position: relative;
-  width: 100%;
+  width: 120%;
   height: auto;
   right: -4rem;
-  transform: scale(1.2);
   object-fit: contain;
 }
 
 .trophyParagraph {
-  flex: 1;
+  flex: 0 0 40%;
   text-align: justify;
   gap: 3rem;
-  min-width: 60%;
+  max-width: 40%;
   p {
     margin-bottom: 1.5rem;
   }
@@ -142,23 +150,22 @@
   }
 
   .trophyInfos {
-    @include flex(column, center, none);
+    @include flex(column, center, center);
     padding: 0 1rem;
   }
 
   .trophyImage {
     width: 100%;
-    transform: scale(1);
     order: 2;
-    right: 0;
     align-self: center;
+    right: 0rem;
   }
 
   .trophyParagraph {
-    max-width: 90%;
     margin: 0;
     order: 1;
     text-align: center;
+    max-width: 100%;
   }
 }
 

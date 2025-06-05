@@ -12,7 +12,7 @@ const NewFunctionality = () => {
           className="background-image"
           priority
         />
-        <div className="contentNewFunctionality">
+        <div className="contentNewFunctionality main-container">
           <h2 className="Title2-Karantina">Et ce n&apos;est que le début !</h2>
 
           <div className="Paragraphe1">

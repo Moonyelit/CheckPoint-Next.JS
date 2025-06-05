@@ -36,8 +36,8 @@ const FollowTrophy = () => {
           <Image
             src="/images/NoLogin/Trophy.png"
             alt="Trophy"
-            width={600}
-            height={500}
+            width={800}
+            height={650}
             className="trophyImage"
           />
           </div>
