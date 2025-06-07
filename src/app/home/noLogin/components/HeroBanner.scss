@@ -1,8 +1,8 @@
 @import '../../../../styles/mixins';
 @import '../../../../styles/variables.scss';
 
-/* ----------------- Mise en page globale du Hero ----------------- */
-.hero-container {
+/* ----------------- Hero Banner Component (BEM) ----------------- */
+.hero-banner {
   height: 100vh;
   background-color: #a5b8c3;
   background-image: linear-gradient(
@@ -19,177 +19,181 @@
     ),
     url("/images/Animate/Nier.gif");
   background-size: cover;
-  padding-top:  8rem; //Pour que le background dépasse de NoLoginNavbar
-}
+  padding-top: 8rem; // Pour que le background dépasse de NoLoginNavbar
 
-.hero-content-container {
-  position: relative;
-  z-index: 2;
-  height: 100%;;
-  @include flex(row, center);
-}
-
-.hero-left {
-  flex: 1;
-  @include flex(row, center, center);
-}
-
-.hero-content {
-  color: var(--white);
-  max-width: 100%;
-  position: relative;
-  z-index: 2;
-}
-
-.hero-right {
-  flex: 1;
-  @include flex(row, center, center);
-  position: relative;
-  margin: 10rem 5rem 0 0;
-}
-
-/* ----------------- Styles du Carousel ----------------- */
-.cards-wrapper {
-  @include flex(column, center, center);
-}
-
-.cards__container {
-  @include flex(row, center, center);
-  height: 25em;
-  position: relative;
-  width: 100%;
-}
-
-/* Style de base pour chaque carte */
-.box {
-  width: clamp(12rem, 20vw, 18rem);
-  height: clamp(20rem, 35vw, 30rem);
-  @include box-shadow(0px, 0px, 2rem, 0px, #6a6a6a);
-  background-color: var(--white);
-  position: absolute;
-  @include transition(all, 0.4s, cubic-bezier(0.25, 0.8, 0.25, 1));
-  border-radius: 1rem;
-  cursor: pointer;
-
-  &:hover {
-    @include box-shadow(0px, 0px, 3rem, 0px, #4a4a4a);
-    transform: translateY(-5px) scale(1.02);
+  /* Container principal */
+  &__container {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    @include flex(row, center);
   }
 
-  &.active {
-    transform: scale(1);
-    z-index: 3;
-    left: 0;
-    
+  /* Section gauche */
+  &__left {
+    flex: 1;
+    @include flex(row, center, center);
+  }
+
+  &__content {
+    color: var(--white);
+    max-width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Section droite */
+  &__right {
+    flex: 1;
+    @include flex(row, center, center);
+    position: relative;
+    margin: 10rem 5rem 0 0;
+  }
+
+  /* Conteneur des cartes du carousel */
+  &__cards {
+    @include flex(column, center, center);
+  }
+
+  &__cards-wrapper {
+    @include flex(row, center, center);
+    height: 25em;
+    position: relative;
+    width: 100%;
+  }
+
+  /* Styles des cartes individuelles */
+  &__card {
+    width: clamp(12rem, 20vw, 18rem);
+    height: clamp(20rem, 35vw, 30rem);
+    @include box-shadow(0px, 0px, 2rem, 0px, #6a6a6a);
+    background-color: var(--white);
+    position: absolute;
+    @include transition(all, 0.4s, cubic-bezier(0.25, 0.8, 0.25, 1));
+    border-radius: 1rem;
+    cursor: pointer;
+
     &:hover {
-      transform: scale(1.02) translateY(-5px);
+      @include box-shadow(0px, 0px, 3rem, 0px, #4a4a4a);
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    /* Modifiers pour les positions des cartes */
+    &--active {
+      transform: scale(1);
+      z-index: 3;
+      left: 0;
+      
+      &:hover {
+        transform: scale(1.02) translateY(-5px);
+      }
+    }
+
+    &--right {
+      transform: scale(0.85);
+      z-index: 2;
+      left: 150%;
+    }
+
+    &--left {
+      transform: scale(0.85);
+      z-index: 2;
+      left: -150%;
+    }
+
+    &--right-hidden {
+      transform: scale(0.75);
+      z-index: 1;
+      left: 250%;
+    }
+
+    &--left-hidden {
+      transform: scale(0.75);
+      z-index: 1;
+      left: -250%;
+    }
+
+    &--hide {
+      display: none;
     }
   }
 
-  &.right {
-    transform: scale(0.85);
-    z-index: 2;
-    left: 150%;
+  /* Contrôles du carousel */
+  &__controls {
+    visibility: hidden;
+    pointer-events: none;
+    color: transparent;
   }
 
-  &.left {
-    transform: scale(0.85);
-    z-index: 2;
-    left: -150%;
-  }
+  &__button {
+    margin: 0 1%;
+    width: 2rem;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: var(--white);
 
-  &.right-hidden {
-    transform: scale(0.75);
-    z-index: 1;
-    left: 250%;
-  }
-
-  &.left-hidden {
-    transform: scale(0.75);
-    z-index: 1;
-    left: -250%;
-  }
-
-  &.box--hide {
-    display: none;
-  }
-}
-
-/* ----------------- Contrôles du Carousel ----------------- */
-.carousel-controls {
-  visibility: hidden;
-  pointer-events: none;
-  color: transparent;
-}
-
-.button {
-  margin: 0 1%;
-  width: 2rem;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  font-size: 2rem;
-  color: var(--white);
-
-  &--inactive {
-    opacity: 0.2;
+    &--inactive {
+      opacity: 0.2;
+    }
   }
 }
 
 /* ----------------- Media Queries ----------------- */
 @include respond-to('large') {
-  .box {
+  .hero-banner {
+    &__card {
+      &--right {
+        left: 135%;
+      }
 
-    &.right {
-      left: 135%;
+      &--left {
+        left: -135%;
+      }
+
+      &--right-hidden {
+        left: 200%;
+      }
+
+      &--left-hidden {
+        left: -200%;
+      }
     }
 
-    &.left {
-      left: -135%;
-    }
+    &__content {
+      @include flex(column);
 
-    &.right-hidden {
-      left: 200%;
-    }
-
-    &.left-hidden {
-      left: -200%;
-    }
-  }
-
-  .hero-overlay {
-    @include flex(column);
-  }
-
-  .hero-content {
-    @include flex(column);
-
-    button {
-      align-self: center;
+      button {
+        align-self: center;
+      }
     }
   }
 }
 
 @include respond-to('medium') {
-  .hero-content-container {
-    @include flex(column);
-  }
+  .hero-banner {
+    &__container {
+      @include flex(column);
+    }
 
-  .hero-right {
-    @include flex(row, center, center);
-    margin: 0.5rem 8rem 0 0;
-  }
+    &__right {
+      @include flex(row, center, center);
+      margin: 0.5rem 8rem 0 0;
+    }
 
-  .carousel-controls {
-    visibility: transparent;
-    pointer-events: auto;
-    margin-top: -10rem;
+    &__controls {
+      visibility: visible;
+      pointer-events: auto;
+      margin-top: -10rem;
+    }
   }
-} 
-
+}
 
 @include respond-to('mobile') {
-  .hero-right {
-    display: none;
+  .hero-banner {
+    &__right {
+      display: none;
+    }
   }
 }

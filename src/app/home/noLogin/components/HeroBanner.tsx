@@ -31,6 +31,19 @@ export default function HeroBanner() {
     resumeDelay: 8000 // Reprend après 8 secondes d'inactivité
   });
 
+  // Fonction pour convertir les anciennes classes en BEM
+  const getBemCardClass = (index: number) => {
+    const oldClass = getCardClass(index);
+    // Conversion des anciennes classes vers BEM
+    if (oldClass.includes('active')) return 'hero-banner__card hero-banner__card--active';
+    if (oldClass.includes('right-hidden')) return 'hero-banner__card hero-banner__card--right-hidden';
+    if (oldClass.includes('left-hidden')) return 'hero-banner__card hero-banner__card--left-hidden';
+    if (oldClass.includes('right')) return 'hero-banner__card hero-banner__card--right';
+    if (oldClass.includes('left')) return 'hero-banner__card hero-banner__card--left';
+    if (oldClass.includes('box--hide')) return 'hero-banner__card hero-banner__card--hide';
+    return 'hero-banner__card';
+  };
+
   // Récupération des 5 meilleurs jeux avec système de fallback simplifié
   useEffect(() => {
     const fetchGames = async () => {
@@ -84,42 +97,42 @@ export default function HeroBanner() {
   });
 
   return (
-    <section className="hero-container">
-        <div className="hero-content-container main-container">
-          <div className="hero-left">
-            <div className="hero-content">
-              <h1 className="Title1-Karantina">Parce que chaque partie mérite d&apos;être sauvegardée</h1>
-              <p className="Paragraphe1">
-                La plateforme gamifiée pour suivre ta progression et gérer ta
-                collection de jeux vidéo
-              </p>
-              <Button label="S'inscrire" />
+    <section className="hero-banner">
+      <div className="hero-banner__container main-container">
+        <div className="hero-banner__left">
+          <div className="hero-banner__content">
+            <h1 className="Title1-Karantina">Parce que chaque partie mérite d&apos;être sauvegardée</h1>
+            <p className="Paragraphe1">
+              La plateforme gamifiée pour suivre ta progression et gérer ta
+              collection de jeux vidéo
+            </p>
+            <Button label="S'inscrire" />
+          </div>
+        </div>
+        <div className="hero-banner__right">
+          <div className="hero-banner__cards" {...handlers}>
+            <div className="hero-banner__cards-wrapper">
+              {cardsData.map((game, idx) => (
+                <div
+                  key={game.id}
+                  className={getBemCardClass(idx)}
+                  onClick={() => goToIndex(idx)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <GameCard
+                    title={game.title}
+                    subtitle={new Date(game.releaseDate).toLocaleDateString("fr-FR")}
+                    imageUrl={game.coverUrl}
+                    alt={game.title}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="hero-banner__controls">
+              <button onClick={goToPrev} className="hero-banner__button">&lt;</button>
+              <button onClick={goToNext} className="hero-banner__button">&gt;</button>
             </div>
           </div>
-          <div className="hero-right">
-            <div className="cards-wrapper" {...handlers}>
-              <div className="cards__container">
-                {cardsData.map((game, idx) => (
-                  <div
-                    key={game.id}
-                    className={getCardClass(idx)}
-                    onClick={() => goToIndex(idx)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <GameCard
-                      title={game.title}
-                      subtitle={new Date(game.releaseDate).toLocaleDateString("fr-FR")}
-                      imageUrl={game.coverUrl}
-                      alt={game.title}
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="carousel-controls">
-                <button onClick={goToPrev} className="button">&lt;</button>
-                <button onClick={goToNext} className="button">&gt;</button>
-              </div>
-            </div>
         </div>
       </div>
     </section>
