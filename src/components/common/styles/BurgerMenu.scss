@@ -1,7 +1,10 @@
 @use '@/styles/mixins' as *;
 @use '../../../styles/variables' as vars;
 
-.burgerContainer {
+//*******************************************************
+// BURGER MENU COMPONENT
+//*******************************************************
+.menuBurger {
   position: relative;
   z-index: 1000;
   // Masqué par défaut sur desktop
@@ -12,7 +15,10 @@
     display: block;
   }
 
-  .iconGroup {
+  //*******************************************************
+  // GROUPE D'ICÔNES (recherche, utilisateur, hamburger)
+  //*******************************************************
+  &-iconGroup {
     @include flex(row, flex-start, center);
     gap: 20px;
     position: relative;
@@ -22,6 +28,7 @@
     color: var(--white);
     cursor: pointer;
 
+    // Effet de fond en biais
     &::before {
       content: "";
       width: 50rem;
@@ -34,7 +41,7 @@
       @include transition(all, 0.3s, ease);
     }
 
-    // Icônes communes
+    // Icônes communes (recherche et utilisateur)
     i {
       font-size: 1.5rem;
       cursor: pointer;
@@ -46,8 +53,8 @@
       }
     }
 
-    // Hamburger custom
-    .hamburger {
+    // Hamburger menu custom avec 3 barres
+    &-hamburger {
       width: 30px;
       height: 24px;
       position: relative;
@@ -78,6 +85,7 @@
         }
       }
 
+      // Animation d'ouverture (transformation en croix)
       &.open {
         span {
           &:nth-child(1) {
@@ -101,10 +109,50 @@
         background: var(--black);
       }
     }
+
+    // Responsive pour tablette/mobile
+    @include respond-to('medium') {
+      gap: 15px;
+      padding: 8px 15px;
+
+      &::before {
+        width: 40rem;
+        left: -1.5rem;
+      }
+
+      i {
+        font-size: 1.3rem;
+      }
+
+      &-hamburger {
+        width: 25px;
+        height: 20px;
+
+        span {
+          height: 2px;
+
+          &:nth-child(2) {
+            top: 8px;
+          }
+
+          &:nth-child(3) {
+            top: 16px;
+          }
+        }
+
+        &.open span {
+          &:nth-child(1), &:nth-child(3) {
+            top: 8px;
+          }
+        }
+      }
+    }
   }
 
-  // Menu overlay pour la navigation
-  .menuOverlay {
+  //*******************************************************
+  // OVERLAY MENU NAVIGATION (plein écran)
+  //*******************************************************
+  &-menuOverlay {
     position: fixed;
     top: 0;
     right: 0;
@@ -116,11 +164,13 @@
     backdrop-filter: blur(10px);
     animation: slideInRight 0.4s ease-out;
 
+    // Animation de sortie
     &.menuOverlayExit {
       animation: slideOutRight 0.4s ease-out;
     }
 
-    .closeIcon {
+    // Icône de fermeture (croix)
+    &-closeIcon {
       position: absolute;
       top: 30px;
       right: 30px;
@@ -135,7 +185,8 @@
       }
     }
 
-    .menuList {
+    // Liste des liens de navigation
+    &-menuList {
       list-style: none;
       padding: 0;
       margin: 0;
@@ -147,6 +198,7 @@
         opacity: 0;
         animation: slideInItem 0.6s ease-out forwards;
 
+        // Animation en cascade pour chaque élément
         @for $i from 1 through 4 {
           &:nth-child(#{$i}) {
             animation-delay: #{$i * 0.1}s;
@@ -173,11 +225,21 @@
           }
         }
       }
+
+      // Responsive pour mobile
+      @include respond-to('medium') {
+        li a {
+          font-size: 1.5rem;
+          padding: 12px 25px;
+        }
+      }
     }
   }
 
-  // Menu overlay pour l'authentification
-  .authOverlay {
+  //*******************************************************
+  // OVERLAY MENU AUTHENTIFICATION (sidebar droite)
+  //*******************************************************
+  &-authOverlay {
     position: fixed;
     top: 0;
     right: 0;
@@ -190,15 +252,18 @@
     border-left: 3px solid var(--bleu-clair-crystal);
     animation: slideInAuth 0.4s ease-out;
 
+    // Plein écran sur mobile
     @include respond-to('medium') {
       width: 100vw;
     }
 
+    // Animation de sortie
     &.authOverlayExit {
       animation: slideOutAuth 0.4s ease-out;
     }
 
-    .closeIcon {
+    // Icône de fermeture (croix)
+    &-closeIcon {
       position: absolute;
       top: 30px;
       right: 30px;
@@ -213,7 +278,8 @@
       }
     }
 
-    .authList {
+    // Liste des liens d'authentification
+    &-authList {
       list-style: none;
       padding: 0;
       margin: 0;
@@ -227,6 +293,7 @@
         opacity: 0;
         animation: slideInAuth 0.6s ease-out forwards;
 
+        // Animation en cascade
         &:nth-child(1) {
           animation-delay: 0.2s;
         }
@@ -262,7 +329,11 @@
   }
 }
 
-// Animations
+//*******************************************************
+// ANIMATIONS KEYFRAMES
+//*******************************************************
+
+// Slide depuis la droite (menu navigation)
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -281,6 +352,7 @@
   }
 }
 
+// Slide pour menu authentification
 @keyframes slideInAuth {
   from {
     transform: translateX(100%);
@@ -303,6 +375,7 @@
   }
 }
 
+// Animation pour les éléments de menu individuels
 @keyframes slideInItem {
   from {
     transform: translateX(100px);
@@ -311,53 +384,6 @@
   to {
     transform: translateX(0);
     opacity: 1;
-  }
-}
-
-// Responsive design
-@include respond-to('medium') {
-  .burgerContainer {
-    .iconGroup {
-      gap: 15px;
-      padding: 8px 15px;
-
-      &::before {
-        width: 40rem;
-        left: -1.5rem;
-      }
-
-      i {
-        font-size: 1.3rem;
-      }
-
-      .hamburger {
-        width: 25px;
-        height: 20px;
-
-        span {
-          height: 2px;
-
-          &:nth-child(2) {
-            top: 8px;
-          }
-
-          &:nth-child(3) {
-            top: 16px;
-          }
-        }
-
-        &.open span {
-          &:nth-child(1), &:nth-child(3) {
-            top: 8px;
-          }
-        }
-      }
-    }
-
-    .menuOverlay .menuList li a {
-      font-size: 1.5rem;
-      padding: 12px 25px;
-    }
   }
 }
 

@@ -5,6 +5,12 @@ import { OrbitControls, useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import './styles/Crystals3D.scss'
 
+
+
+
+//*******************************************************
+//Créer un crystal 3D
+//*******************************************************
 export default function Crystals3D() {
   return (
     // Diminue la hauteur à 250px par ex.
@@ -27,6 +33,10 @@ export default function Crystals3D() {
   )
 }
 
+
+//*******************************************************
+// Modèle 3D des cristaux
+//*******************************************************
 function CrystalsModel() {
   const { scene } = useGLTF('/models/blue_crystals.glb')
   const ref = useRef<THREE.Group>(null)

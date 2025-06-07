@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import styles from '../styles/Step1.module.scss';
 
 interface FormData {
-  username: string;
+  pseudo: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -12,7 +12,7 @@ interface FormData {
 }
 
 interface FormErrors {
-  username?: string;
+  pseudo?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -34,7 +34,7 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
     
     // Validation
     const newErrors: FormErrors = {};
-    if (!formData.username) newErrors.username = 'Le pseudo est requis';
+    if (!formData.pseudo) newErrors.pseudo = 'Le pseudo est requis';
     if (!formData.email) newErrors.email = 'L&apos;email est requis';
     if (!formData.password) newErrors.password = 'Le mot de passe est requis';
     if (formData.password !== formData.confirmPassword) {
@@ -56,12 +56,12 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
         <div className={styles.formGroup}>
           <input
             type="text"
-            id="username"
+            id="pseudo"
             placeholder="Pseudo"
-            value={formData.username}
-            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            value={formData.pseudo}
+            onChange={(e) => setFormData({ ...formData, pseudo: e.target.value })}
           />
-          {errors.username && <span className={styles.error}>{errors.username}</span>}
+          {errors.pseudo && <span className={styles.error}>{errors.pseudo}</span>}
         </div>
 
         <div className={styles.formGroup}>

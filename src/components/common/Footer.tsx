@@ -5,10 +5,10 @@ import classNames from 'classnames';
 const Footer = () => {
   return (
     <footer className={classNames("footer", 'Paragraphe1')} role="contentinfo">
-      <div className="footerContent">
+      <div className="footer-content">
         {/* Liens de navigation principaux */}
-        <nav aria-label="Navigation du footer" className="footerNav">
-          <ul className="footerLinks">
+        <nav aria-label="Navigation du footer" className="footer-content-nav">
+          <ul className="footer-content-nav-links">
             <li><a href="#contact">Contact</a></li>
             <li><a href="#equipe">L&apos;équipe</a></li>
             <li><a href="#legal">Informations légales</a></li>
@@ -41,8 +41,8 @@ const Footer = () => {
         </div> */}
 
         {/* Copyright */}
-        <div className="copyright">
-          <p className="copyrightText">
+        <div className="footer-copyright">
+          <p className="footer-copyright-Text">
             © 2025 CheckPoint v.1.0 | Game database powered by IGDB
           </p>
         </div>

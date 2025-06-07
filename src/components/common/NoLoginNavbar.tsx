@@ -7,6 +7,10 @@ import Link from "next/link";
 import "./styles/NoLoginNavbar.scss";
 import '../../styles/globals.scss'; 
 
+//*******************************************************
+// Barre de navigation pour les utilisateurs non connectés
+//*******************************************************
+// Permet à la navigation de se coller en haut de la page lors du scroll
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -23,6 +27,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  
   return (
     <nav className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`}>
       {/* Partie gauche : logo */}

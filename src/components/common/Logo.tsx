@@ -7,18 +7,18 @@ import './styles/Logo.scss'
 
 export default function Logo() {
   return (
-    <Link href="/" className="logoLink">
+    <Link href="/" className="logo">
       {/* Utilisation du GIF à la place du modèle 3D */}
       <Image 
         src="/images/crystalGIF.gif" 
         alt="Animation du crystal" 
         width={80} 
         height={80}
-        className="crystalGif"
+        className="logo-crystalGif"
       />
-      <div className="textContainer">
-        <span className="checkText">Check</span>
-        <span className="pointText">Point</span>
+      <div className="logo-checkPoint">
+        <span className="logo-checkPoint-check">Check</span>
+        <span className="logo-checkPoint-point">Point</span>
       </div>
     </Link>
   )

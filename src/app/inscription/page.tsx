@@ -4,7 +4,7 @@ import styles from './styles/Inscription.module.scss';
 import Step1 from './components/Step1';
 
 interface FormData {
-  username: string;
+  pseudo: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -15,7 +15,7 @@ interface FormData {
 export default function Inscription() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
-    username: '',
+    pseudo: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -25,7 +25,7 @@ export default function Inscription() {
 
   const handleStep1Submit = async (data: FormData) => {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,11 +34,18 @@ export default function Inscription() {
       });
 
       if (response.ok) {
+        const userData = await response.json();
+        console.log('Inscription réussie:', userData);
         setFormData({ ...formData, ...data });
         setCurrentStep(2);
+      } else {
+        const errorData = await response.json();
+        console.error('Erreur de l\'API:', errorData);
+        alert('Erreur lors de l\'inscription: ' + (errorData.message || 'Erreur inconnue'));
       }
     } catch (error) {
-      console.error('Erreur lors de l\'inscription:', error);
+      console.error('Erreur réseau lors de l\'inscription:', error);
+      alert('Erreur de connexion au serveur. Vérifiez que votre API est démarrée sur http://localhost:8000');
     }
   };
 

@@ -1,34 +1,51 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import "./styles/BurgerMenu.scss";
 
+//*******************************************************
+// Burger Menu pour les petits écrans
+//*******************************************************
+// Composant qui gère deux menus déroulants séparés :
+// 1. Menu de navigation (liens principaux)
+// 2. Menu d'authentification (connexion/inscription)
 const BurgerMenu: React.FC = () => {
-  // États pour le menu de navigation
-  const [navMenuOpen, setNavMenuOpen] = useState(false);
-  const [navMenuClosing, setNavMenuClosing] = useState(false);
+  //*******************************************************
+  // ÉTATS DE GESTION DES MENUS
+  //*******************************************************
   
-  // États pour le menu d'authentification
-  const [authMenuOpen, setAuthMenuOpen] = useState(false);
-  const [authMenuClosing, setAuthMenuClosing] = useState(false);
+  // États pour le menu de navigation principal
+  const [navMenuOpen, setNavMenuOpen] = useState(false); // Menu ouvert ou fermé
+  const [navMenuClosing, setNavMenuClosing] = useState(false); // Animation de fermeture en cours
+  
+  // États pour le menu d'authentification  
+  const [authMenuOpen, setAuthMenuOpen] = useState(false); // Menu auth ouvert ou fermé
+  const [authMenuClosing, setAuthMenuClosing] = useState(false); // Animation de fermeture en cours
 
+  // Durée des animations d'ouverture/fermeture (doit correspondre au CSS)
   const animationDuration = 400; // durée en ms (0.4s)
 
+  //*******************************************************
+  // FONCTIONS DE GESTION DU MENU NAVIGATION
+  //*******************************************************
+  
+  // Ouvrir le menu de navigation (ferme le menu auth s'il est ouvert)
   const openNavMenu = () => {
-    if (authMenuOpen) closeAuthMenu();
+    if (authMenuOpen) closeAuthMenu(); // Ferme l'autre menu si ouvert
     setNavMenuOpen(true);
     setNavMenuClosing(false);
   };
 
+  // Fermer le menu de navigation avec animation
   const closeNavMenu = () => {
-    setNavMenuClosing(true);
+    setNavMenuClosing(true); // Déclenche l'animation de sortie
     setTimeout(() => {
-      setNavMenuOpen(false);
+      setNavMenuOpen(false); // Retire le menu du DOM après l'animation
       setNavMenuClosing(false);
     }, animationDuration);
   };
 
+  // Basculer l'état du menu navigation (ouvrir/fermer)
   const toggleNavMenu = () => {
     if (navMenuOpen && !navMenuClosing) {
       closeNavMenu();
@@ -37,20 +54,27 @@ const BurgerMenu: React.FC = () => {
     }
   };
 
+  //*******************************************************
+  // FONCTIONS DE GESTION DU MENU AUTHENTIFICATION
+  //*******************************************************
+  
+  // Ouvrir le menu d'authentification (ferme le menu nav s'il est ouvert)
   const openAuthMenu = () => {
-    if (navMenuOpen) closeNavMenu();
+    if (navMenuOpen) closeNavMenu(); // Ferme l'autre menu si ouvert
     setAuthMenuOpen(true);
     setAuthMenuClosing(false);
   };
 
+  // Fermer le menu d'authentification avec animation
   const closeAuthMenu = () => {
-    setAuthMenuClosing(true);
+    setAuthMenuClosing(true); // Déclenche l'animation de sortie
     setTimeout(() => {
-      setAuthMenuOpen(false);
+      setAuthMenuOpen(false); // Retire le menu du DOM après l'animation
       setAuthMenuClosing(false);
     }, animationDuration);
   };
 
+  // Basculer l'état du menu authentification (ouvrir/fermer)
   const toggleAuthMenu = () => {
     if (authMenuOpen && !authMenuClosing) {
       closeAuthMenu();
@@ -59,14 +83,22 @@ const BurgerMenu: React.FC = () => {
     }
   };
 
+  //*******************************************************
+  // RENDU DU COMPOSANT
+  //*******************************************************
   return (
-    <div className="burgerContainer">
-      <div className="iconGroup">
+    <div className="menuBurger">
+      {/* Groupe d'icônes : recherche, utilisateur, hamburger */}
+      <div className="menuBurger-iconGroup">
+        {/* Icône de recherche */}
         <i className="bx bx-search" />
+        
+        {/* Icône utilisateur - ouvre le menu d'authentification */}
         <i className="bx bx-user-circle" onClick={toggleAuthMenu} />
-        {/* Remplacement de l'icône burger par notre hamburger custom */}
+        
+        {/* Hamburger menu custom avec animation (3 barres) */}
         <div
-          className={`hamburger ${navMenuOpen ? "open" : ""}`}
+          className={`menuBurger-iconGroup-hamburger ${navMenuOpen ? "open" : ""}`}
           onClick={toggleNavMenu}
         >
           <span></span>
@@ -75,16 +107,19 @@ const BurgerMenu: React.FC = () => {
         </div>
       </div>
 
+      {/* OVERLAY DU MENU NAVIGATION */}
       {navMenuOpen && (
         <div
-          className={`menuOverlay ${navMenuClosing ? "menuOverlayExit" : ""}`}
-          onClick={toggleNavMenu}
+          className={`menuBurger-menuOverlay ${navMenuClosing ? "menuOverlayExit" : ""}`}
+          onClick={toggleNavMenu} // Ferme en cliquant sur l'overlay
         >
           {/* Icône croix pour fermer le menu de navigation */}
-          <div className="closeIcon" onClick={toggleNavMenu}>
+          <div className="menuBurger-menuOverlay-closeIcon" onClick={toggleNavMenu}>
             <i className="bx bx-x" />
           </div>
-          <ul className="menuList" onClick={(e) => e.stopPropagation()}>
+          
+          {/* Liste des liens de navigation */}
+          <ul className="menuBurger-menuOverlay-menuList" onClick={(e) => e.stopPropagation()}>
             <li onClick={toggleNavMenu}>
               <Link href="/" className="home">
                 Home
@@ -103,16 +138,19 @@ const BurgerMenu: React.FC = () => {
         </div>
       )}
 
+      {/* OVERLAY DU MENU AUTHENTIFICATION */}
       {authMenuOpen && (
         <div
-          className={`authOverlay ${authMenuClosing ? "authOverlayExit" : ""}`}
-          onClick={toggleAuthMenu}
+          className={`menuBurger-authOverlay ${authMenuClosing ? "authOverlayExit" : ""}`}
+          onClick={toggleAuthMenu} // Ferme en cliquant sur l'overlay
         >
           {/* Icône croix pour fermer le menu d'authentification */}
-          <div className="closeIcon" onClick={toggleAuthMenu}>
+          <div className="menuBurger-authOverlay-closeIcon" onClick={toggleAuthMenu}>
             <i className="bx bx-x" />
           </div>
-          <ul className="authList" onClick={(e) => e.stopPropagation()}>
+          
+          {/* Liste des liens d'authentification */}
+          <ul className="menuBurger-authOverlay-authList" onClick={(e) => e.stopPropagation()}>
             <li onClick={toggleAuthMenu}>
               <Link href="/inscription">S&apos;inscrire</Link>
             </li>
