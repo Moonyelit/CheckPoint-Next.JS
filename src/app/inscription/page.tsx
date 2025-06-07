@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import '@/styles/inscription.scss';
+import './inscription.scss';
 import Step1 from './components/Step1';
 
 interface FormData {

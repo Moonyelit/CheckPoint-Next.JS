@@ -1,5 +1,7 @@
-import InscriptionNavbar from '@/components/InscriptionNavbar';
+import InscriptionNavbar from '@/components/common/NavBarInscription';
 import HydrationFix from '@/components/common/HydrationFix';
+import Footer from '@/components/common/Footer';
+import styles from './styles/layout.module.scss';
 
 export default function InscriptionLayout({
   children,
@@ -7,12 +9,13 @@ export default function InscriptionLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="inscription-layout">
+    <div className={styles.inscriptionLayout}>
       <HydrationFix />
       <InscriptionNavbar />
       <main>
         {children}
       </main>
+      <Footer />
     </div>
   );
 } 

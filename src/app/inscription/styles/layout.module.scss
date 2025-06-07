@@ -1,0 +1,15 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/mixins';
+
+.inscriptionLayout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important pour éviter les débordements
+  }
+} 

@@ -81,3 +81,21 @@
     padding: 1em 2em;
   }
 } 
+
+/* ===== Button 3 : btn-custom-inscription ===== */
+.btn-custom-inscription {
+  @include flex(row, center, center);
+  font-size: clamp(0.5625rem, 0.4482rem + 0.4878vw, 0.875rem);
+  font-weight: 700;
+  background: var(--crystal-overlay);
+  color: var(--white);
+  padding: 0.8em 1.3em;
+  border-radius: 15px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  @include transition(all, 0.5s, ease);
+
+  &:hover {
+    background: var(--gris-button);
+    color: var(--black);
+  }
+}

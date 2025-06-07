@@ -1,6 +1,6 @@
 "use client";
 
-import MainNavbar from '@/components/common/MainNavbar';
+import MainNavbar from '@/components/common/NavBarMain';
 import Footer from '@/components/common/Footer';
 import { usePathname } from 'next/navigation';
 
@@ -37,8 +37,8 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
 
   // Pour l'instant, on considère que l'utilisateur n'est pas connecté
   // TODO: Récupérer l'état d'authentification depuis un context/store
-  const isAuthenticated = false;
-  const user = null;
+  // const isAuthenticated = false;
+  // const user = null;
 
   if (isAuthPage) {
     // Pages d'authentification : uniquement le contenu
@@ -47,7 +47,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
 
   return (
     <>
-      <MainNavbar isAuthenticated={isAuthenticated} user={user} />  {/* 🧭 Navbar principale intelligente */}
+      <MainNavbar/>  {/* 🧭 Navbar principale intelligente */}
       <main>{children}</main>
       <Footer />  {/* 🦶 Footer global */}
     </>
