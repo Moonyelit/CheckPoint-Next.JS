@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Logo from "@/components/common/Logo";
 import BurgerMenu from "@/components/common/BurgerMenu";
 import Link from "next/link";
-import "./styles/NoLoginNavbar.scss";
+import "./styles/MainNavbar.scss";
 import '../../styles/globals.scss'; 
 
 //*******************************************************

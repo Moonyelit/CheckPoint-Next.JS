@@ -155,7 +155,7 @@ const BurgerMenu: React.FC = () => {
               <Link href="/inscription">S&apos;inscrire</Link>
             </li>
             <li onClick={toggleAuthMenu}>
-              <Link href="/login">Connexion</Link>
+              <Link href="/auth/connexion">Connexion</Link>
             </li>
           </ul>
         </div>

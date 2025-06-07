@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname } from 'next/navigation';
-import NoLoginNavbar from '@/components/common/NoLoginNavbar';
+import MainNavbar from '@/components/common/MainNavbar';
 import Footer from '@/components/common/Footer';
+import { usePathname } from 'next/navigation';
 
 /**
  * 🔄 LAYOUT CONDITIONNEL - AIGUILLEUR INTELLIGENT DE LAYOUTS
@@ -13,7 +13,7 @@ import Footer from '@/components/common/Footer';
  * 
  * FONCTIONNEMENT :
  * - Détecte la page courante avec usePathname()
- * - Si page normale : Affiche NoLoginNavbar + contenu + Footer
+ * - Si page normale : Affiche MainNavbar + contenu + Footer
  * - Si page exclue : Affiche seulement le contenu
  * 
  * AVANTAGE : Évite de dupliquer la logique dans chaque page
@@ -22,26 +22,34 @@ interface ConditionalLayoutProps {
   children: React.ReactNode;
 }
 
+//*******************************************************
+// Layout conditionnel selon la page
+//*******************************************************
+// Détermine quels composants afficher selon l'URL :
+// - Si page d'auth (/inscription, /auth/*) : Contenu uniquement
+// - Si page normale : Affiche MainNavbar + contenu + Footer
 export default function ConditionalLayout({ children }: ConditionalLayoutProps) {
-  const pathname = usePathname(); // 📍 Détecte la page courante
+  const pathname = usePathname();
   
-  // 📋 LISTE DES PAGES AVEC LAYOUT SPÉCIAL (sans navbar/footer standard)
-  const excludedPages = ['/inscription']; // Page d'inscription = layout immersif
-  const shouldShowDefaultLayout = !excludedPages.includes(pathname);
+  // Pages qui n'affichent pas la navbar et le footer (pages d'auth)
+  const authPages = ['/inscription'];
+  const isAuthPage = authPages.some(page => pathname.startsWith(page));
 
-  // 🏠 LAYOUT STANDARD : Navbar + Contenu + Footer
-  if (shouldShowDefaultLayout) {
-    return (
-      <>
-        <NoLoginNavbar />  {/* 🧭 Navbar de navigation standard */}
-        <main className="flex-grow">
-          {children}       {/* 📄 Contenu de la page */}
-        </main>
-        <Footer />         {/* 🦶 Footer avec liens et infos */}
-      </>
-    );
+  // Pour l'instant, on considère que l'utilisateur n'est pas connecté
+  // TODO: Récupérer l'état d'authentification depuis un context/store
+  const isAuthenticated = false;
+  const user = null;
+
+  if (isAuthPage) {
+    // Pages d'authentification : uniquement le contenu
+    return <>{children}</>;
   }
 
-  // 🎭 LAYOUT SPÉCIAL : Contenu seulement (pages immersives)
-  return <>{children}</>; // ✨ Affichage pur sans navbar/footer
+  return (
+    <>
+      <MainNavbar isAuthenticated={isAuthenticated} user={user} />  {/* 🧭 Navbar principale intelligente */}
+      <main>{children}</main>
+      <Footer />  {/* 🦶 Footer global */}
+    </>
+  );
 } 

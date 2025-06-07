@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import styles from './styles/Inscription.module.scss';
+import '@/styles/inscription.scss';
 import Step1 from './components/Step1';
 
 interface FormData {
@@ -50,17 +50,17 @@ export default function Inscription() {
   };
 
   return (
-    <div className={styles.inscriptionContainer}>
-      <div className={styles.formContainer}>
-        <header className={styles.header}>
-          <div className={styles.logo}>
-            <div className={styles.logoText}>
-              <div className={styles.logoIcon}></div>
+    <div className="inscription">
+      <div className="inscription__form-container">
+        <header className="inscription__header">
+          <div className="inscription__logo">
+            <div className="inscription__logo-text">
+              <div className="inscription__logo-icon"></div>
               CheckPoint
             </div>
           </div>
-          <h1 className={styles.title}>Créer votre avatar</h1>
-          <p className={styles.subtitle}>Et prenez une pause en sauvegardant votre progression...</p>
+          <h1 className="inscription__title">Créer votre avatar</h1>
+          <p className="inscription__subtitle">Et prenez une pause en sauvegardant votre progression...</p>
         </header>
 
         {currentStep === 1 && (
