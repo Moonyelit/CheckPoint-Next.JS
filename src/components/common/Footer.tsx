@@ -16,7 +16,7 @@ const Footer = () => {
           </ul>
         </nav>
 
-        {/* Réseaux sociaux  pour plus tard*/}
+        {/* Réseaux sociaux  pour plus tard */}
         {/* <div className="socialMedia">
           <a href="#" aria-label="Discord" className="socialLink">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

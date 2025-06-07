@@ -1,0 +1,176 @@
+@use '@/styles/_mixins' as *;
+
+.step1Form {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  
+  .formGroup {
+    margin-bottom: 1.5rem;
+    
+    input {
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      background-color: rgba(255, 255, 255, 0.9);
+      font-size: 16px;
+      font-family: var(--font-base);
+      color: var(--black);
+      @include transition(background-color, 0.3s, ease);
+      
+      &:focus {
+        outline: none;
+        background-color: rgba(255, 255, 255, 1);
+        box-shadow: 0 0 0 2px var(--bleu-crystal-normal);
+      }
+      
+      &::placeholder {
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 14px;
+      }
+    }
+    
+    .error {
+      display: block;
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-top: 5px;
+      margin-left: 20px;
+    }
+  }
+  
+  .checkboxGroup {
+    margin-bottom: 1rem;
+    @include flex(row, flex-start, flex-start);
+    gap: 12px;
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      margin-top: 2px;
+      accent-color: var(--bleu-crystal-normal);
+    }
+    
+    label {
+      color: var(--white);
+      font-size: 14px;
+      font-family: var(--font-base);
+      line-height: 1.4;
+      cursor: pointer;
+      flex: 1;
+    }
+    
+    .error {
+      display: block;
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-top: 5px;
+      width: 100%;
+    }
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 15px 0;
+    background: var(--bleu-crystal-normal);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: var(--font-base);
+    cursor: pointer;
+    margin-top: 1.5rem;
+    margin-bottom: 3rem;
+    @include transition(background, 0.3s, ease);
+    
+    &:hover {
+      background: var(--bleu-crystal-fonce);
+    }
+    
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  z-index: 2;
+  
+  .footerContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    
+    .footerLinks {
+      @include flex(row, center, center);
+      gap: 30px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      
+      a {
+        color: var(--white);
+        text-decoration: none;
+        font-size: 14px;
+        font-family: var(--font-base);
+        @include transition(color, 0.3s, ease);
+        
+        &:hover {
+          color: var(--bleu-crystal-normal);
+        }
+      }
+    }
+    
+    .copyright {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+      font-family: var(--font-base);
+      
+      a {
+        color: var(--bleu-crystal-normal);
+        text-decoration: none;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+/* Media Queries */
+@include respond-to('medium') {
+  .step1Form {
+    max-width: 90%;
+    
+    .formGroup input {
+      padding: 10px 15px;
+      font-size: 14px;
+    }
+    
+    .submitButton {
+      padding: 12px 0;
+      font-size: 16px;
+    }
+  }
+  
+  .footer {
+    .footerContent {
+      .footerLinks {
+        gap: 20px;
+        
+        a {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+} 

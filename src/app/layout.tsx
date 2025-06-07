@@ -3,8 +3,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/layout.scss";
-import Navbar from '@/components/common/Navbar';
-import Footer from '@/components/common/Footer';
+import ConditionalLayout from '@/components/layout/ConditionalLayout';
 import HydrationFix from '@/components/common/HydrationFix';
 
 const geistSans = Geist({
@@ -33,19 +32,43 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
+        {/* 
+          🛡️ FIX HYDRATATION - SCRIPT DE PROTECTION CONTRE LES EXTENSIONS
+          ================================================================
+          
+          PROBLÈME : Les extensions de navigateur (Grammarly, LastPass, AdBlock, etc.) 
+          ajoutent des attributs au DOM APRÈS que Next.js ait généré le HTML côté serveur.
+          Cela cause des erreurs d'hydratation car Next.js détecte une différence entre 
+          le HTML serveur et le HTML client.
+          
+          SOLUTION : Ce script s'exécute IMMÉDIATEMENT au chargement de la page (avant React)
+          pour nettoyer tous les attributs problématiques des extensions et masquer 
+          les erreurs d'hydratation dans la console.
+          
+          TIMING : Placé dans <head> pour s'exécuter le plus tôt possible
+        */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
-              // Fix agressif pour les attributs d'extensions
+              // 🧹 FIX AGRESSIF POUR LES ATTRIBUTS D'EXTENSIONS DE NAVIGATEUR
               (function() {
+                // 📋 LISTE DES ATTRIBUTS PROBLÉMATIQUES AJOUTÉS PAR LES EXTENSIONS
                 const PROBLEMATIC_ATTRS = [
-                  'cz-shortcut-listen', 'spellcheck', 'data-new-gr-c-s-check-loaded',
-                  'data-gr-ext-installed', 'data-gr-ext-disabled', 'data-adblock',
-                  'data-darkreader-mode', 'data-darkreader-scheme', 'data-lastpass-icon-warning',
-                  'data-1p-ignore', 'data-bitwarden-watching'
+                  'cz-shortcut-listen',           // ColorZilla (pipette couleur)
+                  'spellcheck',                   // Correcteurs orthographiques
+                  'data-new-gr-c-s-check-loaded', // Grammarly (vérification gramm.)
+                  'data-gr-ext-installed',        // Grammarly (extension installée)
+                  'data-gr-ext-disabled',         // Grammarly (extension désactivée)
+                  'data-adblock',                 // Bloqueurs de publicité
+                  'data-darkreader-mode',         // Dark Reader (mode sombre)
+                  'data-darkreader-scheme',       // Dark Reader (schéma couleur)
+                  'data-lastpass-icon-warning',   // LastPass (gestionnaire mots de passe)
+                  'data-1p-ignore',               // 1Password (ignorer ce champ)
+                  'data-bitwarden-watching'       // Bitwarden (surveillance des champs)
                 ];
                 
-                // Nettoyage ultra-agressif
+                // 🧼 FONCTION DE NETTOYAGE ULTRA-AGRESSIF DU DOM
+                // Supprime tous les attributs d'extensions de <html> et <body>
                 function ultraCleanup() {
                   [document.documentElement, document.body].forEach(function(el) {
                     if (el && el.removeAttribute) {
@@ -60,32 +83,38 @@ export default function RootLayout({
                   });
                 }
                 
-                // Masquage d'erreurs renforcé
+                // 🔇 MASQUAGE DES ERREURS D'HYDRATATION DANS LA CONSOLE
+                // Override console.error et console.warn pour cacher les messages d'hydratation
                 const originalError = console.error;
                 const originalWarn = console.warn;
                 
+                // 🚫 FILTRE LES ERREURS D'HYDRATATION CAUSÉES PAR LES EXTENSIONS
                 console.error = function() {
                   const args = Array.prototype.slice.call(arguments);
                   const message = args[0];
                   if (typeof message === 'string') {
+                    // Patterns d'erreurs à ignorer (causées par les extensions)
                     const patterns = [
-                      'A tree hydrated but some attributes',
-                      'cz-shortcut-listen',
-                      'hydration-mismatch',
-                      'Hydration failed',
-                      'There was an error while hydrating',
-                      'Warning: Prop',
-                      'Warning: Extra attributes'
+                      'A tree hydrated but some attributes',  // Attributs en plus détectés
+                      'cz-shortcut-listen',                   // ColorZilla spécifique
+                      'hydration-mismatch',                   // Différence serveur/client
+                      'Hydration failed',                     // Échec d'hydratation
+                      'There was an error while hydrating',   // Erreur pendant hydratation
+                      'Warning: Prop',                        // Props différentes
+                      'Warning: Extra attributes'             // Attributs supplémentaires
                     ];
                     
+                    // Si le message contient un pattern d'erreur d'extension, l'ignorer
                     if (patterns.some(p => message.includes(p)) || 
                         PROBLEMATIC_ATTRS.some(attr => message.includes(attr))) {
-                      return; // Ignore complètement
+                      return; // ⛔ Ignore complètement cette erreur
                     }
                   }
+                  // ✅ Affiche les autres erreurs normalement (pas causées par les extensions)
                   originalError.apply(console, args);
                 };
                 
+                // 🔕 FILTRE AUSSI LES WARNINGS D'HYDRATATION
                 console.warn = function() {
                   const args = Array.prototype.slice.call(arguments);
                   const message = args[0];
@@ -96,19 +125,21 @@ export default function RootLayout({
                   originalWarn.apply(console, args);
                 };
                 
-                // Exécutions multiples avec différents timings
-                ultraCleanup(); // Immédiat
+                // ⏰ NETTOYAGE À PLUSIEURS MOMENTS POUR MAXIMISER L'EFFICACITÉ
+                // Les extensions s'injectent à différents moments du cycle de vie de la page
+                ultraCleanup(); // ⚡ Immédiat (au chargement du script)
                 
-                setTimeout(ultraCleanup, 0);   // Prochain tick
-                setTimeout(ultraCleanup, 1);   // 1ms
-                setTimeout(ultraCleanup, 10);  // 10ms
-                setTimeout(ultraCleanup, 50);  // 50ms
-                setTimeout(ultraCleanup, 100); // 100ms
+                setTimeout(ultraCleanup, 0);   // 📅 Prochain tick du navigateur
+                setTimeout(ultraCleanup, 1);   // 📅 1ms (très tôt)
+                setTimeout(ultraCleanup, 10);  // 📅 10ms (avant que React démarre)
+                setTimeout(ultraCleanup, 50);  // 📅 50ms (pendant l'hydratation)
+                setTimeout(ultraCleanup, 100); // 📅 100ms (après l'hydratation)
                 
-                // Observer en continu
+                // 👁️ SURVEILLANCE CONTINUE DU DOM AVEC MUTATIONOBSERVER
+                // Détecte quand les extensions ajoutent des attributs et nettoie immédiatement
                 if (window.MutationObserver) {
                   const observer = new MutationObserver(function() {
-                    ultraCleanup();
+                    ultraCleanup(); // 🧹 Nettoie dès qu'une modification est détectée
                   });
                   
                   // Observer dès que possible
@@ -133,7 +164,8 @@ export default function RootLayout({
                   setTimeout(startObserving, 10);
                 }
                 
-                // Nettoyage à intervalles réguliers (plus agressif)
+                // 🔄 NETTOYAGE PÉRIODIQUE TOUTES LES 50MS (TRÈS AGRESSIF)
+                // Pour les extensions particulièrement tenaces qui se réinjectent
                 setInterval(ultraCleanup, 50);
               })();
             `,
@@ -145,11 +177,9 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <HydrationFix />
-        <Navbar />
-        <main className="flex-grow">
+        <ConditionalLayout>
           {children}
-        </main>
-        <Footer />
+        </ConditionalLayout>
       </body>
     </html>
   );

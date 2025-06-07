@@ -1,0 +1,123 @@
+@use '@/styles/_mixins' as *;
+
+.inscriptionNavbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  @include flex(row, space-between, center);
+  padding: 1.5rem 4%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  height: 80px;
+
+  .navbarLeft {
+    .logoLink {
+      @include flex(row, flex-start, center);
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--white);
+      @include transition(opacity, 0.3s, ease);
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      .logoIcon {
+        width: 35px;
+        height: 35px;
+        background: var(--bleu-crystal-normal);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &::before {
+          content: "✓";
+          color: white;
+          font-weight: bold;
+          font-size: 16px;
+        }
+      }
+
+      .logoText {
+        font-family: var(--font-title);
+        font-size: 1.5rem;
+        font-weight: 900;
+        color: var(--white);
+      }
+    }
+  }
+
+  .navbarRight {
+    @include flex(row, flex-end, center);
+    gap: 2rem;
+
+    .stepIndicator {
+      color: var(--bleu-crystal-normal);
+      font-family: var(--font-base);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      opacity: 0.8;
+    }
+
+    .backLink {
+      color: var(--white);
+      text-decoration: none;
+      font-family: var(--font-base);
+      font-size: 16px;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      @include transition(all, 0.3s, ease);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+}
+
+/* Media Queries */
+@include respond-to('medium') {
+  .inscriptionNavbar {
+    padding: 1rem 2%;
+    height: 70px;
+
+    .navbarLeft {
+      .logoLink {
+        gap: 0.5rem;
+
+        .logoIcon {
+          width: 30px;
+          height: 30px;
+
+          &::before {
+            font-size: 14px;
+          }
+        }
+
+        .logoText {
+          font-size: 1.2rem;
+        }
+      }
+    }
+
+    .navbarRight {
+      gap: 1rem;
+
+      .stepIndicator {
+        font-size: 12px;
+      }
+
+      .backLink {
+        font-size: 14px;
+        padding: 0.4rem 0.8rem;
+      }
+    }
+  }
+} 

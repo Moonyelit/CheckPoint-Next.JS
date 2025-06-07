@@ -3,37 +3,51 @@
 import { useEffect } from 'react';
 
 /**
- * Hook pour résoudre les problèmes d'hydratation causés par les extensions de navigateur
- * Supprime les attributs ajoutés par les extensions qui causent des conflits d'hydratation
+ * 🎣 HOOK USEHYDRATIONFIX - NETTOYAGE REACT DES EXTENSIONS
+ * =========================================================
+ * 
+ * PROBLÈME RÉSOLU : Extensions de navigateur qui ajoutent des attributs DOM
+ * EXEMPLES : Grammarly, LastPass, AdBlock, Dark Reader, etc.
+ * 
+ * STRATÉGIE :
+ * 1. 🧹 Nettoyage immédiat des attributs problématiques
+ * 2. 🔇 Masquage des erreurs d'hydratation dans la console  
+ * 3. 👁️ Surveillance continue avec MutationObserver
+ * 4. 🧽 Nettoyage automatique au démontage du composant
+ * 
+ * UTILISATION : Appelé par le composant <HydrationFix />
  */
 export const useHydrationFix = () => {
   useEffect(() => {
-    // Liste des attributs problématiques ajoutés par les extensions
+    // 📋 LISTE COMPLÈTE DES ATTRIBUTS PROBLÉMATIQUES DES EXTENSIONS
+    // Ces attributs sont ajoutés automatiquement par les extensions et causent des erreurs d'hydratation
     const PROBLEMATIC_ATTRIBUTES = [
-      'cz-shortcut-listen', // ColorZilla
-      'spellcheck',
-      'data-new-gr-c-s-check-loaded', // Grammarly
-      'data-gr-ext-installed', // Grammarly
-      'data-gr-ext-disabled', // Grammarly
-      'data-adblock', // Bloqueurs de pub
-      'data-darkreader-mode', // Dark Reader
-      'data-darkreader-scheme', // Dark Reader
-      'data-lastpass-icon-warning', // LastPass
-      'data-1p-ignore', // 1Password
-      'data-bitwarden-watching', // Bitwarden
+      'cz-shortcut-listen',           // 🎨 ColorZilla (pipette de couleur)
+      'spellcheck',                   // ✍️ Correcteurs orthographiques génériques
+      'data-new-gr-c-s-check-loaded', // ✅ Grammarly (vérification chargée)
+      'data-gr-ext-installed',        // 📥 Grammarly (extension installée)
+      'data-gr-ext-disabled',         // ⏸️ Grammarly (extension désactivée)
+      'data-adblock',                 // 🚫 Bloqueurs de publicité (AdBlock, uBlock)
+      'data-darkreader-mode',         // 🌙 Dark Reader (mode sombre activé)
+      'data-darkreader-scheme',       // 🎨 Dark Reader (schéma de couleurs)
+      'data-lastpass-icon-warning',   // 🔐 LastPass (avertissement icône)
+      'data-1p-ignore',               // 🔑 1Password (ignorer ce champ)
+      'data-bitwarden-watching',      // 👁️ Bitwarden (surveillance active)
     ];
 
     /**
-     * Nettoie les attributs problématiques des éléments
+     * 🧹 FONCTION DE NETTOYAGE DES ATTRIBUTS D'EXTENSIONS
+     * Parcourt <html> et <body> pour supprimer tous les attributs problématiques
      */
     const cleanupAttributes = () => {
+      // 🎯 Cible les éléments racines où les extensions injectent leurs attributs
       const elements = [document.documentElement, document.body];
       
       elements.forEach(element => {
         if (element) {
           PROBLEMATIC_ATTRIBUTES.forEach(attr => {
             if (element.hasAttribute(attr)) {
-              element.removeAttribute(attr);
+              element.removeAttribute(attr); // ❌ Supprime l'attribut d'extension
             }
           });
         }
@@ -41,7 +55,8 @@ export const useHydrationFix = () => {
     };
 
     /**
-     * Supprime les warnings d'hydratation spécifiques aux extensions
+     * 🔇 SUPPRESSION DES WARNINGS D'HYDRATATION DANS LA CONSOLE
+     * Override console.error pour masquer les erreurs causées par les extensions
      */
     const suppressHydrationWarnings = () => {
       const originalError = console.error;
@@ -50,32 +65,33 @@ export const useHydrationFix = () => {
         const message = args[0];
         
         if (typeof message === 'string') {
-          // Ignore les erreurs d'hydratation causées par les extensions
+          // 🔍 Détecte si l'erreur est causée par une extension de navigateur
           const isHydrationExtensionError = 
-            message.includes('A tree hydrated but some attributes') ||
-            message.includes('cz-shortcut-listen') ||
-            message.includes('hydration-mismatch') ||
-            PROBLEMATIC_ATTRIBUTES.some(attr => message.includes(attr));
+            message.includes('A tree hydrated but some attributes') ||  // Attributs en plus détectés
+            message.includes('cz-shortcut-listen') ||                   // ColorZilla spécifique
+            message.includes('hydration-mismatch') ||                   // Différence serveur/client
+            PROBLEMATIC_ATTRIBUTES.some(attr => message.includes(attr)); // Attributs de notre liste
             
           if (isHydrationExtensionError) {
-            return; // Ignore cette erreur
+            return; // ⛔ Ignore cette erreur (extension, pas notre code)
           }
         }
         
-        // Affiche les autres erreurs normalement
+        // ✅ Affiche les vraies erreurs (pas causées par les extensions)
         originalError(...args);
       };
       
       return originalError;
     };
 
-    // Applique le nettoyage immédiatement
+    // 🚀 NETTOYAGE IMMÉDIAT AU MONTAGE DU COMPOSANT
     cleanupAttributes();
     
-    // Supprime les warnings d'hydratation
+    // 🔇 ACTIVATION DU MASQUAGE DES ERREURS D'HYDRATATION
     const originalError = suppressHydrationWarnings();
     
-    // Configure l'observer pour surveiller les changements futurs
+    // 👁️ SURVEILLANCE CONTINUE AVEC MUTATIONOBSERVER
+    // Détecte quand les extensions ajoutent de nouveaux attributs et nettoie immédiatement
     const observer = new MutationObserver((mutations) => {
       let shouldCleanup = false;
       
@@ -83,30 +99,31 @@ export const useHydrationFix = () => {
         if (mutation.type === 'attributes') {
           const attributeName = mutation.attributeName;
           if (attributeName && PROBLEMATIC_ATTRIBUTES.includes(attributeName)) {
-            shouldCleanup = true;
+            shouldCleanup = true; // 🎯 Extension détectée, nettoyage nécessaire
           }
         }
       });
       
       if (shouldCleanup) {
-        cleanupAttributes();
+        cleanupAttributes(); // 🧹 Nettoie dès qu'une extension ajoute un attribut
       }
     });
     
-    // Observe les changements sur html et body
+    // 🎯 CONFIGURATION DE LA SURVEILLANCE SUR LES ÉLÉMENTS RACINES
+    // Surveille <html> et <body> car c'est là que les extensions injectent leurs attributs
     [document.documentElement, document.body].forEach(element => {
       if (element) {
         observer.observe(element, {
-          attributes: true,
-          attributeFilter: PROBLEMATIC_ATTRIBUTES,
+          attributes: true,                      // 👀 Surveille les changements d'attributs
+          attributeFilter: PROBLEMATIC_ATTRIBUTES, // 🎯 Filtre uniquement nos attributs problématiques
         });
       }
     });
     
-    // Nettoyage lors du démontage
+    // 🧽 NETTOYAGE LORS DU DÉMONTAGE DU COMPOSANT
     return () => {
-      observer.disconnect();
-      console.error = originalError;
+      observer.disconnect();          // 🔌 Arrête la surveillance des mutations
+      console.error = originalError;  // 🔄 Restaure console.error original
     };
   }, []);
 };

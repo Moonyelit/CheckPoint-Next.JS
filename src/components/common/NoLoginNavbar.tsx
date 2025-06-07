@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Logo from "@/components/common/Logo";
 import BurgerMenu from "@/components/common/BurgerMenu";
 import Link from "next/link";
-import "./styles/Navbar.scss";
+import "./styles/NoLoginNavbar.scss";
 import '../../styles/globals.scss'; 
 
 export default function Navbar() {
@@ -53,7 +53,7 @@ export default function Navbar() {
           <Link href="/inscription" className="navbar-right-auth-link">
             S&apos;inscrire
           </Link>
-          <Link href="/login" className="navbar-right-auth-link">
+          <Link href="/auth/connexion" className="navbar-right-auth-link">
             Connexion
           </Link>
         </div>
