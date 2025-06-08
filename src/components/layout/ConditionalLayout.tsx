@@ -41,15 +41,15 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
   // const user = null;
 
   if (isAuthPage) {
-    // Pages d'authentification : uniquement le contenu
+    // Pages d'authentification : utilisent leur propre layout
     return <>{children}</>;
   }
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <MainNavbar/>  {/* 🧭 Navbar principale intelligente */}
-      <main>{children}</main>
+      <main className="flex-grow pt-[7%]">{children}</main>
       <Footer />  {/* 🦶 Footer global */}
-    </>
+    </div>
   );
 } 

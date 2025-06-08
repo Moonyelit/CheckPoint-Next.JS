@@ -3,7 +3,7 @@
 
 /* ----------------- Hero Banner Component (BEM) ----------------- */
 .hero-banner {
-  height: 100vh;
+  min-height: 100vh;
   background-color: #a5b8c3;
   background-image: linear-gradient(
       to top,

@@ -1,7 +1,6 @@
 import InscriptionNavbar from '@/components/common/NavBarInscription';
 import HydrationFix from '@/components/common/HydrationFix';
 import Footer from '@/components/common/Footer';
-import styles from './styles/layout.module.scss';
 
 export default function InscriptionLayout({
   children,
@@ -9,10 +8,10 @@ export default function InscriptionLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={styles.inscriptionLayout}>
+    <div className="flex flex-col min-h-screen">
       <HydrationFix />
       <InscriptionNavbar />
-      <main>
+      <main className="flex-grow">
         {children}
       </main>
       <Footer />

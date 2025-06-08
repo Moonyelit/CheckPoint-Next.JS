@@ -53,13 +53,7 @@ export default function Inscription() {
     <div className="inscription">
       <div className="inscription__form-container">
         <header className="inscription__header">
-          <div className="inscription__logo">
-            <div className="inscription__logo-text">
-              <div className="inscription__logo-icon"></div>
-              CheckPoint
-            </div>
-          </div>
-          <h1 className="inscription__title">Créer votre avatar</h1>
+          <h1 className="inscription__title Title1-Karantina">Créer votre avatar</h1>
           <p className="inscription__subtitle">Et prenez une pause en sauvegardant votre progression...</p>
         </header>
 
