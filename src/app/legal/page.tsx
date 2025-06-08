@@ -15,7 +15,7 @@ export default function LegalPage() {
               className={`legal__nav-button ${activeTab === 'terms' ? 'legal__nav-button--active' : ''}`}
               onClick={() => setActiveTab('terms')}
             >
-              Conditions d'utilisation
+              Conditions d&apos;utilisation
             </button>
             <button 
               className={`legal__nav-button ${activeTab === 'privacy' ? 'legal__nav-button--active' : ''}`}
@@ -29,7 +29,7 @@ export default function LegalPage() {
         <div className="legal__content">
           {activeTab === 'terms' && (
             <section className="legal__section">
-              <h2>Conditions générales d'utilisation</h2>
+              <h2>Conditions générales d&apos;utilisation</h2>
               
               <div className="legal__article">
                 <h3>1. Objet</h3>
@@ -41,17 +41,17 @@ export default function LegalPage() {
               </div>
 
               <div className="legal__article">
-                <h3>2. Identification de l'éditeur</h3>
+                <h3>2. Identification de l&apos;éditeur</h3>
                 <p>
                   Le site CheckPoint est édité par :<br/>
                   <strong>Elodie FOUGEROUSE (Moonye)</strong><br/>
-                  Projet d'examen - Titre professionnel DWWM<br/>
-                  123 Rue de l'Exemple, 75000 Paris, France<br/>
+                  Projet d&apos;examen - Titre professionnel DWWM<br/>
+                  123 Rue de l&apos;Exemple, 75000 Paris, France<br/>
                   Email : contact.checkpoint.moonye@exemple.fr
                 </p>
                 <p>
-                  <em>Note : Ce site est développé dans le cadre d'un projet de certification 
-                  pour le titre professionnel "Développeur Web et Web Mobile" (DWWM).</em>
+                  <em>Note : Ce site est développé dans le cadre d&apos;un projet de certification 
+                  pour le titre professionnel &quot;Développeur Web et Web Mobile&quot; (DWWM).</em>
                 </p>
               </div>
 
@@ -71,32 +71,32 @@ export default function LegalPage() {
               <div className="legal__article">
                 <h3>4. Accès au service</h3>
                 <p>
-                  L'accès au service est gratuit pour les fonctionnalités de base. L'utilisateur doit créer un compte 
-                  en fournissant des informations exactes et à jour. L'utilisateur s'engage à :
+                  L&apos;accès au service est gratuit pour les fonctionnalités de base. L&apos;utilisateur doit créer un compte 
+                  en fournissant des informations exactes et à jour. L&apos;utilisateur s&apos;engage à :
                 </p>
                 <ul>
                   <li>Avoir au minimum 16 ans</li>
-                  <li>Fournir des informations exactes lors de l'inscription</li>
+                  <li>Fournir des informations exactes lors de l&apos;inscription</li>
                   <li>Maintenir la confidentialité de ses identifiants</li>
                   <li>Respecter les autres utilisateurs et les règles de la communauté</li>
                 </ul>
               </div>
 
               <div className="legal__article">
-                <h3>5. Obligations de l'utilisateur</h3>
-                <p>L'utilisateur s'interdit de :</p>
+                <h3>5. Obligations de l&apos;utilisateur</h3>
+                <p>L&apos;utilisateur s&apos;interdit de :</p>
                 <ul>
                   <li>Publier des contenus illégaux, diffamatoires ou contraires aux bonnes mœurs</li>
                   <li>Utiliser le service à des fins commerciales non autorisées</li>
                   <li>Tenter de porter atteinte à la sécurité du système</li>
-                  <li>Usurper l'identité d'autrui</li>
+                  <li>Usurper l&apos;identité d&apos;autrui</li>
                 </ul>
               </div>
 
               <div className="legal__article">
                 <h3>6. Propriété intellectuelle</h3>
                 <p>
-                  Tous les éléments du site CheckPoint sont protégés par le droit d'auteur, des marques ou des brevets. 
+                  Tous les éléments du site CheckPoint sont protégés par le droit d&apos;auteur, des marques ou des brevets. 
                   Ils sont la propriété exclusive de [NOM_EDITEUR] ou de ses partenaires.
                 </p>
               </div>
@@ -104,8 +104,8 @@ export default function LegalPage() {
               <div className="legal__article">
                 <h3>7. Responsabilité</h3>
                 <p>
-                  [NOM_EDITEUR] s'efforce d'assurer la disponibilité du service mais ne peut garantir un accès 
-                  permanent. La responsabilité de [NOM_EDITEUR] ne saurait être engagée en cas d'interruption 
+                  [NOM_EDITEUR] s&apos;efforce d&apos;assurer la disponibilité du service mais ne peut garantir un accès 
+                  permanent. La responsabilité de [NOM_EDITEUR] ne saurait être engagée en cas d&apos;interruption 
                   temporaire du service.
                 </p>
               </div>
@@ -113,7 +113,7 @@ export default function LegalPage() {
               <div className="legal__article">
                 <h3>8. Résiliation</h3>
                 <p>
-                  L'utilisateur peut supprimer son compte à tout moment depuis les paramètres de son profil. 
+                  L&apos;utilisateur peut supprimer son compte à tout moment depuis les paramètres de son profil. 
                   [NOM_EDITEUR] se réserve le droit de suspendre ou supprimer un compte en cas de non-respect 
                   des présentes conditions.
                 </p>
@@ -190,7 +190,7 @@ export default function LegalPage() {
                   Vos données sont conservées :
                 </p>
                 <ul>
-                  <li><strong>Compte actif :</strong> pendant toute la durée d'utilisation du service</li>
+                  <li><strong>Compte actif :</strong> pendant toute la durée d&apos;utilisation du service</li>
                   <li><strong>Après suppression :</strong> 1 mois pour les données personnelles, 3 ans pour les données de connexion (obligations légales)</li>
                 </ul>
               </div>
@@ -202,7 +202,7 @@ export default function LegalPage() {
                 </p>
                 <ul>
                   <li>Nos prestataires techniques (hébergement, maintenance) sous contrat de confidentialité</li>
-                  <li>Les autorités compétentes en cas d'obligation légale</li>
+                  <li>Les autorités compétentes en cas d&apos;obligation légale</li>
                 </ul>
               </div>
 
@@ -219,12 +219,12 @@ export default function LegalPage() {
                 <h3>8. Vos droits (RGPD)</h3>
                 <p>Conformément au RGPD, vous disposez des droits suivants :</p>
                 <ul>
-                  <li><strong>Droit d'accès :</strong> obtenir une copie de vos données</li>
+                  <li><strong>Droit d&apos;accès :</strong> obtenir une copie de vos données</li>
                   <li><strong>Droit de rectification :</strong> corriger vos données inexactes</li>
-                  <li><strong>Droit à l'effacement :</strong> supprimer vos données</li>
+                  <li><strong>Droit à l&apos;effacement :</strong> supprimer vos données</li>
                   <li><strong>Droit à la limitation :</strong> limiter le traitement de vos données</li>
                   <li><strong>Droit à la portabilité :</strong> récupérer vos données dans un format structuré</li>
-                  <li><strong>Droit d'opposition :</strong> vous opposer au traitement</li>
+                  <li><strong>Droit d&apos;opposition :</strong> vous opposer au traitement</li>
                   <li><strong>Droit de retirer votre consentement</strong> à tout moment</li>
                 </ul>
                 <p>

@@ -11,7 +11,7 @@
   padding: 3% 4%;
   overflow: hidden;
   font-size: clamp(16px, 2vw, 20px);
-  z-index: 100;
+  z-index: 1000;
   height: 80px;
   @include transition(all, 0.3s, ease);
 

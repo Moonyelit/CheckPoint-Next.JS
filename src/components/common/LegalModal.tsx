@@ -22,11 +22,13 @@ const LegalModal = ({ isOpen, onClose, initialTab = 'terms' }: LegalModalProps) 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden'; // Empêcher le scroll
+      document.body.classList.add('legal-modal-open'); // Ajouter classe pour flou navbar
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
+      document.body.classList.remove('legal-modal-open'); // Supprimer classe pour flou navbar
     };
   }, [isOpen, onClose]);
 

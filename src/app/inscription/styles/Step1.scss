@@ -21,7 +21,7 @@
     max-width: 700px;
     flex: 1;
     @include flex(column, center, center);
-
+    z-index: 1;
     @include respond-to("medium") {
       max-width: 90%;
     }
