@@ -51,19 +51,12 @@ export default function Inscription() {
 
   return (
     <div className="inscription">
-      <div className="inscription__form-container">
-        <header className="inscription__header">
-          <h1 className="inscription__title Title1-Karantina">Créer votre avatar</h1>
-          <p className="inscription__subtitle">Et prenez une pause en sauvegardant votre progression...</p>
-        </header>
-
-        {currentStep === 1 && (
-          <Step1 
-            onSubmit={handleStep1Submit}
-            initialData={formData}
-          />
-        )}
-      </div>
+      {currentStep === 1 && (
+        <Step1 
+          onSubmit={handleStep1Submit}
+          initialData={formData}
+        />
+      )}
     </div>
   );
 } 

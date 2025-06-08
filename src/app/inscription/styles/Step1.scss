@@ -1,0 +1,205 @@
+@use '@/styles/_mixins' as *;
+
+/* ----------------- Step1 Component (BEM) ----------------- */
+.step1 {
+  &__form-container {
+    z-index: 2;
+    width: 100%;
+    max-width: 700px;
+    flex: 1;
+    @include flex(column, center, center);
+
+    @include respond-to("medium") {
+      max-width: 90%;
+    }
+  }
+
+  /****************************************************
+  ****************** HEADER ******************
+  ****************************************************/
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--white);
+  }
+
+  &__title {
+    font-size: clamp(2.8125rem, 1.6463rem + 4.9756vw, 6rem);
+    letter-spacing: 3;
+    color: var(--white);
+    font-family: "Karantina", cursive;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    font-family: var(--font-base);
+    font-size: clamp(0.8125rem, 0.5704rem + 1.0329vw, 1.5rem); 
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  /****************************************************
+  ****************** FORM ******************
+  ****************************************************/
+
+  &__form {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+    &__form-group {
+    margin-bottom: 1.2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    
+    input {
+        width: 100%;
+        height: auto;
+        min-height: 42px;
+        padding: 10px 18px 10px 45px;
+        border-radius: 12px;
+        background-color: var(--gris-fonce);
+        border: 2px solid var(--white);
+        font-size: 14px;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 700 !important;
+        color: var(--white);
+        line-height: 1.4;
+        vertical-align: middle;
+        @include transition(all, 0.3s, ease);
+        
+        // États spécifiques pour forcer la couleur blanche
+        &:focus,
+        &:active,
+        &:not(:placeholder-shown) {
+          color: var(--white);
+          background-color: var(--gris-fonce);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: var(--bleu-crystal-normal);
+          box-shadow: 0 0 0 2px rgba(35, 171, 250, 0.3);
+        }
+        
+        &::placeholder {
+          color: rgba(255, 255, 255, 0.7) !important;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1.4;
+        }
+
+        // Anti-autofill du navigateur
+        &:-webkit-autofill,
+        &:-webkit-autofill:hover,
+        &:-webkit-autofill:focus,
+        &:-webkit-autofill:active {
+          -webkit-box-shadow: 0 0 0 30px var(--gris-fonce) inset !important;
+          -webkit-text-fill-color: var(--white) !important;
+          color: var(--white) !important;
+        }
+      }
+  }
+
+  &__checkbox-group {
+    margin-bottom: 1rem;
+    @include flex(row, flex-start, flex-start);
+    gap: 12px;
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      margin-top: 2px;
+      accent-color: var(--bleu-crystal-normal);
+    }
+    
+    label {
+      color: var(--white);
+      font-size: 14px;
+      font-family: var(--font-base);
+      line-height: 1.4;
+      cursor: pointer;
+      flex: 1;
+    }
+  }
+
+  &__error {
+    display: block;
+    color: #ff6b6b;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-left: 20px;
+
+    // Erreur pour les checkboxes
+    .step1__checkbox-group & {
+      margin-left: 0;
+      width: 100%;
+    }
+  }
+
+  &__submit-button {
+    width: 100%;
+    padding: 15px 0;
+    background: var(--bleu-crystal-normal);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: var(--font-base);
+    cursor: pointer;
+    margin-top: 1.5rem;
+    margin-bottom: 3rem;
+    @include transition(background, 0.3s, ease);
+    
+    &:hover {
+      background: var(--bleu-crystal-fonce);
+    }
+    
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    z-index: 2;
+    pointer-events: none;
+  }
+}
+
+
+
+/* Media Queries */
+@include respond-to('medium') {
+  .step1 {
+    &__form {
+      max-width: 90%;
+    }
+    
+    &__form-group input {
+      padding: 10px 15px 10px 40px;
+      font-size: 14px;
+    }
+    
+    &__submit-button {
+      padding: 12px 0;
+      font-size: 16px;
+    }
+  }
+  
+
+} 

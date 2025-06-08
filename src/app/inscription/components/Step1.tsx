@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import styles from '../styles/Step1.module.scss';
+import '../styles/Step1.scss';
 
 interface FormData {
   pseudo: string;
@@ -51,53 +51,70 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit} className={styles.step1Form}>
-        <div className={styles.formGroup}>
-          <input
-            type="text"
-            id="pseudo"
-            placeholder="Pseudo"
-            value={formData.pseudo}
-            onChange={(e) => setFormData({ ...formData, pseudo: e.target.value })}
-          />
-          {errors.pseudo && <span className={styles.error}>{errors.pseudo}</span>}
+    <div className="step1__form-container">
+      <header className="step1__header">
+        <h1 className="step1__title">Créer votre avatar</h1>
+        <p className="step1__subtitle">Et prenez une pause en sauvegardant votre progression...</p>
+      </header>
+    
+      <form onSubmit={handleSubmit} className="step1__form">
+        <div className="step1__form-group">
+          <div className="step1__input-container">
+            <i className="bx bx-user step1__icon"></i>
+            <input
+              type="text"
+              id="pseudo"
+              placeholder="Pseudo"
+              value={formData.pseudo}
+              onChange={(e) => setFormData({ ...formData, pseudo: e.target.value })}
+            />
+          </div>
+          {errors.pseudo && <span className="step1__error">{errors.pseudo}</span>}
         </div>
 
-        <div className={styles.formGroup}>
-          <input
-            type="email"
-            id="email"
-            placeholder="E-mail"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          />
-          {errors.email && <span className={styles.error}>{errors.email}</span>}
+        <div className="step1__form-group">
+          <div className="step1__input-container">
+            <i className="bx bx-envelope step1__icon"></i>
+            <input
+              type="email"
+              id="email"
+              placeholder="E-mail"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
+          </div>
+          {errors.email && <span className="step1__error">{errors.email}</span>}
         </div>
 
-        <div className={styles.formGroup}>
-          <input
-            type="password"
-            id="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          />
-          {errors.password && <span className={styles.error}>{errors.password}</span>}
+        <div className="step1__form-group">
+          <div className="step1__input-container">
+            <i className="bx bx-lock-alt step1__icon"></i>
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            />
+          </div>
+          {errors.password && <span className="step1__error">{errors.password}</span>}
         </div>
 
-        <div className={styles.formGroup}>
-          <input
-            type="password"
-            id="confirmPassword"
-            placeholder="Confirmation Password"
-            value={formData.confirmPassword}
-            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-          />
-          {errors.confirmPassword && <span className={styles.error}>{errors.confirmPassword}</span>}
+        <div className="step1__form-group">
+          <div className="step1__input-container">
+            <i className="bx bx-lock-alt step1__icon"></i>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirmation Password"
+              value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+            />
+          </div>
+          {errors.confirmPassword && <span className="step1__error">{errors.confirmPassword}</span>}
         </div>
 
-        <div className={styles.checkboxGroup}>
+        <div className="step1__checkbox-group">
           <input
             type="checkbox"
             id="isOver16"
@@ -105,10 +122,10 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
             onChange={(e) => setFormData({ ...formData, isOver16: e.target.checked })}
           />
           <label htmlFor="isOver16">J&apos;ai plus de 16 ans</label>
-          {errors.isOver16 && <span className={styles.error}>{errors.isOver16}</span>}
+          {errors.isOver16 && <span className="step1__error">{errors.isOver16}</span>}
         </div>
 
-        <div className={styles.checkboxGroup}>
+        <div className="step1__checkbox-group">
           <input
             type="checkbox"
             id="acceptTerms"
@@ -118,16 +135,14 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
           <label htmlFor="acceptTerms">
             Je suis d&apos;accord avec les conditions d&apos;utilisation, la politique de confidentialité
           </label>
-          {errors.acceptTerms && <span className={styles.error}>{errors.acceptTerms}</span>}
+          {errors.acceptTerms && <span className="step1__error">{errors.acceptTerms}</span>}
         </div>
 
-        <button type="submit" className={styles.submitButton}>
+        <button type="submit" className="btn-primary step1__submit-button">
           S&apos;inscrire
         </button>
       </form>
-
-
-    </>
+    </div>
   );
 };
 
