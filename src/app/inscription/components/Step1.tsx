@@ -1,5 +1,7 @@
 "use client";
 import React, { useState } from 'react';
+import DOMPurify from 'dompurify';
+import validator from 'validator';
 import LegalModal from '@/components/common/LegalModal';
 import '../styles/Step1.scss';
 
@@ -32,22 +34,80 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState<'terms' | 'privacy'>('terms');
 
+  // Fonction de sanitisation
+  const sanitizeInput = (input: string): string => {
+    return DOMPurify.sanitize(input.trim());
+  };
+
+  // Fonction de validation du pseudo
+  const validatePseudo = (pseudo: string): string | null => {
+    if (!pseudo) return 'Le pseudo est requis';
+    if (pseudo.length < 3) return 'Le pseudo doit contenir au moins 3 caractères';
+    if (pseudo.length > 15) return 'Le pseudo ne peut pas dépasser 15 caractères';
+    if (!/^[a-zA-Z0-9_-]+$/.test(pseudo)) return 'Le pseudo ne peut contenir que des lettres, chiffres, tirets et underscores';
+    return null;
+  };
+
+  // Fonction de validation du mot de passe
+  const validatePassword = (password: string): string | null => {
+    if (!password) return 'Le mot de passe est requis';
+    if (password.length < 8) return 'Le mot de passe doit contenir au moins 8 caractères';
+    if (!/(?=.*[a-z])/.test(password)) return 'Le mot de passe doit contenir au moins une minuscule';
+    if (!/(?=.*[A-Z])/.test(password)) return 'Le mot de passe doit contenir au moins une majuscule';
+    if (!/(?=.*\d)/.test(password)) return 'Le mot de passe doit contenir au moins un chiffre';
+    return null;
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    const sanitizedValue = sanitizeInput(value);
+    setFormData({ ...formData, [field]: sanitizedValue });
+    
+    // Effacer l'erreur du champ lors de la saisie
+    if (errors[field as keyof FormErrors]) {
+      setErrors({ ...errors, [field]: undefined });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
+    // Validation avec sécurité
     const newErrors: FormErrors = {};
-    if (!formData.pseudo) newErrors.pseudo = 'Le pseudo est requis';
-    if (!formData.email) newErrors.email = 'L&apos;email est requis';
-    if (!formData.password) newErrors.password = 'Le mot de passe est requis';
+    
+    // Validation du pseudo
+    const pseudoError = validatePseudo(formData.pseudo);
+    if (pseudoError) newErrors.pseudo = pseudoError;
+
+    // Validation de l'email
+    if (!formData.email) {
+      newErrors.email = 'L\'email est requis';
+    } else if (!validator.isEmail(formData.email)) {
+      newErrors.email = 'Format d\'email invalide';
+    }
+
+    // Validation du mot de passe
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) newErrors.password = passwordError;
+
+    // Validation de la confirmation du mot de passe
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
     }
+
+    // Validation des checkboxes
     if (!formData.isOver16) newErrors.isOver16 = 'Vous devez avoir plus de 16 ans';
     if (!formData.acceptTerms) newErrors.acceptTerms = 'Vous devez accepter les conditions';
 
     if (Object.keys(newErrors).length === 0) {
-      onSubmit(formData);
+      // Sanitiser toutes les données avant l'envoi
+      const sanitizedData = {
+        ...formData,
+        pseudo: sanitizeInput(formData.pseudo),
+        email: sanitizeInput(formData.email.toLowerCase()),
+        password: formData.password, // Ne pas sanitiser le mot de passe
+        confirmPassword: formData.confirmPassword
+      };
+      onSubmit(sanitizedData);
     } else {
       setErrors(newErrors);
     }
@@ -69,7 +129,9 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
               id="pseudo"
               placeholder="Pseudo"
               value={formData.pseudo}
-              onChange={(e) => setFormData({ ...formData, pseudo: e.target.value })}
+              onChange={(e) => handleInputChange('pseudo', e.target.value)}
+              maxLength={15}
+              autoComplete="username"
             />
           </div>
           {errors.pseudo && <span className="step1__error">{errors.pseudo}</span>}
@@ -83,7 +145,8 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
               id="email"
               placeholder="E-mail"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              autoComplete="email"
             />
           </div>
           {errors.email && <span className="step1__error">{errors.email}</span>}
@@ -98,6 +161,7 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
               placeholder="Password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              autoComplete="new-password"
             />
           </div>
           {errors.password && <span className="step1__error">{errors.password}</span>}
@@ -112,6 +176,7 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
               placeholder="Confirmation Password"
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              autoComplete="new-password"
             />
           </div>
           {errors.confirmPassword && <span className="step1__error">{errors.confirmPassword}</span>}
@@ -162,7 +227,6 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
           {errors.acceptTerms && <span className="step1__error">{errors.acceptTerms}</span>}
         </div>
 
-
         <div className="step1_endform">
         <button type="submit" className="btn-custom-inverse step1__submit-button">
           S&apos;inscrire
@@ -180,4 +244,4 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
   );
 };
 
-export default Step1; 
+export default Step1;
