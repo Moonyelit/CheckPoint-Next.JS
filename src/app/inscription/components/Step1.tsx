@@ -138,9 +138,13 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
           {errors.acceptTerms && <span className="step1__error">{errors.acceptTerms}</span>}
         </div>
 
-        <button type="submit" className="btn-primary step1__submit-button">
+
+        <div className="step1_endform">
+        <button type="submit" className="btn-custom-inverse step1__submit-button">
           S&apos;inscrire
         </button>
+        </div>
+        
       </form>
     </div>
   );

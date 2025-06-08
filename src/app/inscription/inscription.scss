@@ -19,7 +19,7 @@
     url("/images/Animate/TheLastUs2.gif") lightgray 50% / cover no-repeat;
   position: relative;
   @include flex(column, flex-start, center);
-  padding-block: 10rem 3.5rem;
+  padding-block: 8rem 3.5rem;
 
   @include respond-to("medium") {
     padding-block: 8rem 3.5rem;
