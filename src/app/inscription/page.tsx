@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import './inscription.scss';
 import Step1 from './components/Step1';
 import Step2 from './components/Step2';
+import Step3 from './components/Step3';
 
 interface FormData {
   pseudo: string;
@@ -62,6 +63,10 @@ export default function Inscription() {
     }
   };
 
+  const handleStep2Next = () => {
+    setCurrentStep(3);
+  };
+
   return (
     <div className="inscription">
       {currentStep === 1 && (
@@ -71,7 +76,10 @@ export default function Inscription() {
         />
       )}
       {currentStep === 2 && (
-        <Step2 />
+        <Step2 onNext={handleStep2Next} />
+      )}
+      {currentStep === 3 && (
+        <Step3 />
       )}
     </div>
   );

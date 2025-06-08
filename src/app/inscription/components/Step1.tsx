@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
 import validator from 'validator';
 import LegalModal from '@/components/common/LegalModal';
+import { storePendingUser, sendVerificationEmail } from '@/utils/emailVerification';
 import '../styles/Step1.scss';
 
 interface FormData {
@@ -26,9 +27,10 @@ interface FormErrors {
 interface Step1Props {
   onSubmit: (data: FormData) => void;
   initialData: FormData;
+  onEmailSent?: () => void;
 }
 
-const Step1 = ({ onSubmit, initialData }: Step1Props) => {
+const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
   const [formData, setFormData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
@@ -107,6 +109,28 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
         password: formData.password, // Ne pas sanitiser le mot de passe
         confirmPassword: formData.confirmPassword
       };
+
+      // Stocker les données utilisateur pour la vérification
+      storePendingUser({
+        email: sanitizedData.email,
+        pseudo: sanitizedData.pseudo,
+        isVerified: false
+      });
+
+      // Envoyer l'email de vérification
+      sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo)
+        .then((result) => {
+          if (result.success) {
+            console.log('Email de vérification envoyé avec succès');
+            onEmailSent?.();
+          } else {
+            console.error('Erreur lors de l\'envoi de l\'email:', result.message);
+          }
+        })
+        .catch((error) => {
+          console.error('Erreur lors de l\'envoi de l\'email:', error);
+        });
+
       onSubmit(sanitizedData);
     } else {
       setErrors(newErrors);

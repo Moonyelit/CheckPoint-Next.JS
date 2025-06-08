@@ -26,7 +26,7 @@
   &__form-container {
     z-index: 2;
     width: 100%;
-    max-width: 900px;
+    max-width: 400px;
     flex: 1;
     @include flex(column, center, center);
     z-index: 1;
@@ -50,5 +50,6 @@
     color: var(--white);
     font-family: "Karantina", cursive;
     font-weight: 700;
+    line-height: 1; 
   }
 } 

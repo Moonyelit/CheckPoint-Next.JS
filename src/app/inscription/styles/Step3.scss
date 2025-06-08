@@ -1,0 +1,136 @@
+@use "@/styles/_mixins" as *;
+
+/* ----------------- Animations ----------------- */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseSelection {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ----------------- Step2 Component (BEM) ----------------- */
+.step3 {
+  &__form-container {
+    z-index: 2;
+    width: 100%;
+    flex: 1;
+    @include flex(column, space-around, center);
+    z-index: 1;
+    @include respond-to("medium") {
+      max-width: 95%;
+    }
+  }
+
+  /****************************************************
+  ****************** HEADER ******************
+  ****************************************************/
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--white);
+  }
+
+  &__title {
+    font-size: clamp(2.8125rem, 1.6463rem + 4.9756vw, 6rem);
+    letter-spacing: 3;
+    color: var(--white);
+    font-family: "Karantina", cursive;
+    font-weight: 700;
+    line-height: 1;
+    max-width: 400px;
+  }
+
+  &__subtitle {
+    font-size: clamp(0.8125rem, 0.5704rem + 1.0329vw, 1.5rem);
+    font-weight: 700;
+    color: var(--bleu-crystal-fonce);
+    margin-bottom: -5rem;
+  }
+
+
+  /****************************************************
+  ****************** SECTION ******************
+  ****************************************************/
+  &__section {
+    @include flex(column, center, center);
+    text-align: center;
+    color: var(--white);
+    font-weight: 600;
+    max-width: 600px;
+    gap: 1rem;
+  }
+
+  &__email-info {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    
+    p {
+      margin: 0;
+      color: var(--bleu-clair-crystal);
+    }
+  }
+
+  &__resend-section {
+    margin: 1.5rem 0;
+    
+    p {
+      margin-bottom: 1rem;
+    }
+  }
+
+  &__resend-button {
+    background: transparent;
+    border: 2px solid var(--bleu-crystal-normal);
+    color: var(--bleu-crystal-normal);
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover:not(:disabled) {
+      background: var(--bleu-crystal-normal);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  &__message {
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    font-weight: 500;
+
+    &.success {
+      background: rgba(160, 229, 142, 0.2);
+      border: 1px solid var(--green);
+      color: var(--green);
+    }
+
+    &.error {
+      background: rgba(235, 39, 39, 0.2);
+      border: 1px solid var(--red-normal);
+      color: var(--red-normal);
+    }
+  }
+} 
