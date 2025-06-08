@@ -49,13 +49,19 @@
         li {
           font-size: 14px;
 
-          a {
+          a,
+          .footer-legal-link {
             color: var(--black);
             text-decoration: none;
             font-weight: 500;
             @include transition(all, 0.3s, ease);
             padding: 0.5rem 0.75rem;
             border-radius: 6px;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
+            cursor: pointer;
 
             &:hover,
             &:focus {

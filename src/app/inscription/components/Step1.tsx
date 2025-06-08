@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from 'react';
+import LegalModal from '@/components/common/LegalModal';
 import '../styles/Step1.scss';
 
 interface FormData {
@@ -28,6 +29,7 @@ interface Step1Props {
 const Step1 = ({ onSubmit, initialData }: Step1Props) => {
   const [formData, setFormData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,7 +135,14 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
             onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
           />
           <label htmlFor="acceptTerms">
-            Je suis d&apos;accord avec les conditions d&apos;utilisation, la politique de confidentialité
+            Je suis d&apos;accord avec les{' '}
+            <button 
+              type="button"
+              onClick={() => setIsLegalModalOpen(true)}
+              className="step1__legal-link"
+            >
+              conditions d&apos;utilisation et la politique de confidentialité
+            </button>
           </label>
           {errors.acceptTerms && <span className="step1__error">{errors.acceptTerms}</span>}
         </div>
@@ -146,6 +155,11 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
         </div>
         
       </form>
+
+      <LegalModal 
+        isOpen={isLegalModalOpen}
+        onClose={() => setIsLegalModalOpen(false)}
+      />
     </div>
   );
 };

@@ -202,6 +202,30 @@
         transform: translateX(2px);
       }
     }
+
+    .step1__legal-link {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      color: var(--bleu-crystal-normal);
+      text-decoration: underline;
+      cursor: pointer;
+      @include transition(color, 0.3s, ease);
+
+      &:hover {
+        color: var(--bleu-crystal-light);
+        text-decoration-thickness: 2px;
+      }
+
+      &:focus {
+        outline: 2px solid var(--bleu-crystal-normal);
+        outline-offset: 2px;
+        border-radius: 2px;
+      }
+    }
   }
 
   &__error {

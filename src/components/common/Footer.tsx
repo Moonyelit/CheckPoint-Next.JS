@@ -1,8 +1,19 @@
+"use client";
+import React, { useState } from 'react';
 import "./styles/Footer.scss";
 import '../../styles/globals.scss';
 import classNames from 'classnames';
+import LegalModal from './LegalModal';
 
 const Footer = () => {
+  const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
+  const [legalModalTab, setLegalModalTab] = useState<'terms' | 'privacy'>('terms');
+
+  const openLegalModal = (tab: 'terms' | 'privacy') => {
+    setLegalModalTab(tab);
+    setIsLegalModalOpen(true);
+  };
+
   return (
     <footer className={classNames("footer", 'Paragraphe1')} role="contentinfo">
       <div className="footer-content">
@@ -11,8 +22,24 @@ const Footer = () => {
           <ul className="footer-content-nav-links">
             <li><a href="#contact">Contact</a></li>
             <li><a href="#equipe">L&apos;équipe</a></li>
-            <li><a href="#legal">Informations légales</a></li>
-            <li><a href="#confidentialite">Politique de confidentialité</a></li>
+            <li>
+              <button 
+                type="button"
+                onClick={() => openLegalModal('terms')}
+                className="footer-legal-link"
+              >
+                Informations légales
+              </button>
+            </li>
+            <li>
+              <button 
+                type="button"
+                onClick={() => openLegalModal('privacy')}
+                className="footer-legal-link"
+              >
+                Politique de confidentialité
+              </button>
+            </li>
           </ul>
         </nav>
 
@@ -47,6 +74,12 @@ const Footer = () => {
           </p>
         </div>
       </div>
+
+      <LegalModal 
+        isOpen={isLegalModalOpen}
+        onClose={() => setIsLegalModalOpen(false)}
+        initialTab={legalModalTab}
+      />
     </footer>
   );
 };
