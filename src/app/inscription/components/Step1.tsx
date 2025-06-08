@@ -30,6 +30,7 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
   const [formData, setFormData] = useState<FormData>(initialData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
+  const [legalModalTab, setLegalModalTab] = useState<'terms' | 'privacy'>('terms');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,10 +139,24 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
             Je suis d&apos;accord avec les{' '}
             <button 
               type="button"
-              onClick={() => setIsLegalModalOpen(true)}
+              onClick={() => {
+                setLegalModalTab('terms');
+                setIsLegalModalOpen(true);
+              }}
               className="step1__legal-link"
             >
-              conditions d&apos;utilisation et la politique de confidentialité
+              conditions d&apos;utilisation
+            </button>
+            {' '}et la{' '}
+            <button 
+              type="button"
+              onClick={() => {
+                setLegalModalTab('privacy');
+                setIsLegalModalOpen(true);
+              }}
+              className="step1__legal-link"
+            >
+              politique de confidentialité
             </button>
           </label>
           {errors.acceptTerms && <span className="step1__error">{errors.acceptTerms}</span>}
@@ -159,6 +174,7 @@ const Step1 = ({ onSubmit, initialData }: Step1Props) => {
       <LegalModal 
         isOpen={isLegalModalOpen}
         onClose={() => setIsLegalModalOpen(false)}
+        initialTab={legalModalTab}
       />
     </div>
   );

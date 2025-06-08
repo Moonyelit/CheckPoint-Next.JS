@@ -57,11 +57,12 @@
 
   &__form {
     width: 100%;
-    max-width: 380px;
+    max-width: 405px;
     margin: 0 auto;
 
     @include respond-to("medium") {
       max-width: 90%;
+      max-width: 405px;
     }
   }
 
@@ -210,7 +211,7 @@
       font-family: inherit;
       font-size: inherit;
       font-weight: inherit;
-      color: var(--bleu-crystal-normal);
+      color: var(--bleu-crystal-fonce);
       text-decoration: underline;
       cursor: pointer;
       @include transition(color, 0.3s, ease);
