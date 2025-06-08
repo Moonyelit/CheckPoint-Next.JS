@@ -1,0 +1,54 @@
+@use "@/styles/_mixins" as *;
+
+/* ----------------- Animations ----------------- */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseSelection {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ----------------- Step2 Component (BEM) ----------------- */
+.step2 {
+  &__form-container {
+    z-index: 2;
+    width: 100%;
+    max-width: 900px;
+    flex: 1;
+    @include flex(column, center, center);
+    z-index: 1;
+    @include respond-to("medium") {
+      max-width: 95%;
+    }
+  }
+
+  /****************************************************
+  ****************** HEADER ******************
+  ****************************************************/
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--white);
+  }
+
+  &__title {
+    font-size: clamp(2.8125rem, 1.6463rem + 4.9756vw, 6rem);
+    letter-spacing: 3;
+    color: var(--white);
+    font-family: "Karantina", cursive;
+    font-weight: 700;
+  }
+} 

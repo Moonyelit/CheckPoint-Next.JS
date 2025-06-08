@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import './inscription.scss';
 import Step1 from './components/Step1';
+import Step2 from './components/Step2';
 
 interface FormData {
   pseudo: string;
@@ -11,6 +12,8 @@ interface FormData {
   isOver16: boolean;
   acceptTerms: boolean;
 }
+
+
 
 export default function Inscription() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -22,13 +25,14 @@ export default function Inscription() {
     isOver16: false,
     acceptTerms: false
   });
-
+  
   const handleStep1Submit = async (data: FormData) => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/ld+json',
+          'Accept': 'application/ld+json',
         },
         body: JSON.stringify(data),
       });
@@ -41,7 +45,16 @@ export default function Inscription() {
       } else {
         const errorData = await response.json();
         console.error('Erreur de l\'API:', errorData);
-        alert('Erreur lors de l\'inscription: ' + (errorData.message || 'Erreur inconnue'));
+        
+        // Gestion spécifique des erreurs de validation
+        if (response.status === 422 && errorData.violations) {
+          const errors = errorData.violations.map((v: { message: string }) => v.message).join(', ');
+          alert('Erreur de validation: ' + errors);
+        } else if (response.status === 400) {
+          alert('Erreur lors de l\'inscription: ' + (errorData.detail || errorData.message || 'Données invalides'));
+        } else {
+          alert('Erreur lors de l\'inscription: ' + (errorData.detail || errorData.message || 'Erreur inconnue'));
+        }
       }
     } catch (error) {
       console.error('Erreur réseau lors de l\'inscription:', error);
@@ -56,6 +69,9 @@ export default function Inscription() {
           onSubmit={handleStep1Submit}
           initialData={formData}
         />
+      )}
+      {currentStep === 2 && (
+        <Step2 />
       )}
     </div>
   );
