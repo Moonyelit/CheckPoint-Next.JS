@@ -21,6 +21,18 @@
   }
 }
 
+@keyframes checkboxPulse {
+  0% {
+    transform: scale(1.05) rotate(-2deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(-5deg);
+  }
+  100% {
+    transform: scale(1.05) rotate(-2deg);
+  }
+}
+
 /* ----------------- Connexion Container (BEM) ----------------- */
 .connexion {
   flex: 1;
@@ -188,6 +200,71 @@
     color: rgba(255, 255, 255, 0.8);
     z-index: 2;
     pointer-events: none;
+  }
+
+  /****************************************************
+  ****************** CHECKBOX GROUP ******************
+  ****************************************************/
+  &__checkbox-group {
+    @include flex(row, flex-start, flex-start);
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 1rem;
+      margin-top: 2px;
+      accent-color: var(--bleu-crystal-normal);
+      cursor: pointer;
+      @include transition(
+        transform,
+        0.2s,
+        cubic-bezier(0.68, -0.55, 0.265, 1.55)
+      );
+
+      &:hover {
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95) rotate(5deg);
+      }
+
+      &:checked {
+        transform: scale(1.05) rotate(-2deg);
+        animation: checkboxPulse 0.3s ease-out;
+      }
+
+      &:checked:hover {
+        transform: scale(1.15) rotate(-2deg);
+      }
+
+      &:focus {
+        outline: 2px solid var(--bleu-crystal-normal);
+        outline-offset: 2px;
+      }
+    }
+
+    label {
+      color: var(--white);
+      font-family: var(--font-base);
+      font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      flex: 1;
+      @include transition(color, 0.5s, ease);
+
+      &:hover {
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      &:active {
+        transform: translateX(2px);
+      }
+    }
   }
 
   /****************************************************
