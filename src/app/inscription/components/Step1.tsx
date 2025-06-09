@@ -110,12 +110,15 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
         confirmPassword: formData.confirmPassword
       };
 
-      // Stocker les données utilisateur pour la vérification
+      // Stocker les données utilisateur pour la vérification avec indicateur d'étape
       storePendingUser({
         email: sanitizedData.email,
         pseudo: sanitizedData.pseudo,
         isVerified: false
       });
+      
+      // Marquer qu'on passe à l'étape 2
+      localStorage.setItem('inscriptionStep', '2');
 
       // Envoyer l'email de vérification
       sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo)

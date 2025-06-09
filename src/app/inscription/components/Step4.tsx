@@ -10,6 +10,9 @@ const Step4 = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
+    // Marquer qu'on est à l'étape 4
+    localStorage.setItem('inscriptionStep', '4');
+    
     // Récupérer l'email depuis les paramètres URL
     const email = searchParams?.get('email');
     const verified = searchParams?.get('verified');
@@ -30,8 +33,9 @@ const Step4 = () => {
   }, [searchParams]);
 
   const handleContinue = () => {
-    // Nettoyer les données en attente et rediriger vers la connexion
+    // Nettoyer les données en attente et les indicateurs d'étape
     clearPendingUser();
+    localStorage.removeItem('inscriptionStep');
     window.location.href = '/connexion';
   };
 

@@ -11,6 +11,10 @@ interface Step3Props {
 }
 
 const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
+  // Marquer qu'on est à l'étape 3
+  useEffect(() => {
+    localStorage.setItem('inscriptionStep', '3');
+  }, []);
   const [isResending, setIsResending] = useState(false);
   const [resendMessage, setResendMessage] = useState('');
   const [userEmail, setUserEmail] = useState(email || '');

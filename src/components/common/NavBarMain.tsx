@@ -58,7 +58,7 @@ export default function Navbar() {
           <Link href="/inscription" className="navbar-right-auth-link">
             S&apos;inscrire
           </Link>
-          <Link href="/auth/connexion" className="navbar-right-auth-link">
+          <Link href="/connexion" className="navbar-right-auth-link">
             Connexion
           </Link>
         </div>

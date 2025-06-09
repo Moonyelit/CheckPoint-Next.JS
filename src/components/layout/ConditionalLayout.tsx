@@ -32,7 +32,7 @@ export default function ConditionalLayout({ children }: ConditionalLayoutProps) 
   const pathname = usePathname();
   
   // Pages qui n'affichent pas la navbar et le footer (pages d'auth)
-  const authPages = ['/inscription'];
+  const authPages = ['/inscription', '/connexion'];
   const isAuthPage = authPages.some(page => pathname.startsWith(page));
 
   // Pour l'instant, on considère que l'utilisateur n'est pas connecté
