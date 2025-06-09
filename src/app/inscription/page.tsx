@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { getInitialInscriptionStep } from '@/utils/auth';
 import './inscription.scss';
 import Step1 from './components/Step1';
 import Step2 from './components/Step2';
@@ -30,25 +31,10 @@ export default function Inscription() {
   });
   const searchParams = useSearchParams();
 
-  // Vérifier s'il y a une redirection depuis la vérification email ou depuis la connexion
+  // Déterminer l'étape d'inscription avec la fonction centralisée
   useEffect(() => {
-    const verified = searchParams?.get('verified');
-    const error = searchParams?.get('error');
-    
-    // Priorité 1: Paramètres URL (vérification email)
-    if (verified === 'true' || error) {
-      setCurrentStep(4);
-      return;
-    }
-    
-    // Priorité 2: Étape stockée depuis la connexion
-    const storedStep = localStorage.getItem('inscriptionStep');
-    if (storedStep) {
-      const stepNumber = parseInt(storedStep, 10);
-      if (stepNumber >= 1 && stepNumber <= 4) {
-        setCurrentStep(stepNumber);
-      }
-    }
+    const step = getInitialInscriptionStep(searchParams || undefined);
+    setCurrentStep(step);
   }, [searchParams]);
   
   const handleStep1Submit = async (data: FormData) => {

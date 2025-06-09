@@ -68,14 +68,18 @@ export default function Connexion() {
         localStorage.removeItem('inscriptionStep');
         
         // Vérifier le statut de vérification email pour rediriger correctement
-        if (userData.user && !userData.user.emailVerified) {
+        if (userData?.user?.emailVerified === false) {
           // Si l'email n'est pas vérifié, rediriger vers l'étape 3
           localStorage.setItem('inscriptionStep', '3');
           router.push('/inscription');
-        } else {
+        } else if (userData?.user?.emailVerified === true) {
           // Email vérifié, rediriger vers l'étape 4 pour afficher le succès
           localStorage.setItem('inscriptionStep', '4');
           router.push('/inscription');
+        } else {
+          // Données utilisateur invalides ou incomplètes
+          console.error('Données utilisateur invalides:', userData);
+          setError('Erreur lors de la récupération des données utilisateur');
         }
       } else {
         const errorData = await response.json();
@@ -99,7 +103,12 @@ export default function Connexion() {
 
         <form onSubmit={handleSubmit} className="connexion__form">
           {error && (
-            <div className="connexion__error-banner">
+            <div 
+              className="connexion__error-banner" 
+              role="alert" 
+              aria-live="assertive"
+              aria-label="Erreur de connexion"
+            >
               {error}
             </div>
           )}

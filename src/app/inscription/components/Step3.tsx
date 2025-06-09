@@ -145,7 +145,12 @@ const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
         </div>
 
         {resendMessage && (
-          <div className={`step3__message ${resendMessage.includes('succès') || resendMessage.includes('vérifié') ? 'success' : 'error'}`}>
+          <div 
+            className={`step3__message ${resendMessage.includes('succès') || resendMessage.includes('vérifié') ? 'success' : 'error'}`}
+            role="alert"
+            aria-live="polite"
+            aria-label={resendMessage.includes('succès') || resendMessage.includes('vérifié') ? 'Message de succès' : 'Message d\'erreur'}
+          >
             {resendMessage}
           </div>
         )}

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { clearPendingUser, markEmailAsVerified } from '@/utils/emailVerification';
-import { getCurrentUser, logout } from '@/utils/auth';
+import { getCurrentUser, logout, cleanupInscriptionData } from '@/utils/auth';
 import '../styles/Step3.scss';
 import '../styles/Step4.scss';
 
@@ -47,7 +47,7 @@ const Step4 = () => {
   const handleContinue = () => {
     // Nettoyer les données en attente et les indicateurs d'étape
     clearPendingUser();
-    localStorage.removeItem('inscriptionStep');
+    cleanupInscriptionData();
     
     // Si l'utilisateur est déjà connecté, aller à l'accueil, sinon à la connexion
     const currentUser = getCurrentUser();
@@ -78,11 +78,11 @@ const Step4 = () => {
             </div>
 
             <div className="step3__section">
-              <p>
+              <p role="alert" aria-live="polite">
                 Parfait ! Votre adresse e-mail <strong>{userEmail}</strong> a été vérifiée avec succès.
               </p>
               {userName && (
-                <p>
+                <p aria-label={`Message de bienvenue pour ${userName}`}>
                   Bienvenue <strong>{userName}</strong> ! Votre compte CheckPoint est maintenant actif.
                 </p>
               )}
@@ -131,8 +131,8 @@ const Step4 = () => {
             <p className="step3__subtitle">Problème de vérification</p>
 
             <div className="step3__section">
-              <div className="error-icon">❌</div>
-              <p>
+              <div className="error-icon" aria-label="Icône d'erreur">❌</div>
+              <p role="alert" aria-live="assertive">
                 Désolé, nous n&apos;avons pas pu vérifier votre adresse e-mail. 
                 Le lien peut avoir expiré ou être invalide.
               </p>

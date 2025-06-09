@@ -4,6 +4,7 @@ import DOMPurify from 'dompurify';
 import validator from 'validator';
 import LegalModal from '@/components/common/LegalModal';
 import { storePendingUser, sendVerificationEmail } from '@/utils/emailVerification';
+import { safeLocalStorageSet } from '@/utils/auth';
 import '../styles/Step1.scss';
 
 interface FormData {
@@ -118,7 +119,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
       });
       
       // Marquer qu'on passe à l'étape 2
-      localStorage.setItem('inscriptionStep', '2');
+      safeLocalStorageSet('inscriptionStep', '2');
 
       // Envoyer l'email de vérification
       sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo)
@@ -161,7 +162,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
               autoComplete="username"
             />
           </div>
-          {errors.pseudo && <span className="step1__error">{errors.pseudo}</span>}
+          {errors.pseudo && <span className="step1__error" role="alert" aria-live="polite">{errors.pseudo}</span>}
         </div>
 
         <div className="step1__form-group">
@@ -176,7 +177,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
               autoComplete="email"
             />
           </div>
-          {errors.email && <span className="step1__error">{errors.email}</span>}
+          {errors.email && <span className="step1__error" role="alert" aria-live="polite">{errors.email}</span>}
         </div>
 
         <div className="step1__form-group">
@@ -191,7 +192,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
               autoComplete="new-password"
             />
           </div>
-          {errors.password && <span className="step1__error">{errors.password}</span>}
+          {errors.password && <span className="step1__error" role="alert" aria-live="polite">{errors.password}</span>}
         </div>
 
         <div className="step1__form-group">
@@ -206,7 +207,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
               autoComplete="new-password"
             />
           </div>
-          {errors.confirmPassword && <span className="step1__error">{errors.confirmPassword}</span>}
+          {errors.confirmPassword && <span className="step1__error" role="alert" aria-live="polite">{errors.confirmPassword}</span>}
         </div>
 
         <div className="step1__checkbox-group">
@@ -217,7 +218,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
             onChange={(e) => setFormData({ ...formData, isOver16: e.target.checked })}
           />
           <label htmlFor="isOver16">J&apos;ai plus de 16 ans</label>
-          {errors.isOver16 && <span className="step1__error">{errors.isOver16}</span>}
+          {errors.isOver16 && <span className="step1__error" role="alert" aria-live="polite">{errors.isOver16}</span>}
         </div>
 
         <div className="step1__checkbox-group">
@@ -251,7 +252,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
               politique de confidentialité
             </button>
           </label>
-          {errors.acceptTerms && <span className="step1__error">{errors.acceptTerms}</span>}
+          {errors.acceptTerms && <span className="step1__error" role="alert" aria-live="polite">{errors.acceptTerms}</span>}
         </div>
 
         <div className="step1_endform">

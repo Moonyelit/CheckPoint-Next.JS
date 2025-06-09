@@ -207,4 +207,81 @@ export const debugAuthState = (): void => {
   }
   
   console.groupEnd();
+};
+
+// Gestion sécurisée du localStorage avec try/catch
+export const safeLocalStorageGet = (key: string): string | null => {
+  if (typeof window === 'undefined') return null;
+  
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    console.error(`Erreur lors de la lecture de localStorage (${key}):`, error);
+    return null;
+  }
+};
+
+export const safeLocalStorageSet = (key: string, value: string): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    console.error(`Erreur lors de l'écriture de localStorage (${key}):`, error);
+    return false;
+  }
+};
+
+export const safeLocalStorageRemove = (key: string): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    localStorage.removeItem(key);
+    return true;
+  } catch (error) {
+    console.error(`Erreur lors de la suppression de localStorage (${key}):`, error);
+    return false;
+  }
+};
+
+// Fonction centralisée pour déterminer l'étape d'inscription initiale
+export const getInitialInscriptionStep = (searchParams?: URLSearchParams): number => {
+  // Priorité 1: Paramètres URL (vérification email directe)
+  if (searchParams) {
+    const verified = searchParams.get('verified');
+    const error = searchParams.get('error');
+    
+    if (verified === 'true' || error) {
+      return 4;
+    }
+  }
+  
+  // Priorité 2: Étape stockée dans localStorage (depuis connexion)
+  const storedStep = safeLocalStorageGet('inscriptionStep');
+  if (storedStep) {
+    const parsed = parseInt(storedStep, 10);
+    if (parsed >= 1 && parsed <= 4) {
+      return parsed;
+    }
+  }
+  
+  // Priorité 3: Déduction selon l'état de l'utilisateur connecté
+  const currentUser = getCurrentUser();
+  if (currentUser && isUserLoggedIn()) {
+    if (currentUser.emailVerified) {
+      return 4; // Email vérifié
+    } else {
+      return 3; // Connecté mais email non vérifié
+    }
+  }
+  
+  // Valeur par défaut: nouvelle inscription
+  return 1;
+};
+
+// Fonction pour nettoyer automatiquement les données temporaires
+export const cleanupInscriptionData = (): void => {
+  safeLocalStorageRemove('inscriptionStep');
+  safeLocalStorageRemove('pendingUser');
 }; 
