@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { hasUnverifiedEmail, getPendingUser } from '@/utils/emailVerification';
+import { hasUnverifiedEmail } from '@/utils/emailVerification';
 
 interface EmailVerificationGuardProps {
   children: React.ReactNode;

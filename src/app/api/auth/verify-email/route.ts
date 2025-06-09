@@ -19,9 +19,9 @@ export async function GET(request: NextRequest) {
     // 2. Marquer l'email comme vérifié en base de données
     // 3. Supprimer le token utilisé
 
-    // Simulation de succès
+    // Simulation de succès - redirection vers l'inscription avec l'étape 4
     return NextResponse.redirect(
-      new URL('/inscription?verified=true', request.url)
+      new URL(`/inscription?verified=true&email=${encodeURIComponent(email)}`, request.url)
     );
 
   } catch (error) {

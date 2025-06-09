@@ -1,18 +1,21 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { getPendingUser } from '@/utils/emailVerification';
 import '../styles/Step3.scss';
 
 interface Step3Props {
   email?: string;
   pseudo?: string;
+  onEmailVerified?: () => void;
 }
 
-const Step3 = ({ email, pseudo }: Step3Props) => {
+const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
   const [isResending, setIsResending] = useState(false);
   const [resendMessage, setResendMessage] = useState('');
   const [userEmail, setUserEmail] = useState(email || '');
   const [userPseudo, setUserPseudo] = useState(pseudo || '');
+  const [showPopup, setShowPopup] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -39,6 +42,20 @@ const Step3 = ({ email, pseudo }: Step3Props) => {
       setUserPseudo(userData.pseudo);
     }
   }, [searchParams, email]);
+
+  const handleContinueClick = () => {
+    // Vérifier si l'email a été vérifié
+    const pendingUser = getPendingUser();
+    
+    if (pendingUser && pendingUser.isVerified) {
+      // Email vérifié, passer à l'étape 4
+      onEmailVerified?.();
+    } else {
+      // Email non vérifié, afficher la popup
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 3000); // Fermer après 3 secondes
+    }
+  };
 
   const handleResendEmail = async () => {
     if (!userEmail) {
@@ -98,7 +115,7 @@ const Step3 = ({ email, pseudo }: Step3Props) => {
             disabled={isResending}
             className="step3__resend-button"
           >
-            {isResending ? 'Envoi en cours...' : 'Renvoyer l&apos;e-mail'}
+            {isResending ? 'Envoi en cours...' : 'Renvoyer un e-mail'}
           </button>
         </div>
 
@@ -109,8 +126,25 @@ const Step3 = ({ email, pseudo }: Step3Props) => {
         )}
       </div>
 
-      <button className="btn-custom-inverse" onClick={() => window.location.href = '/connexion'}>
-        Retour à la connexion
+      {/* Popup de validation */}
+      {showPopup && (
+        <div className="step3__popup-overlay">
+          <div className="step3__popup">
+            <div className="step3__popup-icon">⚠️</div>
+            <h3>Vérification requise</h3>
+            <p>Veuillez valider votre adresse e-mail avant de continuer</p>
+            <button 
+              className="step3__popup-button"
+              onClick={() => setShowPopup(false)}
+            >
+              Compris
+            </button>
+          </div>
+        </div>
+      )}
+
+      <button className="btn-custom-inverse" onClick={handleContinueClick}>
+        Continuer
       </button>
     </div>
   );

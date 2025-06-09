@@ -1,9 +1,11 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import './inscription.scss';
 import Step1 from './components/Step1';
 import Step2 from './components/Step2';
 import Step3 from './components/Step3';
+import Step4 from './components/Step4';
 
 interface FormData {
   pseudo: string;
@@ -26,6 +28,17 @@ export default function Inscription() {
     isOver16: false,
     acceptTerms: false
   });
+  const searchParams = useSearchParams();
+
+  // Vérifier s'il y a une redirection depuis la vérification email
+  useEffect(() => {
+    const verified = searchParams?.get('verified');
+    const error = searchParams?.get('error');
+    
+    if (verified === 'true' || error) {
+      setCurrentStep(4);
+    }
+  }, [searchParams]);
   
   const handleStep1Submit = async (data: FormData) => {
     try {
@@ -67,6 +80,10 @@ export default function Inscription() {
     setCurrentStep(3);
   };
 
+  const handleEmailVerified = () => {
+    setCurrentStep(4);
+  };
+
   return (
     <div className="inscription">
       {currentStep === 1 && (
@@ -79,7 +96,14 @@ export default function Inscription() {
         <Step2 onNext={handleStep2Next} />
       )}
       {currentStep === 3 && (
-        <Step3 />
+        <Step3 
+          email={formData.email}
+          pseudo={formData.pseudo}
+          onEmailVerified={handleEmailVerified}
+        />
+      )}
+      {currentStep === 4 && (
+        <Step4 />
       )}
     </div>
   );
