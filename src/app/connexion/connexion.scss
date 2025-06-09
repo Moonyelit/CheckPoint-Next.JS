@@ -1,0 +1,31 @@
+@import "@/styles/mixins";
+@import "@/styles/variables";
+
+/* ----------------- Connexion Container (BEM) ----------------- */
+.connexion {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(
+      to top,
+      rgba(165, 183, 194, 0.9) 0%,
+      rgba(165, 183, 194, 0.8) 40%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(168, 187, 197, 0.6) 0%,
+      rgba(217, 223, 228, 0.2) 50%,
+      transparent 100%
+    ),
+    url("/images/Animate/TheLastUs2.gif") lightgray 70% / cover no-repeat;
+  position: relative;
+  @include flex(column, center, center);
+  padding-block: 8rem 3.5rem;
+
+  @include respond-to("medium") {
+    padding-block: 8rem 3.5rem;
+  }
+} 
