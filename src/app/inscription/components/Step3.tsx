@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { getPendingUser } from '@/utils/emailVerification';
+import { getCurrentUser, isEmailVerified } from '@/utils/auth';
 import '../styles/Step3.scss';
 
 interface Step3Props {
@@ -38,20 +39,40 @@ const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
       }
     }
 
-    // Récupérer les données utilisateur depuis le localStorage si disponibles
-    const storedUserData = localStorage.getItem('pendingUser');
-    if (storedUserData && !email) {
-      const userData = JSON.parse(storedUserData);
-      setUserEmail(userData.email);
-      setUserPseudo(userData.pseudo);
+    // Récupérer les données utilisateur selon la priorité :
+    // 1. Props (si passées directement)
+    // 2. Utilisateur connecté (si disponible)
+    // 3. Données en attente (fallback)
+    
+    if (!email) { // Seulement si pas passé en props
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        // Utilisateur connecté : utiliser ses données
+        setUserEmail(currentUser.email);
+        setUserPseudo(currentUser.pseudo);
+      } else {
+        // Pas d'utilisateur connecté : chercher dans les données en attente
+        const storedUserData = localStorage.getItem('pendingUser');
+        if (storedUserData) {
+          try {
+            const userData = JSON.parse(storedUserData);
+            setUserEmail(userData.email || '');
+            setUserPseudo(userData.pseudo || '');
+          } catch (error) {
+            console.error('Erreur parsing pendingUser:', error);
+            localStorage.removeItem('pendingUser'); // Nettoyer les données corrompues
+          }
+        }
+      }
     }
   }, [searchParams, email]);
 
   const handleContinueClick = () => {
     // Vérifier si l'email a été vérifié
+    const emailVerified = isEmailVerified();
     const pendingUser = getPendingUser();
     
-    if (pendingUser && pendingUser.isVerified) {
+    if (emailVerified || (pendingUser && pendingUser.isVerified)) {
       // Email vérifié, passer à l'étape 4
       onEmailVerified?.();
     } else {

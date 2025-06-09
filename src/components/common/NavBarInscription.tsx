@@ -4,8 +4,9 @@ import Link from "next/link";
 import "./styles/NavBarInscription.scss";
 import Logo from "@/components/common/Logo";
 import Button from "@/components/common/Button";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { isUserLoggedIn, logout, getCurrentInscriptionStep } from "@/utils/auth";
 
 //*******************************************************
 // Navbar pour la page d'inscription et d'authentification  
@@ -16,38 +17,33 @@ import { useEffect, useState } from "react";
 export default function InscriptionNavbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Vérifier si l'utilisateur est connecté
+  // Vérification simple de l'état d'auth
   useEffect(() => {
-    // TODO: Remplacer par votre logique d'authentification
-    // Par exemple, vérifier un token dans localStorage, un context, etc.
-    const checkAuthStatus = () => {
-      const token = localStorage.getItem('authToken');
-      const user = localStorage.getItem('user');
-      setIsUserLoggedIn(!!(token && user));
+    const checkAuth = () => {
+      setIsAuthenticated(isUserLoggedIn());
     };
 
-    checkAuthStatus();
+    checkAuth();
     
-    // Écouter les changements dans localStorage
-    window.addEventListener('storage', checkAuthStatus);
-    return () => window.removeEventListener('storage', checkAuthStatus);
+    // Écouter les changements de stockage pour la synchronisation
+    window.addEventListener('storage', checkAuth);
+    
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+    };
   }, []);
 
   // Déterminer l'état actuel pour le bouton
   const getButtonConfig = () => {
     // Si l'utilisateur est connecté
-    if (isUserLoggedIn) {
+    if (isAuthenticated) {
       return {
         label: "SE DÉCONNECTER",
         action: () => {
-          // Logique de déconnexion
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-          localStorage.removeItem('pendingUser');
-          setIsUserLoggedIn(false);
+          logout();
+          setIsAuthenticated(false); // Mise à jour immédiate
           router.push('/');
         }
       };
@@ -63,26 +59,10 @@ export default function InscriptionNavbar() {
 
     // Si on est sur la page d'inscription, détecter l'étape
     if (pathname === '/inscription') {
-      // Récupérer l'étape actuelle depuis localStorage
-      const currentStep = typeof window !== 'undefined' ? localStorage.getItem('inscriptionStep') : null;
+      const currentStep = getCurrentInscriptionStep();
       
-      // Étape 4 : Email vérifié avec succès (considéré comme connecté)
-      if (searchParams?.get('verified') === 'true' || currentStep === '4') {
-        return {
-          label: "SE DÉCONNECTER",
-          action: () => {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('user');
-            localStorage.removeItem('pendingUser');
-            localStorage.removeItem('inscriptionStep');
-            setIsUserLoggedIn(false);
-            router.push('/');
-          }
-        };
-      }
-
-      // Étapes 2 et 3 : Après inscription, pendant la vérification
-      if (currentStep === '2' || currentStep === '3') {
+      // Étapes 2, 3 et 4 : Processus d'inscription en cours
+      if (currentStep === '2' || currentStep === '3' || currentStep === '4') {
         return {
           label: "SE CONNECTER",
           action: () => router.push('/connexion')

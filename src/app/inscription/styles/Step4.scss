@@ -1,0 +1,205 @@
+@use "@/styles/_mixins" as *;
+
+/* ----------------- Animations pour Step4 ----------------- */
+@keyframes successBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(50px);
+  }
+  50% {
+    transform: scale(1.1) translateY(-10px);
+  }
+  70% {
+    transform: scale(0.9) translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pulseSuccess {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8px 20px rgba(160, 229, 142, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(160, 229, 142, 0.6);
+  }
+}
+
+@keyframes confetti {
+  0% {
+    transform: translateY(-10px) rotateZ(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInSuccess {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ----------------- Step4 Component Spécifique (BEM) ----------------- */
+.step4 {
+  &__success-container {
+    animation: successBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  &__success-icon {
+    text-align: center;
+    margin: 2rem 0;
+    position: relative;
+
+    .success-checkmark {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, var(--green) 0%, #7ed957 100%);
+      border-radius: 50%;
+      color: white;
+      font-size: 50px;
+      line-height: 100px;
+      font-weight: bold;
+      box-shadow: 0 8px 20px rgba(160, 229, 142, 0.4);
+      animation: pulseSuccess 2s infinite;
+      position: relative;
+      
+      &::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+        border-radius: 50%;
+        border: 3px solid rgba(160, 229, 142, 0.3);
+        animation: pulseSuccess 2s infinite 0.5s;
+      }
+    }
+
+    // Effet confetti
+    &::after {
+      content: '🎉';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      animation: confetti 3s ease-out infinite;
+    }
+  }
+
+  &__celebration-text {
+    animation: slideInSuccess 0.6s ease-out 0.3s both;
+    
+    h1 {
+      background: linear-gradient(45deg, var(--bleu-crystal-normal), var(--green));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: slideInSuccess 0.8s ease-out 0.5s both;
+    }
+  }
+
+  &__benefits {
+    display: grid;
+    gap: 1rem;
+    margin: 2rem 0;
+    max-width: 400px;
+
+    .benefit-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      border-left: 4px solid var(--bleu-crystal-normal);
+      animation: slideInSuccess 0.6s ease-out calc(var(--delay, 0) * 0.1s) both;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateX(5px);
+        background: rgba(255, 255, 255, 0.15);
+        box-shadow: 0 5px 15px rgba(35, 171, 250, 0.2);
+      }
+
+      &:nth-child(1) { --delay: 3; }
+      &:nth-child(2) { --delay: 4; }
+      &:nth-child(3) { --delay: 5; }
+
+      .benefit-icon {
+        font-size: 1.5rem;
+        min-width: 30px;
+        animation: pulseSuccess 2s infinite calc(var(--delay, 0) * 0.2s);
+      }
+
+      span:last-child {
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__action-button {
+    animation: slideInSuccess 0.6s ease-out 0.8s both;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 25px rgba(35, 171, 250, 0.4);
+    }
+  }
+
+  // Styles pour les états d'erreur
+  &__error-container {
+    animation: slideInSuccess 0.6s ease-out;
+    
+    .error-icon {
+      color: var(--red-normal);
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      animation: pulse 1s infinite;
+    }
+  }
+
+  // Styles pour l'état de chargement
+  &__loading-container {
+    animation: slideInSuccess 0.6s ease-out;
+    
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid var(--bleu-crystal-normal);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem auto;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
