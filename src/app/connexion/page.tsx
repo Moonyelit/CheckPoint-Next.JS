@@ -1,21 +1,30 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { saveAuthData, isRememberMeEnabled } from '@/utils/auth';
 import './connexion.scss';
 
 interface LoginFormData {
   email: string;
   password: string;
+  rememberMe: boolean;
 }
 
 export default function Connexion() {
   const router = useRouter();
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
-    password: ''
+    password: '',
+    rememberMe: false
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Récupérer la préférence "se souvenir de moi" au chargement
+  useEffect(() => {
+    const rememberMe = isRememberMeEnabled();
+    setFormData(prev => ({ ...prev, rememberMe }));
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,26 +50,32 @@ export default function Connexion() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
       });
 
       if (response.ok) {
         const userData = await response.json();
         console.log('Connexion réussie:', userData);
         
-        // Sauvegarder les informations d'authentification
-        if (userData.token) {
-          localStorage.setItem('authToken', userData.token);
-        }
-        if (userData.user) {
-          localStorage.setItem('user', JSON.stringify(userData.user));
-        }
+        // Utiliser la nouvelle fonction saveAuthData
+        saveAuthData(userData, formData.rememberMe);
         
         // Nettoyer les données d'inscription en attente
         localStorage.removeItem('pendingUser');
+        localStorage.removeItem('inscriptionStep');
         
-        // Rediriger vers la page d'accueil ou dashboard
-        router.push('/');
+        // Vérifier le statut de vérification email pour rediriger correctement
+        if (userData.user && !userData.user.emailVerified) {
+          // Si l'email n'est pas vérifié, rediriger vers l'étape 3
+          localStorage.setItem('inscriptionStep', '3');
+          router.push('/inscription');
+        } else {
+          // Email vérifié, rediriger vers la page d'accueil
+          router.push('/');
+        }
       } else {
         const errorData = await response.json();
         setError(errorData.message || 'Erreur lors de la connexion');
@@ -118,6 +133,17 @@ export default function Connexion() {
                 autoComplete="current-password"
               />
             </div>
+          </div>
+
+          <div className="connexion__checkbox-group">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              name="rememberMe"
+              checked={formData.rememberMe}
+              onChange={(e) => setFormData(prev => ({ ...prev, rememberMe: e.target.checked }))}
+            />
+            <label htmlFor="rememberMe">Se souvenir de moi</label>
           </div>
 
           <div className="connexion__form-actions">
