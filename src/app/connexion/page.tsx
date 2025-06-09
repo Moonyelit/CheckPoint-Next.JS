@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { saveAuthData, isRememberMeEnabled } from '@/utils/auth';
+import { useHydrationFix } from '@/hooks/useHydrationFix';
 import './connexion.scss';
 
 interface LoginFormData {
@@ -11,6 +12,8 @@ interface LoginFormData {
 }
 
 export default function Connexion() {
+  useHydrationFix(); // Résout les erreurs d'hydratation causées par les extensions
+  
   const router = useRouter();
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
@@ -41,49 +44,111 @@ export default function Connexion() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('🚀 DEBUT DE LA CONNEXION - handleSubmit appelé');
     setIsLoading(true);
     setError('');
 
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/login_check`;
+    const requestData = {
+      email: formData.email,
+      password: formData.password
+    };
+
+    console.log('Tentative de connexion:', {
+      url: apiUrl,
+      email: formData.email,
+      passwordLength: formData.password.length,
+      rememberMe: formData.rememberMe
+    });
+
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login_check`, {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        }),
+        body: JSON.stringify(requestData),
+      });
+
+      console.log('Réponse de l\'API:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok,
+        url: response.url,
+        headers: Object.fromEntries(response.headers.entries())
       });
 
       if (response.ok) {
         const userData = await response.json();
-        console.log('Connexion réussie:', userData);
+        console.log('Données brutes reçues de l\'API:', userData);
+        console.log('Type de userData:', typeof userData);
+        console.log('Clés de userData:', Object.keys(userData || {}));
         
-        // Utiliser la nouvelle fonction saveAuthData
-        saveAuthData(userData, formData.rememberMe);
-        
-        // Nettoyer les données d'inscription en attente
-        localStorage.removeItem('pendingUser');
-        localStorage.removeItem('inscriptionStep');
+        // Vérifier si on a un token ET les données utilisateur
+        if (!userData || !userData.token) {
+          console.error('Token manquant dans la réponse:', userData);
+          setError('Token d\'authentification manquant dans la réponse du serveur');
+          return;
+        }
+
+        if (!userData.user) {
+          console.error('Données utilisateur manquantes dans la réponse:', userData);
+          setError('Données utilisateur manquantes dans la réponse du serveur');
+          return;
+        }
+
+        // ✅ LOGIQUE SIMPLIFIÉE : Plus besoin d'appels API supplémentaires !
+        console.log('=== VERIFICATION STATUT EMAIL ===');
+        console.log('Email utilisateur:', userData.user.email);
+        console.log('emailVerified depuis l\'API:', userData.user.emailVerified);
+
+        // Utiliser directement les données de l'API
+        const completeUserData = userData;
+
+        // Utiliser la nouvelle fonction saveAuthData avec gestion d'erreur
+        try {
+          saveAuthData(completeUserData, formData.rememberMe);
+        } catch (authError) {
+          console.error('Erreur lors de la sauvegarde des données d\'authentification:', authError);
+          setError(authError instanceof Error ? authError.message : 'Erreur lors de la sauvegarde des données');
+          return;
+        }
         
         // Vérifier le statut de vérification email pour rediriger correctement
-        if (userData?.user?.emailVerified === false) {
-          // Si l'email n'est pas vérifié, rediriger vers l'étape 3
-          localStorage.setItem('inscriptionStep', '3');
-          router.push('/inscription');
-        } else if (userData?.user?.emailVerified === true) {
+        const emailVerified = completeUserData.user.emailVerified;
+        console.log('=== DECISION REDIRECTION ===');
+        console.log('emailVerified final:', emailVerified, typeof emailVerified);
+        
+        if (emailVerified === true) {
           // Email vérifié, rediriger vers l'étape 4 pour afficher le succès
+          console.log('REDIRECTION vers étape 4 - email vérifié');
           localStorage.setItem('inscriptionStep', '4');
+          // Nettoyer les données temporaires
+          localStorage.removeItem('pendingUser');
           router.push('/inscription');
         } else {
-          // Données utilisateur invalides ou incomplètes
-          console.error('Données utilisateur invalides:', userData);
-          setError('Erreur lors de la récupération des données utilisateur');
+          // Email non vérifié, rediriger vers l'étape 3
+          console.log('REDIRECTION vers étape 3 - email non vérifié');
+          localStorage.setItem('inscriptionStep', '3');
+          router.push('/inscription');
         }
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Erreur lors de la connexion');
+        console.error('Erreur de réponse API:', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url
+        });
+
+        try {
+          const errorData = await response.json();
+          console.error('Données d\'erreur de l\'API:', errorData);
+          setError(errorData.message || `Erreur lors de la connexion (${response.status})`);
+        } catch (parseError) {
+          console.error('Impossible de parser la réponse d\'erreur:', parseError);
+          const errorText = await response.text();
+          console.error('Contenu de la réponse d\'erreur:', errorText);
+          setError(`Erreur lors de la connexion (${response.status}): ${response.statusText}`);
+        }
       }
     } catch (error) {
       console.error('Erreur réseau lors de la connexion:', error);

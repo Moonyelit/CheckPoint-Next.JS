@@ -121,11 +121,20 @@ const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
     <div className="step3__form-container">
       <header className="step3__header">
         <h1 className="step3__title">Bienvenue sur CheckPoint</h1>
-        <p className="step3__subtitle">Vous avez presque terminé</p>
+        <p className="step3__subtitle">Vous devez vérifier votre email</p>
       </header>
 
       <div className="step3__section">
-        <p>Vous devez vérifier votre adresse e-mail pour activer votre compte. Un e-mail contenant un lien pour vérifier votre adresse e-mail vous a été envoyé.</p>
+        {getCurrentUser() ? (
+          // Utilisateur connecté mais email non vérifié
+          <div>
+                         <p>Votre compte a été créé avec succès, mais vous devez vérifier votre adresse e-mail pour l&apos;activer complètement.</p>
+            <p>Un e-mail contenant un lien de vérification vous a été envoyé.</p>
+          </div>
+        ) : (
+          // Utilisateur en cours d'inscription
+          <p>Vous devez vérifier votre adresse e-mail pour activer votre compte. Un e-mail contenant un lien pour vérifier votre adresse e-mail vous a été envoyé.</p>
+        )}
         
         {userEmail && (
           <div className="step3__email-info">

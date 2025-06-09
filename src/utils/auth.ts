@@ -70,16 +70,50 @@ export const getCurrentUser = (): User | null => {
 
 // Sauvegarder les données d'authentification
 export const saveAuthData = (userData: AuthData, rememberMe: boolean = false): void => {
+  // Validation des données d'entrée
+  if (!userData) {
+    console.error('saveAuthData: userData est null ou undefined');
+    throw new Error('Données utilisateur manquantes');
+  }
+
+  if (!userData.token) {
+    console.error('saveAuthData: token manquant', userData);
+    throw new Error('Token d\'authentification manquant');
+  }
+
+  if (!userData.user) {
+    console.error('saveAuthData: user manquant', userData);
+    throw new Error('Données utilisateur manquantes');
+  }
+
+  if (!userData.user.email || !userData.user.id) {
+    console.error('saveAuthData: propriétés utilisateur essentielles manquantes', userData.user);
+    throw new Error('Email et ID utilisateur requis');
+  }
+
+  // Générer un pseudo si manquant
+  if (!userData.user.pseudo) {
+    userData.user.pseudo = userData.user.email.split('@')[0];
+    console.log('Pseudo généré automatiquement:', userData.user.pseudo);
+  }
+
   const storage = rememberMe ? localStorage : sessionStorage;
   
-  storage.setItem('authToken', userData.token);
-  storage.setItem('user', JSON.stringify(userData.user));
-  
-  // Marquer la préférence "se souvenir de moi"
-  if (rememberMe) {
-    localStorage.setItem('rememberMe', 'true');
-  } else {
-    localStorage.removeItem('rememberMe');
+  try {
+    storage.setItem('authToken', userData.token);
+    storage.setItem('user', JSON.stringify(userData.user));
+    
+    // Marquer la préférence "se souvenir de moi"
+    if (rememberMe) {
+      localStorage.setItem('rememberMe', 'true');
+    } else {
+      localStorage.removeItem('rememberMe');
+    }
+
+    console.log('Données d\'authentification sauvegardées avec succès');
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde des données d\'authentification:', error);
+    throw new Error('Impossible de sauvegarder les données d\'authentification');
   }
 };
 
@@ -247,41 +281,83 @@ export const safeLocalStorageRemove = (key: string): boolean => {
 
 // Fonction centralisée pour déterminer l'étape d'inscription initiale
 export const getInitialInscriptionStep = (searchParams?: URLSearchParams): number => {
-  // Priorité 1: Paramètres URL (vérification email directe)
-  if (searchParams) {
-    const verified = searchParams.get('verified');
-    const error = searchParams.get('error');
+  // Vérification côté client uniquement
+  if (typeof window === 'undefined') {
+    return 1; // Valeur par défaut côté serveur
+  }
+
+  try {
+    // Priorité 1: Paramètres URL (vérification email directe)
+    if (searchParams) {
+      const verified = searchParams.get('verified');
+      const error = searchParams.get('error');
+      
+      if (verified === 'true' || error) {
+        return 4;
+      }
+    }
     
-    if (verified === 'true' || error) {
-      return 4;
+    // Priorité 2: Étape stockée dans localStorage (depuis connexion)
+    const storedStep = safeLocalStorageGet('inscriptionStep');
+    if (storedStep) {
+      const parsed = parseInt(storedStep, 10);
+      if (parsed >= 1 && parsed <= 4) {
+        return parsed;
+      }
     }
-  }
-  
-  // Priorité 2: Étape stockée dans localStorage (depuis connexion)
-  const storedStep = safeLocalStorageGet('inscriptionStep');
-  if (storedStep) {
-    const parsed = parseInt(storedStep, 10);
-    if (parsed >= 1 && parsed <= 4) {
-      return parsed;
+    
+    // Priorité 3: Déduction selon l'état de l'utilisateur connecté
+    const currentUser = getCurrentUser();
+    if (currentUser && isUserLoggedIn()) {
+      if (currentUser.emailVerified) {
+        return 4; // Email vérifié
+      } else {
+        return 3; // Connecté mais email non vérifié
+      }
     }
+    
+    // Valeur par défaut: nouvelle inscription
+    return 1;
+  } catch (error) {
+    console.error('Erreur dans getInitialInscriptionStep:', error);
+    return 1; // Fallback sécurisé
   }
-  
-  // Priorité 3: Déduction selon l'état de l'utilisateur connecté
-  const currentUser = getCurrentUser();
-  if (currentUser && isUserLoggedIn()) {
-    if (currentUser.emailVerified) {
-      return 4; // Email vérifié
-    } else {
-      return 3; // Connecté mais email non vérifié
-    }
-  }
-  
-  // Valeur par défaut: nouvelle inscription
-  return 1;
 };
 
 // Fonction pour nettoyer automatiquement les données temporaires
 export const cleanupInscriptionData = (): void => {
   safeLocalStorageRemove('inscriptionStep');
   safeLocalStorageRemove('pendingUser');
+};
+
+// Fonction pour mettre à jour le statut de vérification d'email de l'utilisateur connecté
+export const updateEmailVerificationStatus = (verified: boolean): boolean => {
+  if (typeof window === 'undefined') return false;
+  
+  const currentUser = getCurrentUser();
+  if (!currentUser) {
+    console.log('Aucun utilisateur connecté pour mettre à jour');
+    return false;
+  }
+  
+  try {
+    // Créer un nouvel objet utilisateur avec le statut mis à jour
+    const updatedUser: User = {
+      ...currentUser,
+      emailVerified: verified
+    };
+    
+    // Déterminer quel storage utiliser
+    const isRememberMe = isRememberMeEnabled();
+    const storage = isRememberMe ? localStorage : sessionStorage;
+    
+    // Sauvegarder les données mises à jour
+    storage.setItem('user', JSON.stringify(updatedUser));
+    
+    console.log(`Statut emailVerified mis à jour: ${verified} pour ${currentUser.email}`);
+    return true;
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du statut email:', error);
+    return false;
+  }
 }; 

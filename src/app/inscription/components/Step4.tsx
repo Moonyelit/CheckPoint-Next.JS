@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { clearPendingUser, markEmailAsVerified } from '@/utils/emailVerification';
-import { getCurrentUser, logout, cleanupInscriptionData } from '@/utils/auth';
+import { getCurrentUser, logout, cleanupInscriptionData, updateEmailVerificationStatus } from '@/utils/auth';
 import '../styles/Step3.scss';
 import '../styles/Step4.scss';
 
@@ -33,8 +33,47 @@ const Step4 = () => {
 
     if (verified === 'true') {
       setVerificationStatus('success');
+      console.log('🎉 Email vérifié avec succès !');
+      
       if (email) {
+        console.log('📧 Mise à jour des données pour email:', decodeURIComponent(email));
         markEmailAsVerified(decodeURIComponent(email));
+        
+        // S'assurer que les données pendingUser sont correctement mises à jour
+        const emailDecoded = decodeURIComponent(email);
+        const pendingUser = localStorage.getItem('pendingUser');
+        
+        if (pendingUser) {
+          try {
+            const userData = JSON.parse(pendingUser);
+            if (userData.email === emailDecoded) {
+              const updatedUserData = {
+                ...userData,
+                isVerified: true
+              };
+              localStorage.setItem('pendingUser', JSON.stringify(updatedUserData));
+              console.log('✅ Données pendingUser mises à jour:', updatedUserData);
+            }
+          } catch (error) {
+            console.error('❌ Erreur mise à jour pendingUser:', error);
+          }
+        } else {
+          // Créer des données pendingUser si elles n'existent pas
+          const newPendingUser = {
+            email: emailDecoded,
+            pseudo: emailDecoded.split('@')[0],
+            isVerified: true,
+            createdAt: new Date().toISOString()
+          };
+          localStorage.setItem('pendingUser', JSON.stringify(newPendingUser));
+          console.log('📦 Nouvelles données pendingUser créées:', newPendingUser);
+        }
+      }
+      
+      // IMPORTANT: Mettre à jour le statut de l'utilisateur connecté si c'est lui
+      if (currentUser && (email === currentUser.email || !email)) {
+        console.log('🔄 Mise à jour du statut emailVerified pour l\'utilisateur connecté');
+        updateEmailVerificationStatus(true);
       }
     } else if (error) {
       setVerificationStatus('error');
@@ -113,13 +152,15 @@ const Step4 = () => {
               >
                 {getCurrentUser() ? 'Continuer vers l\'accueil' : 'Se connecter maintenant'}
               </button>
-              <button 
-                className="step3__resend-button" 
-                onClick={handleLogout}
-                style={{ marginTop: '1rem' }}
-              >
-                Se déconnecter
-              </button>
+              {getCurrentUser() && (
+                <button 
+                  className="step3__resend-button" 
+                  onClick={handleLogout}
+                  style={{ marginTop: '1rem' }}
+                >
+                  Se déconnecter
+                </button>
+              )}
             </div>
           </div>
         );

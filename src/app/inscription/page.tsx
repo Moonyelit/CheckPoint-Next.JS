@@ -33,7 +33,7 @@ export default function Inscription() {
 
   // Déterminer l'étape d'inscription avec la fonction centralisée
   useEffect(() => {
-    const step = getInitialInscriptionStep(searchParams || undefined);
+    const step = getInitialInscriptionStep(searchParams ?? undefined);
     setCurrentStep(step);
   }, [searchParams]);
   

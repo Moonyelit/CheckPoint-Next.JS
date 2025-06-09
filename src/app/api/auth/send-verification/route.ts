@@ -140,8 +140,8 @@ export async function POST(request: NextRequest) {
     // Générer un token de vérification
     const verificationToken = crypto.randomBytes(32).toString('hex');
     
-    // URL de vérification (à adapter selon votre domaine)
-    const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/auth/verify-email?token=${verificationToken}&email=${encodeURIComponent(email)}`;
+    // URL de vérification - POINTER VERS L'API SYMFONY
+    const verificationUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/verify-email?token=${verificationToken}&email=${encodeURIComponent(email)}`;
 
     // Configuration du mail avec template séparé
     const mailOptions = {
