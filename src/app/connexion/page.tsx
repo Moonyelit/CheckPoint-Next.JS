@@ -23,6 +23,11 @@ export default function Connexion() {
       ...prev,
       [name]: value
     }));
+    
+    // Effacer l'erreur lors de la saisie
+    if (error) {
+      setError('');
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,76 +75,81 @@ export default function Connexion() {
 
   return (
     <div className="connexion">
-      <div className="max-w-md mx-auto bg-white bg-opacity-95 rounded-lg shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Connexion
-        </h1>
-        
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+      <div className="connexion__form-container">
+        <header className="connexion__header">
+          <h1 className="connexion__title">HEY LISTEN</h1>
+          <p className="connexion__subtitle">Connectez-vous pour continuer votre aventure...</p>
+        </header>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Votre email"
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="connexion__form">
+          {error && (
+            <div className="connexion__error-banner">
+              {error}
+            </div>
+          )}
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
-              Mot de passe
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Votre mot de passe"
-            />
+          <div className="connexion__form-group">
+            <div className="connexion__input-container">
+              <i className="bx bx-envelope connexion__icon"></i>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="E-mail"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                autoComplete="email"
+              />
+            </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {isLoading ? 'Connexion...' : 'Se connecter'}
-          </button>
+          <div className="connexion__form-group">
+            <div className="connexion__input-container">
+              <i className="bx bx-lock-alt connexion__icon"></i>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Mot de passe"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+          </div>
+
+          <div className="connexion__form-actions">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="btn-custom-inverse connexion__submit-button"
+            >
+              {isLoading ? 'Connexion...' : 'Se connecter'}
+            </button>
+          </div>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Pas encore de compte ?{' '}
-            <button
-              onClick={() => router.push('/inscription')}
-              className="text-blue-600 hover:text-blue-800 font-medium"
-            >
-              S'inscrire
-            </button>
-          </p>
-          
+        <div className="connexion__links">
           <button
+            type="button"
             onClick={() => router.push('/mot-de-passe-oublie')}
-            className="text-sm text-blue-600 hover:text-blue-800 mt-2 block"
+            className="connexion__link"
           >
             Mot de passe oublié ?
           </button>
+          
+          <div className="connexion__register">
+            <span className="connexion__register-text">Pas encore de compte ?</span>
+            <button
+              type="button"
+              onClick={() => router.push('/inscription')}
+              className="connexion__register-link"
+            >
+              S&apos;inscrire
+            </button>
+          </div>
         </div>
       </div>
     </div>

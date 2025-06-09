@@ -1,5 +1,25 @@
-@import "@/styles/mixins";
-@import "@/styles/variables";
+@use "@/styles/_mixins" as *;
+
+/* ----------------- Animations ----------------- */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
 
 /* ----------------- Connexion Container (BEM) ----------------- */
 .connexion {
@@ -27,5 +47,253 @@
 
   @include respond-to("medium") {
     padding-block: 8rem 3.5rem;
+  }
+
+  &__form-container {
+    z-index: 2;
+    width: 100%;
+    max-width: 600px;
+    flex: 1;
+    @include flex(column, center, center);
+    animation: fadeInUp 0.8s ease-out;
+    
+    @include respond-to("medium") {
+      max-width: 90%;
+    }
+  }
+
+  /****************************************************
+  ****************** HEADER ******************
+  ****************************************************/
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--white);
+  }
+
+  &__title {
+    font-size: clamp(2.5rem, 1.4rem + 4.5vw, 5rem);
+    letter-spacing: 2px;
+    color: var(--white);
+    font-family: "Karantina", cursive;
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    font-family: var(--font-base);
+    font-size: clamp(0.8125rem, 0.5704rem + 1.0329vw, 1.5rem);
+    font-weight: 600;
+    color: var(--bleu-crystal-fonce);
+    opacity: 0.9;
+  }
+
+  /****************************************************
+  ****************** FORM ******************
+  ****************************************************/
+  &__form {
+    width: 100%;
+    max-width: 405px;
+    margin: 0 auto;
+
+    @include respond-to("medium") {
+      max-width: 90%;
+    }
+  }
+
+  &__error-banner {
+    background-color: rgba(235, 39, 39, 0.1);
+    border: 2px solid var(--red-normal);
+    color: var(--red-normal);
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    animation: pulse 0.5s ease-in-out;
+  }
+
+  &__form-group {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    input {
+      width: 100%;
+      height: auto;
+      min-height: 50px;
+      padding: 15px 20px 15px 50px;
+      border-radius: 12px;
+      background-color: var(--gris-fonce);
+      border: 2px solid var(--white);
+      font-size: 16px;
+      font-family: "DM Sans", sans-serif;
+      font-weight: 700 !important;
+      color: var(--white);
+      line-height: 1.4;
+      vertical-align: middle;
+      @include transition(all, 0.3s, ease);
+
+      @include respond-to("medium") {
+        padding: 12px 18px 12px 45px;
+        min-height: 45px;
+      }
+
+      // États spécifiques pour forcer la couleur blanche
+      &:focus,
+      &:active,
+      &:not(:placeholder-shown) {
+        color: var(--white);
+        background-color: var(--gris-fonce);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--bleu-crystal-normal);
+        box-shadow: 0 0 0 3px rgba(35, 171, 250, 0.3);
+        transform: translateY(-2px);
+      }
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 1.4;
+      }
+
+      // Anti-autofill du navigateur
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px var(--gris-fonce) inset;
+        -webkit-text-fill-color: var(--white);
+        color: var(--white);
+      }
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /****************************************************
+  ****************** FORM ACTIONS ******************
+  ****************************************************/
+  &__form-actions {
+    @include flex(row, center, center);
+    margin-top: 2rem;
+  }
+
+  &__submit-button {
+    width: 80%;
+    margin-bottom: 2rem;
+    padding: clamp(1.0625rem, -0.4437rem + 2.1596vw, 1.5rem);
+    font-size: clamp(1.4rem, 1.2rem + 0.8vw, 2rem);
+    font-family: var(--font-base);
+    font-weight: 700;
+    @include transition(all, 0.3s, ease);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(35, 171, 250, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  /****************************************************
+  ****************** LINKS ******************
+  ****************************************************/
+  &__links {
+    @include flex(column, center, center);
+    gap: 1.5rem;
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  &__link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-base);
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+    font-weight: 600;
+    color: var(--bleu-crystal-fonce);
+    text-decoration: underline;
+    cursor: pointer;
+    @include transition(all, 0.3s, ease);
+
+    &:hover {
+      color: var(--white);
+      text-decoration-thickness: 2px;
+      transform: translateY(-1px);
+    }
+
+    &:focus {
+      outline: 2px solid var(--bleu-crystal-normal);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+  }
+
+  &__register {
+    @include flex(row, center, center);
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  &__register-text {
+    color: var(--white);
+    font-family: var(--font-base);
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+    font-weight: 500;
+  }
+
+  &__register-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: var(--font-base);
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
+    font-weight: 700;
+    color: var(--bleu-crystal-fonce);
+    text-decoration: underline;
+    cursor: pointer;
+    @include transition(all, 0.3s, ease);
+
+    &:hover {
+      color: var(--white);
+      text-decoration-thickness: 2px;
+      transform: scale(1.05);
+    }
+
+    &:focus {
+      outline: 2px solid var(--bleu-crystal-normal);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
   }
 } 
