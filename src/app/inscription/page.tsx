@@ -30,13 +30,24 @@ export default function Inscription() {
   });
   const searchParams = useSearchParams();
 
-  // Vérifier s'il y a une redirection depuis la vérification email
+  // Vérifier s'il y a une redirection depuis la vérification email ou depuis la connexion
   useEffect(() => {
     const verified = searchParams?.get('verified');
     const error = searchParams?.get('error');
     
+    // Priorité 1: Paramètres URL (vérification email)
     if (verified === 'true' || error) {
       setCurrentStep(4);
+      return;
+    }
+    
+    // Priorité 2: Étape stockée depuis la connexion
+    const storedStep = localStorage.getItem('inscriptionStep');
+    if (storedStep) {
+      const stepNumber = parseInt(storedStep, 10);
+      if (stepNumber >= 1 && stepNumber <= 4) {
+        setCurrentStep(stepNumber);
+      }
     }
   }, [searchParams]);
   

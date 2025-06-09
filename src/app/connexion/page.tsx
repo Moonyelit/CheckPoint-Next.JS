@@ -73,8 +73,9 @@ export default function Connexion() {
           localStorage.setItem('inscriptionStep', '3');
           router.push('/inscription');
         } else {
-          // Email vérifié, rediriger vers la page d'accueil
-          router.push('/');
+          // Email vérifié, rediriger vers l'étape 4 pour afficher le succès
+          localStorage.setItem('inscriptionStep', '4');
+          router.push('/inscription');
         }
       } else {
         const errorData = await response.json();

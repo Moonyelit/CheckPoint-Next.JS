@@ -48,7 +48,14 @@ const Step4 = () => {
     // Nettoyer les données en attente et les indicateurs d'étape
     clearPendingUser();
     localStorage.removeItem('inscriptionStep');
-    window.location.href = '/connexion';
+    
+    // Si l'utilisateur est déjà connecté, aller à l'accueil, sinon à la connexion
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      window.location.href = '/';
+    } else {
+      window.location.href = '/connexion';
+    }
   };
 
   const handleLogout = () => {
@@ -104,7 +111,7 @@ const Step4 = () => {
                 className="btn-custom-inverse step4__action-button" 
                 onClick={handleContinue}
               >
-                Se connecter maintenant
+                {getCurrentUser() ? 'Continuer vers l\'accueil' : 'Se connecter maintenant'}
               </button>
               <button 
                 className="step3__resend-button" 
