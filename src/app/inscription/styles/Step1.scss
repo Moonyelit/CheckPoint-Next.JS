@@ -1,6 +1,37 @@
 @use "@/styles/_mixins" as *;
 
 /* ----------------- Animations ----------------- */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 @keyframes checkboxPulse {
   0% {
     transform: scale(1.05) rotate(-2deg);
@@ -22,6 +53,7 @@
     flex: 1;
     @include flex(column, center, center);
     z-index: 1;
+    animation: fadeInUp 0.8s ease-out;
     @include respond-to("medium") {
       max-width: 90%;
     }
@@ -70,6 +102,14 @@
     margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
+    animation: slideInLeft 0.6s ease-out;
+    animation-fill-mode: both;
+    
+    &:nth-child(1) { animation-delay: 0.1s; }
+    &:nth-child(2) { animation-delay: 0.2s; }
+    &:nth-child(3) { animation-delay: 0.3s; }
+    &:nth-child(4) { animation-delay: 0.4s; }
+    &:nth-child(5) { animation-delay: 0.5s; }
   }
 
   &__input-container {
@@ -235,6 +275,7 @@
     font-weight: 600;
     margin-top: 5px;
     margin-left: 20px;
+    animation: pulse 0.5s ease-in-out;
 
     // Erreur pour les checkboxes
     .step1__checkbox-group & {
@@ -250,10 +291,16 @@
     font-size: clamp(1.5625rem, 1.3204rem + 1.0329vw, 2.25rem);    
     font-family: var(--font-base);
     height: 100%;
-    @include transition(background, 0.5s, ease);
+    @include transition(all, 0.3s, ease);
+    animation: fadeInUp 1s ease-out 0.6s both;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(35, 171, 250, 0.3);
+    }
 
     &:active {
-      transform: translateY(1px);
+      transform: translateY(1px) scale(0.98);
     }
   }
 }
