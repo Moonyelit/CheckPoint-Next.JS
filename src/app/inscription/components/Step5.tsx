@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { getCurrentUser, safeLocalStorageSet, User } from '@/utils/auth';
+import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, debugAuthState } from '@/utils/auth';
 import '../styles/Step5.scss';
 
 // Extension de l'interface User pour inclure profileImage
@@ -18,11 +18,16 @@ const Step5 = ({ onNext }: Step5Props) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
   useEffect(() => {
+    // DEBUG: Vérifier l'état d'authentification
+    console.log('=== DEBUG STEP 5 ===');
+    debugAuthState();
+    
     // Marquer qu'on est à l'étape 5
     safeLocalStorageSet('inscriptionStep', '5');
     
     // Récupérer l'utilisateur actuel
     const user = getCurrentUser() as UserWithProfile;
+    console.log('Utilisateur Step5:', user);
     setCurrentUser(user);
     
     // Définir l'avatar par défaut basé sur l'utilisateur
@@ -35,11 +40,21 @@ const Step5 = ({ onNext }: Step5Props) => {
     try {
       // Sauvegarder l'avatar sélectionné pour l'utilisateur
       if (currentUser) {
+        const token = getAuthToken();
+        if (!token) {
+          alert('Session expirée. Veuillez vous reconnecter.');
+          window.location.href = '/connexion';
+          return;
+        }
+        
+        console.log('Save - Token:', token ? 'Présent' : 'Absent');
+        console.log('Save - User ID:', currentUser.id);
+        
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${currentUser.id}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/merge-patch+json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({
             profileImage: selectedAvatar
@@ -63,7 +78,9 @@ const Step5 = ({ onNext }: Step5Props) => {
             window.location.href = '/';
           }
         } else {
-          console.error('Erreur lors de la sauvegarde de l\'avatar');
+          console.error('Erreur lors de la sauvegarde de l\'avatar:', response.status);
+          const errorText = await response.text();
+          console.error('Erreur details:', errorText);
           alert('Erreur lors de la sauvegarde de l\'avatar. Veuillez réessayer.');
         }
       } else {
@@ -81,6 +98,13 @@ const Step5 = ({ onNext }: Step5Props) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    console.log('=== UPLOAD DEBUG ===');
+    console.log('Fichier sélectionné:', {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    });
+
     // Validation du fichier
     if (!validateImageFile(file)) {
       alert('Fichier invalide. Veuillez sélectionner une image JPG, PNG ou WEBP de moins de 5MB.');
@@ -94,21 +118,67 @@ const Step5 = ({ onNext }: Step5Props) => {
       formData.append('avatar', file);
       formData.append('userId', currentUser?.id || '');
 
+      const token = getAuthToken();
+      if (!token) {
+        alert('Session expirée. Veuillez vous reconnecter.');
+        window.location.href = '/connexion';
+        return;
+      }
+      
+      console.log('Upload - Token:', token ? 'Présent' : 'Absent');
+      console.log('Upload - User ID:', currentUser?.id);
+      console.log('Upload - API URL:', process.env.NEXT_PUBLIC_API_URL);
+      console.log('Upload - FormData entries:');
+      for (const [key, value] of formData.entries()) {
+        console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value);
+      }
+      
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload-avatar`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: formData,
       });
 
+      console.log('Upload - Response status:', response.status);
+      console.log('Upload - Response headers:', Object.fromEntries(response.headers.entries()));
+
       if (response.ok) {
         const result = await response.json();
-        setSelectedAvatar(result.avatarUrl);
-        alert('Avatar uploadé avec succès !');
+        console.log('Upload - Success result:', result);
+        
+        // Mettre à jour l'avatar immédiatement pour l'aperçu
+        if (result.avatarUrl) {
+          setSelectedAvatar(result.avatarUrl);
+          alert('Avatar uploadé avec succès ! Cliquez sur "Sauver et continuer" pour finaliser.');
+        } else {
+          // Fallback : utiliser une URL temporaire pour l'aperçu
+          const fileUrl = URL.createObjectURL(file);
+          setSelectedAvatar(fileUrl);
+          alert('Avatar uploadé avec succès ! Aperçu affiché. Cliquez sur "Sauver et continuer" pour finaliser.');
+        }
       } else {
-        const error = await response.json();
-        alert('Erreur lors de l\'upload: ' + (error.message || 'Erreur inconnue'));
+        console.error('Erreur upload - Status:', response.status);
+        let errorMessage = 'Erreur inconnue';
+        
+        try {
+          const error = await response.json();
+          console.error('Erreur upload - Details:', error);
+          errorMessage = error.error || error.message || `Erreur HTTP ${response.status}`;
+          
+          // En mode dev, afficher aussi le message de debug
+          if (error.debug) {
+            errorMessage += '\nDétails: ' + error.debug;
+          }
+        } catch (e) {
+          console.error('Erreur lors du parsing de la réponse:', e);
+          const responseText = await response.text();
+          console.error('Response text:', responseText);
+          errorMessage = `Erreur HTTP ${response.status} - ${response.statusText}`;
+        }
+        
+        alert('Erreur lors de l\'upload: ' + errorMessage);
       }
     } catch (error) {
       console.error('Erreur upload:', error);
@@ -164,28 +234,30 @@ const Step5 = ({ onNext }: Step5Props) => {
       </header>
 
       <div className="step5__avatar-section">
-        <div className="step5__current-avatar">
+        <div className="step5__current-avatar" onClick={handleSelectAvatar}>
           <img 
             src={selectedAvatar} 
-            alt="Avatar sélectionné"
+            alt="Avatar utilisateur"
             className="step5__avatar-image"
             onError={(e) => {
+              console.log('Erreur chargement image, fallback vers avatar par défaut');
               e.currentTarget.src = '/images/avatars/DefaultAvatar.JPG';
             }}
+            style={{ cursor: 'pointer' }}
           />
         </div>
       </div>
 
       <div className="step5__actions">
         <button 
-          className="btn-custom-inverse step5__save-button" 
+          className="btn-custom-inverse step5__button" 
           onClick={handleSaveAndContinue}
           disabled={isUploading}
         >
           {isUploading ? 'Sauvegarde...' : 'Sauver et continuer'}
         </button>
         <button 
-          className="step5__select-button btn-custom-inverse" 
+          className="step5__button btn-custom-inverse" 
           onClick={handleSelectAvatar}
           disabled={isUploading}
         >
