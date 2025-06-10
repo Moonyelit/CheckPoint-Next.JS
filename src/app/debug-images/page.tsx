@@ -19,7 +19,7 @@ export default function DebugImagesPage() {
     const fetchGames = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://127.0.0.1:8000/api/games/top100?limit=5');
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/top100?limit=5`);
         
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);

@@ -50,7 +50,7 @@ export default function HeroBanner() {
       try {
         // 1er choix : Top 30 jeux de l'année (365 derniers jours, 100+ votes, note 75+)
         console.log('🎮 Tentative de récupération des jeux de l\'année...');
-        const yearData = await fetch('http://127.0.0.1:8000/api/games/top100-year?limit=5')
+        const yearData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/top100-year?limit=5`)
           .then(res => res.json());
         
         if (yearData && yearData.length > 0) {
@@ -67,7 +67,7 @@ export default function HeroBanner() {
         // 2ème choix : Top 100 de tous les temps (50+ votes, note 85+)
         try {
           console.log('🏆 Fallback vers Top 100 de tous les temps...');
-          const top100Data = await fetch('http://127.0.0.1:8000/api/games/top100?limit=5')
+          const top100Data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/top100?limit=5`)
             .then(res => res.json());
             
           if (top100Data && top100Data.length > 0) {
