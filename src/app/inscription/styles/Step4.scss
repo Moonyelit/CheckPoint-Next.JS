@@ -167,12 +167,11 @@
   }
 
   // États pour les textes d'erreur et de chargement
+  &__title_error {
+    color: var(--red-normal);
+  }
+  
   .step4__form-container {
-
-    &__title_error {
-      color: var(--red-normal);
-    }
-    
     &[data-status="loading"] {
       .step4__achievement-label {
         color: var(--bleu-crystal-normal);

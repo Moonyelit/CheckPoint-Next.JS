@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { clearPendingUser, markEmailAsVerified } from '@/utils/emailVerification';
-import { getCurrentUser, cleanupInscriptionData, updateEmailVerificationStatus } from '@/utils/auth';
+import { markEmailAsVerified } from '@/utils/emailVerification';
+import { getCurrentUser, updateEmailVerificationStatus } from '@/utils/auth';
 import '../styles/Step4.scss';
 
 const Step4 = () => {
@@ -74,17 +74,11 @@ const Step4 = () => {
   }, [searchParams]);
 
   const handleContinue = () => {
-    // Nettoyer les données en attente et les indicateurs d'étape
-    clearPendingUser();
-    cleanupInscriptionData();
+    // Marquer qu'on passe à l'étape 5
+    localStorage.setItem('inscriptionStep', '5');
     
-    // Si l'utilisateur est déjà connecté, aller à l'accueil, sinon à la connexion
-    const currentUser = getCurrentUser();
-    if (currentUser) {
-      window.location.href = '/';
-    } else {
-      window.location.href = '/connexion';
-    }
+    // Rediriger vers la page d'inscription qui affichera Step5
+    window.location.href = '/inscription';
   };
 
   const renderContent = () => {
@@ -111,7 +105,7 @@ const Step4 = () => {
             <button 
               className="btn-custom-inverse step4__continue-button" 
               onClick={handleContinue}
-              aria-label="Continuer vers l'accueil"
+              aria-label="Continuer vers la personnalisation de l'avatar"
             >
               Continuer
             </button>

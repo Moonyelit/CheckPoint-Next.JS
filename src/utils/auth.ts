@@ -301,7 +301,7 @@ export const getInitialInscriptionStep = (searchParams?: URLSearchParams): numbe
     const storedStep = safeLocalStorageGet('inscriptionStep');
     if (storedStep) {
       const parsed = parseInt(storedStep, 10);
-      if (parsed >= 1 && parsed <= 4) {
+      if (parsed >= 1 && parsed <= 5) {
         return parsed;
       }
     }

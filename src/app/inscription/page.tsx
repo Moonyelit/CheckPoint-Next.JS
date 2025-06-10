@@ -7,6 +7,8 @@ import Step1 from './components/Step1';
 import Step2 from './components/Step2';
 import Step3 from './components/Step3';
 import Step4 from './components/Step4';
+import Step5 from './components/Step5';
+
 
 interface FormData {
   pseudo: string;
@@ -81,6 +83,8 @@ export default function Inscription() {
     setCurrentStep(4);
   };
 
+
+
   return (
     <div className="inscription">
       {currentStep === 1 && (
@@ -101,6 +105,9 @@ export default function Inscription() {
       )}
       {currentStep === 4 && (
         <Step4 />
+      )}
+      {currentStep === 5 && (
+        <Step5 />
       )}
     </div>
   );
