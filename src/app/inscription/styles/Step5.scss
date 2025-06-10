@@ -115,6 +115,16 @@
   &__current-avatar {
     display: inline-block;
     position: relative;
+    cursor: pointer;
+    @include transition(transform, 0.3s, ease);
+
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
   }
 
   &__avatar-image {
@@ -154,24 +164,16 @@
     }
   }
 
-  &__save-button {
-    padding: clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
-    font-size: clamp(1rem, 0.9rem + 0.4vw, 1.25rem);
-    font-family: var(--font-base);
-    font-weight: 700;
+  &__button {
     min-width: 200px;
-    @include transition(all, 0.3s, ease);
-
-    &:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(35, 171, 250, 0.4);
-    }
 
     @include respond-to("medium") {
       width: 100%;
       max-width: 300px;
     }
   }
+
+
 
   /****************************************************
   ****************** AVATAR SELECTION ******************

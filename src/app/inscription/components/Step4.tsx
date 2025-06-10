@@ -91,7 +91,7 @@ const Step4 = () => {
                 Vous avez débloqué une quête :
                 <br/>
                 Réalisation du tutoriel
-              </div>
+            </div>
               <h1 className="step4__title">
                 Appuyer sur [start] pour jouer
               </h1>
@@ -102,13 +102,13 @@ const Step4 = () => {
                 Cela ne prendra pas longtemps, c&apos;est promis !
               </p>
             </header>
-            <button 
+              <button 
               className="btn-custom-inverse step4__continue-button" 
-              onClick={handleContinue}
+                onClick={handleContinue}
               aria-label="Continuer vers la personnalisation de l'avatar"
             >
               Continuer
-            </button>
+                </button>
           </div>
         );
 
@@ -151,7 +151,7 @@ const Step4 = () => {
             <header className="step4__header">
               <div className="step4__achievement-label">
                 Vérification en cours...
-              </div>
+            </div>
               <h1 className="step4__title">
                 Chargement de votre profil
               </h1>
@@ -167,9 +167,9 @@ const Step4 = () => {
 
   return (
     <div className="step4">
-      {renderContent()}
+        {renderContent()}
     </div>
   );
 };
 
-export default Step4;
+export default Step4; 
