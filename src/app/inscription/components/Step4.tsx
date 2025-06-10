@@ -2,14 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { clearPendingUser, markEmailAsVerified } from '@/utils/emailVerification';
-import { getCurrentUser, logout, cleanupInscriptionData, updateEmailVerificationStatus } from '@/utils/auth';
-import '../styles/Step3.scss';
+import { getCurrentUser, cleanupInscriptionData, updateEmailVerificationStatus } from '@/utils/auth';
 import '../styles/Step4.scss';
 
 const Step4 = () => {
   const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [userEmail, setUserEmail] = useState('');
-  const [userName, setUserName] = useState('');
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -23,13 +20,6 @@ const Step4 = () => {
 
     // Essayer de récupérer les infos de l'utilisateur connecté
     const currentUser = getCurrentUser();
-    
-    if (email) {
-      setUserEmail(decodeURIComponent(email));
-    } else if (currentUser) {
-      setUserEmail(currentUser.email);
-      setUserName(currentUser.pseudo);
-    }
 
     if (verified === 'true') {
       setVerificationStatus('success');
@@ -97,102 +87,62 @@ const Step4 = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/';
-  };
-
   const renderContent = () => {
     switch (verificationStatus) {
       case 'success':
         return (
-          <div className="step4__success-container">
-            <div className="step4__celebration-text">
-              <h1 className="step3__title">🎉 Félicitations !</h1>
-              <p className="step3__subtitle">Votre compte est maintenant activé</p>
-            </div>
-
-            <div className="step4__success-icon">
-              <div className="success-checkmark">✓</div>
-            </div>
-
-            <div className="step3__section">
-              <p role="alert" aria-live="polite">
-                Parfait ! Votre adresse e-mail <strong>{userEmail}</strong> a été vérifiée avec succès.
-              </p>
-              {userName && (
-                <p aria-label={`Message de bienvenue pour ${userName}`}>
-                  Bienvenue <strong>{userName}</strong> ! Votre compte CheckPoint est maintenant actif.
-                </p>
-              )}
-              <p>
-                Vous pouvez maintenant commencer à sauvegarder votre progression gaming !
-              </p>
-
-              <div className="step4__benefits">
-                <div className="benefit-item">
-                  <span className="benefit-icon">🎮</span>
-                  <span>Sauvegarde de vos parties</span>
-                </div>
-                <div className="benefit-item">
-                  <span className="benefit-icon">🏆</span>
-                  <span>Suivi de vos succès</span>
-                </div>
-                <div className="benefit-item">
-                  <span className="benefit-icon">📈</span>
-                  <span>Statistiques détaillées</span>
-                </div>
+          <div className="step4__form-container">
+            <header className="step4__header">
+              <div className="step4__achievement-label">
+                Vous avez débloqué une quête :
+                <br/>
+                Réalisation du tutoriel
               </div>
-            </div>
-
-            <div className="step3_endform">
-              <button 
-                className="btn-custom-inverse step4__action-button" 
-                onClick={handleContinue}
-              >
-                {getCurrentUser() ? 'Continuer vers l\'accueil' : 'Se connecter maintenant'}
-              </button>
-              {getCurrentUser() && (
-                <button 
-                  className="step3__resend-button" 
-                  onClick={handleLogout}
-                  style={{ marginTop: '1rem' }}
-                >
-                  Se déconnecter
-                </button>
-              )}
-            </div>
+              <h1 className="step4__title">
+                Appuyer sur [start] pour jouer
+              </h1>
+              <p className="step4__description">
+                Je sais, je sais, nous préférerions tous sauter le tutoriel et plonger directement dans 
+                l&apos;action, mais avant de vous lancer dans votre quête, nous aimerions apprendre à vous 
+                connaître pour personnaliser votre compte !<br/>
+                Cela ne prendra pas longtemps, c&apos;est promis !
+              </p>
+            </header>
+            <button 
+              className="btn-custom-inverse step4__continue-button" 
+              onClick={handleContinue}
+              aria-label="Continuer vers l'accueil"
+            >
+              Continuer
+            </button>
           </div>
         );
 
       case 'error':
         return (
-          <div className="step4__error-container">
-            <h1 className="step3__title">⚠️ Erreur</h1>
-            <p className="step3__subtitle">Problème de vérification</p>
-
-            <div className="step3__section">
-              <div className="error-icon" aria-label="Icône d'erreur">❌</div>
-              <p role="alert" aria-live="assertive">
+          <div className="step4__form-container">
+            <header className="step4__header">
+              <div className="step4__achievement-label">
+                Erreur de vérification
+              </div>
+              <h1 className="step4__title_error">
+                Oups ! Quelque chose s&apos;est mal passé
+              </h1>
+              <p className="step4__description">
                 Désolé, nous n&apos;avons pas pu vérifier votre adresse e-mail. 
                 Le lien peut avoir expiré ou être invalide.
               </p>
-              <p>
-                Veuillez réessayer de vous inscrire ou contacter le support si le problème persiste.
-              </p>
-            </div>
-
-            <div className="step3_endform">
+            </header>
+            <div className="step4__error-actions">
               <button 
-                className="step3__resend-button"
+                className="btn-custom-inverse"
                 onClick={() => window.location.href = '/inscription'}
               >
                 Retour à l&apos;inscription
               </button>
               <button 
-                className="btn-custom-inverse" 
+                className="step4__secondary-button" 
                 onClick={() => window.location.href = '/connexion'}
-                style={{ marginTop: '1rem' }}
               >
                 Retour à la connexion
               </button>
@@ -203,26 +153,29 @@ const Step4 = () => {
       case 'loading':
       default:
         return (
-          <div className="step4__loading-container">
-            <h1 className="step3__title">⏳ Vérification...</h1>
-            <p className="step3__subtitle">Validation en cours</p>
-
-            <div className="step3__section">
-              <div className="loading-spinner"></div>
-              <p>Vérification de votre e-mail en cours...</p>
-            </div>
+          <div className="step4__form-container">
+            <header className="step4__header">
+              <div className="step4__achievement-label">
+                Vérification en cours...
+              </div>
+              <h1 className="step4__title">
+                Chargement de votre profil
+              </h1>
+              <p className="step4__description">
+                Vérification de votre e-mail en cours...
+              </p>
+            </header>
+            <div className="step4__loading-spinner"></div>
           </div>
         );
     }
   };
 
   return (
-    <div className="step3__form-container">
-      <header className="step3__header">
-        {renderContent()}
-      </header>
+    <div className="step4">
+      {renderContent()}
     </div>
   );
 };
 
-export default Step4; 
+export default Step4;
