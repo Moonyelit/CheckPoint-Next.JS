@@ -8,6 +8,7 @@ import Step2 from './components/Step2';
 import Step3 from './components/Step3';
 import Step4 from './components/Step4';
 import Step5 from './components/Step5';
+import Step6 from './components/Step6';
 
 
 interface FormData {
@@ -83,7 +84,13 @@ export default function Inscription() {
     setCurrentStep(4);
   };
 
+  const handleStep5Next = () => {
+    setCurrentStep(6);
+  };
 
+  const handleStep6Next = () => {
+    setCurrentStep(7); // ou redirection vers l'accueil
+  };
 
   return (
     <div className="inscription">
@@ -107,7 +114,10 @@ export default function Inscription() {
         <Step4 />
       )}
       {currentStep === 5 && (
-        <Step5 />
+        <Step5 onNext={handleStep5Next} />
+      )}
+      {currentStep === 6 && (
+        <Step6 onNext={handleStep6Next} />
       )}
     </div>
   );

@@ -66,15 +66,13 @@ const Step5 = ({ onNext }: Step5Props) => {
           const updatedUser = { ...currentUser, profileImage: selectedAvatar };
           localStorage.setItem('currentUser', JSON.stringify(updatedUser));
           
-          // Nettoyer les données d'inscription maintenant que tout est terminé
-          localStorage.removeItem('inscriptionStep');
-          localStorage.removeItem('pendingUser');
-          
-          // Continuer vers l'étape suivante ou terminer
+          // Continuer vers l'étape suivante
           if (onNext) {
             onNext();
           } else {
-            // Rediriger vers l'accueil - inscription terminée !
+            // Si pas de fonction onNext, nettoyer et terminer
+            localStorage.removeItem('inscriptionStep');
+            localStorage.removeItem('pendingUser');
             window.location.href = '/';
           }
         } else {

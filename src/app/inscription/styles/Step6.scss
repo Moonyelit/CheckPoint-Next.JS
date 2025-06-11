@@ -1,0 +1,196 @@
+@use "@/styles/_mixins" as *;
+
+/* ----------------- Animations pour Step6 ----------------- */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* ----------------- Step6 Component (BEM) ----------------- */
+.step6 {
+  &__form-container {
+    z-index: 2;
+    width: 100%;
+    max-width: 700px;
+    flex: 1;
+    @include flex(column, center, center);
+    animation: fadeInUp 0.8s ease-out;
+    text-align: center;
+    
+    @include respond-to("medium") {
+      max-width: 90%;
+    }
+  }
+
+  /****************************************************
+  ****************** HEADER ******************
+  ****************************************************/
+  &__header {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--white);
+  }
+
+  &__quest-label {
+    font-family: var(--font-base);
+    font-size: clamp(1rem, 0.8rem + 0.8vw, 1.25rem);
+    font-weight: 700;
+    color: var(--bleu-crystal-fonce);
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+    animation: slideIn 0.6s ease-out 0.2s both;
+  }
+
+  &__title {
+    font-size: clamp(2.5rem, 1.4rem + 4.5vw, 5rem);
+    letter-spacing: 2px;
+    color: var(--white);
+    font-family: "Karantina", cursive;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    animation: slideIn 0.8s ease-out 0.6s both;
+  }
+
+  &__description {
+    font-family: var(--font-base);
+    font-size: clamp(0.875rem, 0.8rem + 0.3vw, 1.125rem);
+    font-weight: 500;
+    color: var(--white);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 3rem auto;
+    animation: slideIn 0.6s ease-out 0.8s both;
+    
+    @include respond-to("medium") {
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+  }
+
+  /****************************************************
+  ****************** CONTENT ******************
+  ****************************************************/
+  &__content {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto 3rem auto;
+    animation: slideIn 0.6s ease-out 1s both;
+  }
+
+  &__placeholder {
+    font-family: var(--font-base);
+    font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    text-align: center;
+    @include transition(all, 0.3s, ease);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  /****************************************************
+  ****************** ACTIONS ******************
+  ****************************************************/
+  &__actions {
+    @include flex(column, center, center);
+    gap: 1rem;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    animation: slideIn 0.6s ease-out 1.2s both;
+  }
+
+  &__continue-button {
+    width: 100%;
+    padding: clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
+    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.8rem);
+    font-family: var(--font-base);
+    font-weight: 700;
+    @include transition(all, 0.3s, ease);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      animation: pulse 1.5s infinite;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    @include respond-to("medium") {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+/* ----------------- Responsive adjustments ----------------- */
+@include respond-to("small") {
+  .step6 {
+    padding-block: 2rem;
+    
+    &__form-container {
+      max-width: 95%;
+    }
+    
+    &__header {
+      margin-bottom: 2rem;
+    }
+    
+    &__description {
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    
+    &__content {
+      margin-bottom: 2rem;
+    }
+    
+    &__placeholder {
+      padding: 1.5rem;
+      font-size: 0.95rem;
+    }
+    
+    &__continue-button {
+      font-size: 1rem;
+    }
+  }
+}
