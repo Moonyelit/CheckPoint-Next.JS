@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { safeLocalStorageSet } from "@/utils/auth";
+import { safeLocalStorageSet, getAuthToken } from "@/utils/auth";
 import "../styles/Step6.scss";
 
 interface Game {
@@ -27,6 +27,11 @@ const Step6 = ({ onNext }: Step6Props) => {
   const [selectedWallpapers, setSelectedWallpapers] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Filtrer pour n'avoir qu'un seul wallpaper par image (évite les doublons)
+  const uniqueWallpapers = React.useMemo(() => {
+    return Array.from(new Map(wallpapers.map(w => [w.image, w])).values());
+  }, [wallpapers]);
 
   // Marquer qu'on est à l'étape 6
   React.useEffect(() => {
@@ -62,7 +67,7 @@ const Step6 = ({ onNext }: Step6Props) => {
   }, []);
 
   const handleWallpaperSelect = async (wallpaperId: number) => {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
     if (!token) {
       setError('Vous devez être connecté pour sélectionner des wallpapers');
       return;
@@ -101,6 +106,14 @@ const Step6 = ({ onNext }: Step6Props) => {
 
   const handleContinue = () => {
     // Marquer qu'on passe à l'étape 7
+    safeLocalStorageSet("inscriptionStep", "7");
+    onNext();
+  };
+
+  // Bouton "Passer cette étape et continuer" : sélectionne tout par défaut
+  const handleSkip = () => {
+    // Ici, on peut soit tout sélectionner, soit ne rien sélectionner selon la logique métier
+    // Ici, on considère que l'utilisateur aura accès à tous les wallpapers (aucune restriction)
     safeLocalStorageSet("inscriptionStep", "7");
     onNext();
   };
@@ -158,19 +171,19 @@ const Step6 = ({ onNext }: Step6Props) => {
         </header>
 
         <div className="step6__content">
-          {wallpapers.length > 0 ? (
+          {uniqueWallpapers.length > 0 ? (
             <div className="step6__wallpapers-grid">
-              {wallpapers.map((wallpaper) => (
+              {uniqueWallpapers.map((wallpaper) => (
                 <div 
                   key={wallpaper.id} 
                   className={`step6__wallpaper-card ${selectedWallpapers.has(wallpaper.id) ? 'step6__wallpaper-card--selected' : ''}`}
                   onClick={() => handleWallpaperSelect(wallpaper.id)}
                 >
-                  <div className="step6__wallpaper-cover">
+                  <div className="step6__wallpaper-cover step6__wallpaper-cover--small">
                     <img 
                       src={wallpaper.game.coverUrl} 
                       alt={wallpaper.game.title}
-                      className="step6__cover-image"
+                      className="step6__cover-image step6__cover-image--small"
                       onError={(e) => {
                         e.currentTarget.src = '/images/default-game-cover.png';
                       }}
@@ -180,15 +193,6 @@ const Step6 = ({ onNext }: Step6Props) => {
                         {selectedWallpapers.has(wallpaper.id) ? '✓' : '+'}
                       </div>
                     </div>
-                  </div>
-                  <div className="step6__wallpaper-info">
-                    <h3 className="step6__game-title">{wallpaper.game.title}</h3>
-                    <p className="step6__game-developer">{wallpaper.game.developer}</p>
-                    {wallpaper.game.totalRating && (
-                      <div className="step6__game-rating">
-                        ⭐ {wallpaper.game.totalRating.toFixed(1)}
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
@@ -206,7 +210,14 @@ const Step6 = ({ onNext }: Step6Props) => {
             onClick={handleContinue}
             aria-label="Continuer vers l'étape suivante"
           >
-            Continuer
+            Sauver et continuer
+          </button>
+          <button
+            className="btn-custom step6__continue-button"
+            onClick={handleSkip}
+            aria-label="Passer cette étape et continuer"
+          >
+            Passer cette étape et continuer
           </button>
         </div>
       </div>

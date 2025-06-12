@@ -154,18 +154,18 @@
 
   &__wallpapers-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     padding: 1rem;
     
     @include respond-to("medium") {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 1.5rem;
       padding: 0.5rem;
     }
     
     @include respond-to("small") {
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: 1fr;
       gap: 1rem;
     }
   }
@@ -344,6 +344,31 @@
     @include respond-to("medium") {
       font-size: 1.1rem;
     }
+  }
+
+  &__wallpaper-cover--small {
+    width: 140px;
+    height: 200px;
+    margin: 0 auto;
+    @include respond-to("medium") {
+      width: 110px;
+      height: 160px;
+    }
+    @include respond-to("small") {
+      width: 90px;
+      height: 130px;
+    }
+  }
+
+  &__cover-image--small {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  &__wallpaper-info {
+    display: none !important;
   }
 }
 
