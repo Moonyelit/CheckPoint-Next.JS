@@ -86,67 +86,25 @@ export const getCurrentUser = (): User | null => {
 };
 
 // Sauvegarder les données d'authentification
-export const saveAuthData = (userData: AuthData, rememberMe: boolean = false): void => {
-  // Validation des données d'entrée
-  if (!userData) {
-    console.error('saveAuthData: userData est null ou undefined');
-    throw new Error('Données utilisateur manquantes');
-  }
-
-  if (!userData.token) {
-    console.error('saveAuthData: token manquant', userData);
-    throw new Error('Token d\'authentification manquant');
-  }
-
-  if (!userData.user) {
-    console.error('saveAuthData: user manquant', userData);
-    throw new Error('Données utilisateur manquantes');
-  }
-
-  if (!userData.user.email || !userData.user.id) {
-    console.error('saveAuthData: propriétés utilisateur essentielles manquantes', userData.user);
-    throw new Error('Email et ID utilisateur requis');
-  }
-
-  // Générer un pseudo si manquant
-  if (!userData.user.pseudo) {
-    userData.user.pseudo = userData.user.email.split('@')[0];
-    console.log('Pseudo généré automatiquement:', userData.user.pseudo);
-  }
-
-  const storage = rememberMe ? localStorage : sessionStorage;
-  
-  try {
-    // Nettoyer d'abord les anciennes données
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('user');
-    
-    // Sauvegarder les nouvelles données
-    storage.setItem('authToken', userData.token);
-    storage.setItem('user', JSON.stringify(userData.user));
-    
-    // Marquer la préférence "se souvenir de moi"
-    if (rememberMe) {
-      localStorage.setItem('rememberMe', 'true');
-    } else {
-      localStorage.removeItem('rememberMe');
+export const saveAuthData = (data: AuthData, rememberMe: boolean = false): void => {
+    if (!data || !data.token || !data.user) {
+        throw new Error('Données d\'authentification invalides');
     }
 
-    console.log('Données d\'authentification sauvegardées avec succès:', {
-      storage: rememberMe ? 'localStorage' : 'sessionStorage',
-      user: {
-        id: userData.user.id,
-        email: userData.user.email,
-        pseudo: userData.user.pseudo,
-        emailVerified: userData.user.emailVerified
-      }
-    });
-  } catch (error) {
-    console.error('Erreur lors de la sauvegarde des données d\'authentification:', error);
-    throw new Error('Impossible de sauvegarder les données d\'authentification');
-  }
+    const storage = rememberMe ? localStorage : sessionStorage;
+    
+    try {
+        // Sauvegarder le token
+        storage.setItem('authToken', data.token);
+        
+        // Sauvegarder les données utilisateur
+        storage.setItem('user', JSON.stringify(data.user));
+        
+        console.log('Données d\'authentification sauvegardées avec succès');
+    } catch (error) {
+        console.error('Erreur lors de la sauvegarde des données d\'authentification:', error);
+        throw new Error('Impossible de sauvegarder les données d\'authentification');
+    }
 };
 
 // Vérifier si l'utilisateur a choisi "se souvenir de moi"

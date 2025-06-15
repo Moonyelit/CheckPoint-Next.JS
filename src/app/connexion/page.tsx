@@ -53,129 +53,47 @@ export default function Connexion() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('🚀 DEBUT DE LA CONNEXION - handleSubmit appelé');
-    setIsLoading(true);
     setError('');
-
-    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/login_check`;
-    const requestData = {
-      email: formData.email,
-      password: formData.password
-    };
-
-    console.log('Tentative de connexion:', {
-      url: apiUrl,
-      email: formData.email,
-      passwordLength: formData.password.length,
-      rememberMe: formData.rememberMe
-    });
+    setIsLoading(true);
 
     try {
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      });
-
-      console.log('Réponse de l\'API:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-        url: response.url,
-        headers: Object.fromEntries(response.headers.entries())
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        console.log('Données brutes reçues de l\'API:', userData);
-        console.log('Type de userData:', typeof userData);
-        console.log('Clés de userData:', Object.keys(userData || {}));
-        
-        // Vérifier si on a un token ET les données utilisateur
-        if (!userData || !userData.token) {
-          console.error('Token manquant dans la réponse:', userData);
-          setError('Token d\'authentification manquant dans la réponse du serveur');
-          return;
-        }
-
-        if (!userData.user) {
-          console.error('Données utilisateur manquantes dans la réponse:', userData);
-          setError('Données utilisateur manquantes dans la réponse du serveur');
-          return;
-        }
-
-        // ✅ LOGIQUE SIMPLIFIÉE : Plus besoin d'appels API supplémentaires !
-        console.log('=== VERIFICATION STATUT EMAIL ===');
-        console.log('Email utilisateur:', userData.user.email);
-        console.log('emailVerified depuis l\'API:', userData.user.emailVerified);
-
-        // Utiliser directement les données de l'API
-        const completeUserData = userData;
-
-        // Utiliser la nouvelle fonction saveAuthData avec gestion d'erreur
-        try {
-          saveAuthData(completeUserData, formData.rememberMe);
-        } catch (authError) {
-          console.error('Erreur lors de la sauvegarde des données d\'authentification:', authError);
-          setError(authError instanceof Error ? authError.message : 'Erreur lors de la sauvegarde des données');
-          return;
-        }
-        
-        // Vérifier le statut de vérification email pour rediriger correctement
-        const emailVerified = completeUserData.user.emailVerified;
-        console.log('=== DECISION REDIRECTION ===');
-        console.log('emailVerified final:', emailVerified, typeof emailVerified);
-        
-        if (emailVerified === true) {
-          // Email vérifié, rediriger vers l'étape 4 pour afficher le succès
-          console.log('REDIRECTION vers étape 4 - email vérifié');
-          localStorage.setItem('inscriptionStep', '4');
-          // Nettoyer les données temporaires
-          localStorage.removeItem('pendingUser');
-          router.push('/inscription');
-        } else {
-          // Email non vérifié, rediriger vers l'étape 3
-          console.log('REDIRECTION vers étape 3 - email non vérifié');
-          localStorage.setItem('inscriptionStep', '3');
-          router.push('/inscription');
-        }
-      } else {
-        console.error('Erreur de réponse API:', {
-          status: response.status,
-          statusText: response.statusText,
-          url: response.url
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login_check`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
         });
 
-        try {
-          const errorData = await response.json();
-          console.error('Données d\'erreur de l\'API:', errorData);
-          
-          // Gestion spécifique des erreurs 401
-          if (response.status === 401) {
-            setError('Email ou mot de passe incorrect');
-          } else {
-            setError(errorData.message || `Erreur lors de la connexion (${response.status})`);
-          }
-        } catch (parseError) {
-          console.error('Impossible de parser la réponse d\'erreur:', parseError);
-          const errorText = await response.text();
-          console.error('Contenu de la réponse d\'erreur:', errorText);
-          
-          // Gestion spécifique des erreurs 401 même si pas de JSON
-          if (response.status === 401) {
-            setError('Email ou mot de passe incorrect');
-          } else {
-            setError(`Erreur lors de la connexion (${response.status}): ${response.statusText}`);
-          }
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Erreur lors de la connexion');
         }
-      }
+
+        if (!data.token) {
+            throw new Error('Token d\'authentification manquant dans la réponse du serveur');
+        }
+
+        if (!data.user) {
+            throw new Error('Données utilisateur manquantes dans la réponse du serveur');
+        }
+
+        // Sauvegarder les données d'authentification
+        saveAuthData(data, formData.rememberMe);
+
+        // Rediriger en fonction du statut de vérification de l'email
+        if (data.user.emailVerified) {
+            router.push('/');
+        } else {
+            router.push('/inscription?step=4');
+        }
+
     } catch (error) {
-      console.error('Erreur réseau lors de la connexion:', error);
-      setError('Erreur de connexion au serveur');
+        console.error('Erreur de connexion:', error);
+        setError(error instanceof Error ? error.message : 'Une erreur est survenue');
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
   };
 
