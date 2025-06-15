@@ -50,12 +50,15 @@
     z-index: 2;
     width: 100%;
     max-width: 700px;
+    margin-top: 7rem;
     flex: 1;
     @include flex(column, center, center);
     z-index: 1;
     animation: fadeInUp 0.8s ease-out;
+
     @include respond-to("medium") {
       max-width: 90%;
+      margin-top:0rem;
     }
   }
 
