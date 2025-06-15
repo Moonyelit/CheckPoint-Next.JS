@@ -24,13 +24,14 @@
     gap: 40px;
     position: relative;
     z-index: 2;
+    font-family: "DM Sans", sans-serif;
   }
 
   &-right {
     @include flex(row, space-between, center);
     font-family: var(--base);
     z-index: 2;
-    gap: 20px;
+    gap: 20px; 
 
     &-links {
       @include flex(row, center, center);

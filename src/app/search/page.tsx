@@ -42,11 +42,11 @@ export default function SearchPage() {
   }, [query]);
 
   return (
-    <div className="search-page">
-      <h1>Résultats de recherche pour : <span className="search-page__query">{query}</span></h1>
+    <div className="search-page main-container">
+      <h1 className="search-page__title">Jeux</h1>
       {loading && <div>Chargement...</div>}
       {error && <div className="search-page__error">{error}</div>}
-      <div className="search-page__results">
+      <section className="search-page__results">
         {games.length === 0 && !loading && !error && <div>Aucun jeu trouvé.</div>}
         {games.map(game => (
           <ResultsGame
@@ -57,7 +57,7 @@ export default function SearchPage() {
             score={game.totalRating}
           />
         ))}
-      </div>
+      </section>
     </div>
   );
 }

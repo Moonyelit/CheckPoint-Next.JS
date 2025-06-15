@@ -13,9 +13,12 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
+  height: auto;
+  background: var(--gradient-checkpoint);
   margin: 0;
-} 
+  color: var(--black);
+}
 
 #__next {
   min-height: 100vh;
@@ -24,12 +27,6 @@ html, body {
 
 main {
   flex: 1;
-}
-
-body {
-  background: var(--gradient-checkpoint);
-  font-family: var(--font-base);
-  color: var(--black);
 }
 
 /* COULEURS */
