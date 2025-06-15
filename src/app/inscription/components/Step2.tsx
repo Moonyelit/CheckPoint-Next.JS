@@ -25,7 +25,7 @@ const Step2 = ({ onNext }: Step2Props) => {
         <h1 className="step2__title" role="alert" aria-live="polite">Avatar créé avec succès !</h1>
       </header>
       <button 
-        className="btn-custom-inverse" 
+        className="btn-custom-inverse step2__continue-button" 
         onClick={handleNext}
         aria-label="Continuer vers l'étape suivante"
       >

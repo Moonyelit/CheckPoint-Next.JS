@@ -125,6 +125,18 @@
     animation: pulse 0.5s ease-in-out;
   }
 
+  &__success-banner {
+    background-color: rgba(12, 96, 185, 0.1);
+    border: 1px solid var(--bleu-crystal-fonce) ;
+    color: var(--bleu-crystal-fonce);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.9rem;
+    animation: slideIn 0.3s ease-out;
+  }
+
   &__form-group {
     margin-bottom: 2rem;
     display: flex;

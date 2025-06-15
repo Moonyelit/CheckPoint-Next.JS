@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { saveAuthData, isRememberMeEnabled } from '@/utils/auth';
 import { useHydrationFix } from '@/hooks/useHydrationFix';
 import './connexion.scss';
@@ -15,6 +15,7 @@ export default function Connexion() {
   useHydrationFix(); // Résout les erreurs d'hydratation causées par les extensions
   
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [formData, setFormData] = useState<LoginFormData>({
     email: '',
     password: '',
@@ -22,6 +23,14 @@ export default function Connexion() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Vérifier si l'email a été vérifié
+  useEffect(() => {
+    if (searchParams?.get('verified') === 'true') {
+      setSuccessMessage('Votre compte a été validé avec succès ! Vous pouvez maintenant vous connecter pour continuer votre aventure.');
+    }
+  }, [searchParams]);
 
   // Récupérer la préférence "se souvenir de moi" au chargement
   useEffect(() => {
@@ -175,6 +184,17 @@ export default function Connexion() {
               aria-label="Erreur de connexion"
             >
               {error}
+            </div>
+          )}
+
+          {successMessage && (
+            <div 
+              className="connexion__success-banner" 
+              role="alert" 
+              aria-live="polite"
+              aria-label="Message de succès"
+            >
+              {successMessage}
             </div>
           )}
 
