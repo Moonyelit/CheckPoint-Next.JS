@@ -9,7 +9,7 @@ interface Game {
   coverUrl: string;
   developer: string;
   genres: string[];
-  totalRating: number;
+  totalRating: number; 
 }
 
 interface Wallpaper {
@@ -170,6 +170,23 @@ const Step6 = ({ onNext }: Step6Props) => {
           </p>
         </header>
 
+        <div className="step6__actions">
+          <button 
+            className="btn-custom-inverse step6__continue-button" 
+            onClick={handleContinue}
+            aria-label="Continuer vers l'étape suivante"
+          >
+            Sauver et continuer
+          </button>
+          <button
+            className=" step6__continue-button-skip"
+            onClick={handleSkip}
+            aria-label="Passer cette étape et continuer"
+          >
+            Passer cette étape et continuer
+          </button>
+        </div>
+
         <div className="step6__content">
           {uniqueWallpapers.length > 0 ? (
             <div className="step6__wallpapers-grid">
@@ -202,23 +219,6 @@ const Step6 = ({ onNext }: Step6Props) => {
               <p>Aucun wallpaper disponible pour le moment.</p>
             </div>
           )}
-        </div>
-
-        <div className="step6__actions">
-          <button 
-            className="btn-custom-inverse step6__continue-button" 
-            onClick={handleContinue}
-            aria-label="Continuer vers l'étape suivante"
-          >
-            Sauver et continuer
-          </button>
-          <button
-            className="btn-custom step6__continue-button"
-            onClick={handleSkip}
-            aria-label="Passer cette étape et continuer"
-          >
-            Passer cette étape et continuer
-          </button>
         </div>
       </div>
     </div>

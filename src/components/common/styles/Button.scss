@@ -7,22 +7,22 @@
 /* ===== Block: button ===== */
 .button {
   @include flex(row, center, center);
-  padding: 1em 2em;
+  padding: 1.5rem 2rem;
   flex-shrink: 0;
   cursor: pointer;
   text-align: center;
   font-family: "DM Sans", sans-serif;
   font-size: 1.2em;
   font-style: normal;
-  font-weight: 900;
+  font-weight: 700;
   line-height: normal;
   letter-spacing: -1.8px;
   @include box-shadow;
   border-radius: 8px;
-  position: relative;
-  overflow: hidden;
   z-index: 1;
   transition: color 0.3s ease;
+  font-size: clamp(0.5875rem, 0.5995rem + 0.3756vw, 0.9375rem);    font-family: var(--font-base);
+
 
   &:active {
     opacity: 0.9;
@@ -55,7 +55,6 @@
   /* ===== Modifier: --inverse ===== */
   &--inverse {
     @include flex(column, center, center);
-    width: 8em;
     height: 2.5em;
     background: var(--crystal-overlay);
     color: var(--white);
@@ -70,8 +69,7 @@
   /* ===== Modifier: --inscription ===== */
   &--inscription {
     font-size: clamp(0.5625rem, 0.4482rem + 0.4878vw, 0.875rem);
-    font-weight: 700;
-    background: var(--crystal-overlay);
+     background: var(--crystal-overlay);
     color: var(--white);
     padding: 0.8em 1.3em;
     border-radius: 15px;

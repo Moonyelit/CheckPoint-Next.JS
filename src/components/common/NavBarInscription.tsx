@@ -22,16 +22,23 @@ export default function InscriptionNavbar() {
   // Vérification simple de l'état d'auth
   useEffect(() => {
     const checkAuth = () => {
-      setIsAuthenticated(isUserLoggedIn());
+      const isLoggedIn = isUserLoggedIn();
+      console.log('🔍 État de connexion:', isLoggedIn);
+      setIsAuthenticated(isLoggedIn);
     };
 
+    // Vérifier immédiatement
     checkAuth();
     
     // Écouter les changements de stockage pour la synchronisation
     window.addEventListener('storage', checkAuth);
     
+    // Vérifier périodiquement (toutes les 2 secondes)
+    const interval = setInterval(checkAuth, 2000);
+    
     return () => {
       window.removeEventListener('storage', checkAuth);
+      clearInterval(interval);
     };
   }, []);
 

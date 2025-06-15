@@ -26,13 +26,11 @@ const Step4 = () => {
       console.log('🎉 Email vérifié avec succès !');
       
       if (email) {
-        console.log('📧 Mise à jour des données pour email:', decodeURIComponent(email));
-        markEmailAsVerified(decodeURIComponent(email));
-        
-        // S'assurer que les données pendingUser sont correctement mises à jour
         const emailDecoded = decodeURIComponent(email);
-        const pendingUser = localStorage.getItem('pendingUser');
+        console.log('📧 Mise à jour des données pour email:', emailDecoded);
         
+        // Mettre à jour les données pendingUser
+        const pendingUser = localStorage.getItem('pendingUser');
         if (pendingUser) {
           try {
             const userData = JSON.parse(pendingUser);
@@ -47,23 +45,27 @@ const Step4 = () => {
           } catch (error) {
             console.error('❌ Erreur mise à jour pendingUser:', error);
           }
-        } else {
-          // Créer des données pendingUser si elles n'existent pas
-          const newPendingUser = {
-            email: emailDecoded,
-            pseudo: emailDecoded.split('@')[0],
-            isVerified: true,
-            createdAt: new Date().toISOString()
-          };
-          localStorage.setItem('pendingUser', JSON.stringify(newPendingUser));
-          console.log('📦 Nouvelles données pendingUser créées:', newPendingUser);
         }
-      }
-      
-      // IMPORTANT: Mettre à jour le statut de l'utilisateur connecté si c'est lui
-      if (currentUser && (email === currentUser.email || !email)) {
-        console.log('🔄 Mise à jour du statut emailVerified pour l\'utilisateur connecté');
-        updateEmailVerificationStatus(true);
+
+        // Mettre à jour l'état de connexion si nécessaire
+        if (currentUser && currentUser.email === emailDecoded) {
+          console.log('🔄 Mise à jour du statut emailVerified pour l\'utilisateur connecté');
+          updateEmailVerificationStatus(true);
+          
+          // Forcer la mise à jour de l'état de connexion
+          const updatedUser = {
+            ...currentUser,
+            emailVerified: true
+          };
+          
+          // Déterminer quel storage utiliser
+          const isRememberMe = localStorage.getItem('rememberMe') === 'true';
+          const storage = isRememberMe ? localStorage : sessionStorage;
+          
+          // Mettre à jour les données utilisateur
+          storage.setItem('user', JSON.stringify(updatedUser));
+          console.log('✅ État de connexion mis à jour');
+        }
       }
     } else if (error) {
       setVerificationStatus('error');
