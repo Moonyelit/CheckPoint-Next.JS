@@ -71,7 +71,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validation avec sécurité
@@ -121,19 +121,14 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
       // Marquer qu'on passe à l'étape 2
       safeLocalStorageSet('inscriptionStep', '2');
 
-      // Envoyer l'email de vérification
-      sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo)
-        .then((result) => {
-          if (result.success) {
-            console.log('Email de vérification envoyé avec succès');
-            onEmailSent?.();
-          } else {
-            console.error('Erreur lors de l\'envoi de l\'email:', result.message);
-          }
-        })
-        .catch((error) => {
-          console.error('Erreur lors de l\'envoi de l\'email:', error);
-        });
+      // Envoyer l'email de vérification avec le pseudo
+      const verificationResult = await sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo);
+      if (verificationResult.success) {
+        console.log('Email de vérification envoyé avec succès');
+        onEmailSent?.();
+      } else {
+        console.error('Erreur lors de l\'envoi de l\'email:', verificationResult.message);
+      }
 
       onSubmit(sanitizedData);
     } else {

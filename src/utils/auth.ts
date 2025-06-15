@@ -97,10 +97,19 @@ export const saveAuthData = (data: AuthData, rememberMe: boolean = false): void 
         // Sauvegarder le token
         storage.setItem('authToken', data.token);
         
-        // Sauvegarder les données utilisateur
-        storage.setItem('user', JSON.stringify(data.user));
+        // S'assurer que emailVerified est un booléen
+        const userData = {
+            ...data.user,
+            emailVerified: Boolean(data.user.emailVerified)
+        };
         
-        console.log('Données d\'authentification sauvegardées avec succès');
+        // Sauvegarder les données utilisateur
+        storage.setItem('user', JSON.stringify(userData));
+        
+        console.log('Données d\'authentification sauvegardées avec succès:', {
+            email: userData.email,
+            emailVerified: userData.emailVerified
+        });
     } catch (error) {
         console.error('Erreur lors de la sauvegarde des données d\'authentification:', error);
         throw new Error('Impossible de sauvegarder les données d\'authentification');
@@ -129,8 +138,23 @@ export const logout = (): void => {
 
 // Vérifier si l'utilisateur a validé son email
 export const isEmailVerified = (): boolean => {
-  const user = getCurrentUser();
-  return user?.emailVerified || false;
+    const user = getCurrentUser();
+    if (!user) return false;
+    
+    // Vérifier d'abord dans le stockage local
+    const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+    if (storedUser) {
+        try {
+            const parsedUser = JSON.parse(storedUser);
+            // S'assurer que emailVerified est un booléen
+            return Boolean(parsedUser.emailVerified);
+        } catch (error) {
+            console.error('Erreur lors du parsing des données utilisateur:', error);
+        }
+    }
+    
+    // Fallback sur la valeur de l'utilisateur courant
+    return Boolean(user.emailVerified);
 };
 
 // Déterminer l'étape d'inscription actuelle selon l'état de l'utilisateur
@@ -320,34 +344,24 @@ export const cleanupInscriptionData = (): void => {
   safeLocalStorageRemove('pendingUser');
 };
 
-// Fonction pour mettre à jour le statut de vérification d'email de l'utilisateur connecté
-export const updateEmailVerificationStatus = (verified: boolean): boolean => {
-  if (typeof window === 'undefined') return false;
-  
-  const currentUser = getCurrentUser();
-  if (!currentUser) {
-    console.log('Aucun utilisateur connecté pour mettre à jour');
-    return false;
-  }
+// Mettre à jour le statut de vérification d'email
+export const updateEmailVerificationStatus = (verified: boolean): void => {
+  const user = getCurrentUser();
+  if (!user) return;
+
+  // Mettre à jour dans le stockage approprié
+  const isRememberMe = isRememberMeEnabled();
+  const storage = isRememberMe ? localStorage : sessionStorage;
   
   try {
-    // Créer un nouvel objet utilisateur avec le statut mis à jour
-    const updatedUser: User = {
-      ...currentUser,
+    const updatedUser = {
+      ...user,
       emailVerified: verified
     };
     
-    // Déterminer quel storage utiliser
-    const isRememberMe = isRememberMeEnabled();
-    const storage = isRememberMe ? localStorage : sessionStorage;
-    
-    // Sauvegarder les données mises à jour
     storage.setItem('user', JSON.stringify(updatedUser));
-    
-    console.log(`Statut emailVerified mis à jour: ${verified} pour ${currentUser.email}`);
-    return true;
+    console.log(`Statut emailVerified mis à jour: ${verified} pour ${user.email}`);
   } catch (error) {
     console.error('Erreur lors de la mise à jour du statut email:', error);
-    return false;
   }
 }; 

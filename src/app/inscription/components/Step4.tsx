@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getCurrentUser, updateEmailVerificationStatus } from '@/utils/auth';
+import { getCurrentUser, updateEmailVerificationStatus, isEmailVerified } from '@/utils/auth';
 import '../styles/Step4.scss';
 
 const Step4 = () => {
@@ -9,69 +9,68 @@ const Step4 = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Marquer qu'on est à l'étape 4
-    localStorage.setItem('inscriptionStep', '4');
-    
-    // Récupérer l'email depuis les paramètres URL ou l'utilisateur connecté
-    const email = searchParams?.get('email');
-    const verified = searchParams?.get('verified');
-    const error = searchParams?.get('error');
+    const checkVerificationStatus = async () => {
+      try {
+        // Vérifier d'abord les paramètres URL
+        const email = searchParams?.get('email');
+        const verified = searchParams?.get('verified');
+        const error = searchParams?.get('error');
 
-    // Essayer de récupérer les infos de l'utilisateur connecté
-    const currentUser = getCurrentUser();
+        if (verified === 'true') {
+          setVerificationStatus('success');
+          if (email) {
+            const emailDecoded = decodeURIComponent(email);
+            updateEmailVerificationStatus(true);
+          }
+          return;
+        }
 
-    if (verified === 'true') {
-      setVerificationStatus('success');
-      console.log('🎉 Email vérifié avec succès !');
-      
-      if (email) {
-        const emailDecoded = decodeURIComponent(email);
-        console.log('📧 Mise à jour des données pour email:', emailDecoded);
-        
-        // Mettre à jour les données pendingUser
-        const pendingUser = localStorage.getItem('pendingUser');
-        if (pendingUser) {
-          try {
-            const userData = JSON.parse(pendingUser);
-            if (userData.email === emailDecoded) {
-              const updatedUserData = {
-                ...userData,
-                isVerified: true
-              };
-              localStorage.setItem('pendingUser', JSON.stringify(updatedUserData));
-              console.log('✅ Données pendingUser mises à jour:', updatedUserData);
+        if (error) {
+          setVerificationStatus('error');
+          return;
+        }
+
+        // Si pas de paramètres URL, vérifier l'état actuel
+        const currentUser = getCurrentUser();
+        if (currentUser) {
+          // Vérifier avec l'API
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/me`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('authToken') || sessionStorage.getItem('authToken')}`
             }
-          } catch (error) {
-            console.error('❌ Erreur mise à jour pendingUser:', error);
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            if (userData.emailVerified) {
+              setVerificationStatus('success');
+              updateEmailVerificationStatus(true);
+              return;
+            }
           }
         }
 
-        // Mettre à jour l'état de connexion si nécessaire
-        if (currentUser && currentUser.email === emailDecoded) {
-          console.log('🔄 Mise à jour du statut emailVerified pour l\'utilisateur connecté');
-          updateEmailVerificationStatus(true);
-          
-          // Forcer la mise à jour de l'état de connexion
-          const updatedUser = {
-            ...currentUser,
-            emailVerified: true
-          };
-          
-          // Déterminer quel storage utiliser
-          const isRememberMe = localStorage.getItem('rememberMe') === 'true';
-          const storage = isRememberMe ? localStorage : sessionStorage;
-          
-          // Mettre à jour les données utilisateur
-          storage.setItem('user', JSON.stringify(updatedUser));
-          console.log('✅ État de connexion mis à jour');
+        // Si on arrive ici, on vérifie une dernière fois avec isEmailVerified
+        if (isEmailVerified()) {
+          setVerificationStatus('success');
+          return;
         }
+
+        // Si rien n'est vérifié, on reste en loading
+        setVerificationStatus('loading');
+      } catch (error) {
+        console.error('Erreur lors de la vérification du statut:', error);
+        setVerificationStatus('error');
       }
-    } else if (error) {
-      setVerificationStatus('error');
-    } else if (currentUser && currentUser.emailVerified) {
-      // Si l'utilisateur est déjà connecté et vérifié
-      setVerificationStatus('success');
-    }
+    };
+
+    // Vérifier immédiatement
+    checkVerificationStatus();
+
+    // Vérifier toutes les 2 secondes
+    const interval = setInterval(checkVerificationStatus, 2000);
+
+    return () => clearInterval(interval);
   }, [searchParams]);
 
   const handleContinue = () => {

@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getPendingUser } from '@/utils/emailVerification';
-import { getCurrentUser, isEmailVerified } from '@/utils/auth';
+import { getCurrentUser, isEmailVerified, updateEmailVerificationStatus } from '@/utils/auth';
 import '../styles/Step3.scss';
 
 interface Step3Props {
@@ -16,10 +15,9 @@ const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
   useEffect(() => {
     localStorage.setItem('inscriptionStep', '3');
   }, []);
+  
   const [isResending, setIsResending] = useState(false);
   const [resendMessage, setResendMessage] = useState('');
-  const [userEmail, setUserEmail] = useState(email || '');
-  const [userPseudo, setUserPseudo] = useState(pseudo || '');
   const [showPopup, setShowPopup] = useState(false);
   const searchParams = useSearchParams();
 
@@ -27,6 +25,12 @@ const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
     // Vérifier si l'email a été vérifié avec succès
     if (searchParams?.get('verified') === 'true') {
       setResendMessage('Votre email a été vérifié avec succès ! Vous pouvez maintenant vous connecter.');
+      // Mettre à jour le statut de vérification et passer à l'étape suivante
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        updateEmailVerificationStatus(true);
+        onEmailVerified?.();
+      }
     }
     
     // Vérifier s'il y a une erreur de vérification
@@ -39,51 +43,56 @@ const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
       }
     }
 
-    // Récupérer les données utilisateur selon la priorité :
-    // 1. Props (si passées directement)
-    // 2. Utilisateur connecté (si disponible)
-    // 3. Données en attente (fallback)
-    
-    if (!email) { // Seulement si pas passé en props
+    // Vérifier périodiquement le statut de vérification
+    const checkVerificationStatus = async () => {
       const currentUser = getCurrentUser();
       if (currentUser) {
-        // Utilisateur connecté : utiliser ses données
-        setUserEmail(currentUser.email);
-        setUserPseudo(currentUser.pseudo);
-      } else {
-        // Pas d'utilisateur connecté : chercher dans les données en attente
-        const storedUserData = localStorage.getItem('pendingUser');
-        if (storedUserData) {
-          try {
-            const userData = JSON.parse(storedUserData);
-            setUserEmail(userData.email || '');
-            setUserPseudo(userData.pseudo || '');
-          } catch (error) {
-            console.error('Erreur parsing pendingUser:', error);
-            localStorage.removeItem('pendingUser'); // Nettoyer les données corrompues
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/me`, {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('authToken') || sessionStorage.getItem('authToken')}`
+            }
+          });
+          
+          if (response.ok) {
+            const userData = await response.json();
+            if (userData.emailVerified) {
+              updateEmailVerificationStatus(true);
+              onEmailVerified?.();
+            }
           }
+        } catch (error) {
+          console.error('Erreur lors de la vérification du statut:', error);
         }
       }
-    }
-  }, [searchParams, email]);
+    };
+
+    // Vérifier immédiatement
+    checkVerificationStatus();
+    
+    // Vérifier toutes les 2 secondes
+    const interval = setInterval(checkVerificationStatus, 2000);
+    
+    return () => clearInterval(interval);
+  }, [searchParams, onEmailVerified]);
 
   const handleContinueClick = () => {
     // Vérifier si l'email a été vérifié
     const emailVerified = isEmailVerified();
-    const pendingUser = getPendingUser();
+    const currentUser = getCurrentUser();
     
-    if (emailVerified || (pendingUser && pendingUser.isVerified)) {
+    if (emailVerified || (currentUser && currentUser.emailVerified)) {
       // Email vérifié, passer à l'étape 4
       onEmailVerified?.();
     } else {
       // Email non vérifié, afficher la popup
       setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 3000); // Fermer après 3 secondes
+      setTimeout(() => setShowPopup(false), 3000);
     }
   };
 
   const handleResendEmail = async () => {
-    if (!userEmail) {
+    if (!email) {
       setResendMessage('Aucune adresse email trouvée. Veuillez vous réinscrire.');
       return;
     }
@@ -98,8 +107,8 @@ const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: userEmail,
-          pseudo: userPseudo
+          email: email,
+          pseudo: pseudo
         }),
       });
 
@@ -136,9 +145,9 @@ const Step3 = ({ email, pseudo, onEmailVerified }: Step3Props) => {
           <p>Vous devez vérifier votre adresse e-mail pour activer votre compte. Un e-mail contenant un lien pour vérifier votre adresse e-mail vous a été envoyé.</p>
         )}
         
-        {userEmail && (
+        {email && (
           <div className="step3__email-info">
-            <p><strong>Email:</strong> {userEmail}</p>
+            <p><strong>Email:</strong> {email}</p>
           </div>
         )}
 

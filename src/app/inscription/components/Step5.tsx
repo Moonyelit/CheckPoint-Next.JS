@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, debugAuthState, saveAuthData, getAuthData } from '@/utils/auth';
+import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, saveAuthData, getAuthData } from '@/utils/auth';
 import '../styles/Step5.scss';
 
 // Extension de l'interface User pour inclure profileImage
@@ -16,29 +16,60 @@ const Step5 = ({ onNext }: Step5Props) => {
   const [currentUser, setCurrentUser] = useState<UserWithProfile | null>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<string>('/images/avatars/DefaultAvatar.JPG');
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
 
   useEffect(() => {
-    // DEBUG: Vérifier l'état d'authentification
-    console.log('=== DEBUG STEP 5 ===');
-    debugAuthState();
-    
-    // Marquer qu'on est à l'étape 5
-    safeLocalStorageSet('inscriptionStep', '5');
-    
-    // Récupérer l'utilisateur actuel
-    const user = getCurrentUser() as UserWithProfile;
-    console.log('Utilisateur Step5:', user);
-    setCurrentUser(user);
-    
-    // Définir l'avatar par défaut basé sur l'utilisateur
-    if (user && user.profileImage) {
-      setSelectedAvatar(user.profileImage);
-    }
+    const initializeStep = async () => {
+      try {
+        // Marquer qu'on est à l'étape 5
+        safeLocalStorageSet('inscriptionStep', '5');
+        
+        // Récupérer l'utilisateur actuel
+        const user = getCurrentUser() as UserWithProfile;
+        
+        if (!user) {
+          window.location.href = '/connexion';
+          return;
+        }
+        
+        setCurrentUser(user);
+        
+        // Définir l'avatar par défaut basé sur l'utilisateur
+        if (user.profileImage) {
+          setSelectedAvatar(user.profileImage);
+        }
+
+        setIsInitialized(true);
+      } catch (error) {
+        console.error('Erreur lors de l\'initialisation:', error);
+        window.location.href = '/connexion';
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeStep();
   }, []);
+
+  // Ne rien afficher tant que l'initialisation n'est pas terminée
+  if (!isInitialized) {
+    return null;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="step5__form-container">
+        <div className="step5__loading">
+          <div className="step5__loading-spinner"></div>
+          <p>Chargement de votre profil...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleSaveAndContinue = async () => {
     try {
-      // Sauvegarder l'avatar sélectionné pour l'utilisateur
       if (currentUser) {
         const token = getAuthToken();
         if (!token) {
@@ -46,53 +77,59 @@ const Step5 = ({ onNext }: Step5Props) => {
           window.location.href = '/connexion';
           return;
         }
-        
-        console.log('Save - Token:', token ? 'Présent' : 'Absent');
-        console.log('Save - User ID:', currentUser.id);
-        
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${currentUser.id}`, {
-          method: 'PATCH',
+
+        // Créer un objet File à partir de l'URL de l'avatar
+        const response = await fetch(selectedAvatar);
+        const blob = await response.blob();
+        const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+
+        // Créer FormData pour l'upload
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        // Utiliser l'endpoint d'upload d'avatar
+        const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload-avatar`, {
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/merge-patch+json',
             'Authorization': `Bearer ${token}`,
           },
-          body: JSON.stringify({
-            profileImage: selectedAvatar
-          }),
+          body: formData,
         });
 
-        if (response.ok) {
-          // Récupérer les données d'authentification actuelles
-          const authData = getAuthData();
-          if (!authData) {
-            console.error('Données d\'authentification non trouvées');
-            return;
-          }
+        if (!uploadResponse.ok) {
+          const errorData = await uploadResponse.json();
+          console.error('Erreur lors de la sauvegarde de l\'avatar:', uploadResponse.status);
+          console.error('Erreur details:', JSON.stringify(errorData));
+          throw new Error(`Erreur lors de la sauvegarde de l'avatar: ${uploadResponse.status}`);
+        }
 
-          // Mettre à jour uniquement l'avatar dans les données utilisateur
-          const updatedUser = {
-            ...authData.user,
-            profileImage: selectedAvatar
-          };
+        const result = await uploadResponse.json();
+        
+        // Mettre à jour les données utilisateur avec la nouvelle URL d'avatar
+        const authData = getAuthData();
+        if (!authData) {
+          console.error('Données d\'authentification non trouvées');
+          return;
+        }
 
-          // Sauvegarder les données mises à jour avec le même token
-          const isRememberMe = localStorage.getItem('rememberMe') === 'true';
-          saveAuthData({ token: authData.token, user: updatedUser }, isRememberMe);
-          
-          // Continuer vers l'étape suivante
-          if (onNext) {
-            onNext();
-          } else {
-            // Si pas de fonction onNext, nettoyer et terminer
-            localStorage.removeItem('inscriptionStep');
-            localStorage.removeItem('pendingUser');
-            window.location.href = '/';
-          }
+        // Mettre à jour uniquement l'avatar dans les données utilisateur
+        const updatedUser = {
+          ...authData.user,
+          profileImage: result.avatarUrl
+        };
+
+        // Sauvegarder les données mises à jour avec le même token
+        const isRememberMe = localStorage.getItem('rememberMe') === 'true';
+        saveAuthData({ token: authData.token, user: updatedUser }, isRememberMe);
+        
+        // Continuer vers l'étape suivante
+        if (onNext) {
+          onNext();
         } else {
-          console.error('Erreur lors de la sauvegarde de l\'avatar:', response.status);
-          const errorText = await response.text();
-          console.error('Erreur details:', errorText);
-          alert('Erreur lors de la sauvegarde de l\'avatar. Veuillez réessayer.');
+          // Si pas de fonction onNext, nettoyer et terminer
+          localStorage.removeItem('inscriptionStep');
+          localStorage.removeItem('pendingUser');
+          window.location.href = '/';
         }
       } else {
         // Si pas d'utilisateur connecté, rediriger vers la connexion
@@ -101,7 +138,7 @@ const Step5 = ({ onNext }: Step5Props) => {
       }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
-      alert('Erreur de connexion. Veuillez réessayer.');
+      alert('Erreur lors de la sauvegarde de l\'avatar. Veuillez réessayer.');
     }
   };
 
