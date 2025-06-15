@@ -41,7 +41,6 @@
     url("/images/Animate/TheLastUs2.gif") lightgray 70% / cover no-repeat;
   position: relative;
   @include flex(column, center, center);
-  padding-block: 8rem 3.5rem;
   animation: backgroundFade 1.2s ease-out;
 
   @include respond-to("medium") {
