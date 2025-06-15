@@ -293,48 +293,64 @@ export const safeLocalStorageRemove = (key: string): boolean => {
   }
 };
 
-// Fonction centralisée pour déterminer l'étape d'inscription initiale
-export const getInitialInscriptionStep = (searchParams?: URLSearchParams): number => {
-  // Vérification côté client uniquement
-  if (typeof window === 'undefined') {
-    return 1; // Valeur par défaut côté serveur
-  }
+// Déterminer l'étape d'inscription initiale
+export const getInitialInscriptionStep = async (searchParams?: URLSearchParams): Promise<number> => {
+  if (typeof window === 'undefined') return 1;
 
   try {
-    // Priorité 1: Paramètres URL (vérification email directe)
-    if (searchParams) {
-      const verified = searchParams.get('verified');
-      const error = searchParams.get('error');
-      
-      if (verified === 'true' || error) {
-        return 4;
+    // Vérifier d'abord si l'utilisateur a déjà complété le tutoriel
+    const user = getCurrentUser();
+    if (user) {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/me`, {
+        headers: {
+          'Authorization': `Bearer ${getAuthToken()}`
+        }
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        if (userData.tutorialCompleted) {
+          return 0; // 0 signifie que le tutoriel est terminé
+        }
       }
     }
-    
-    // Priorité 2: Étape stockée dans localStorage (depuis connexion)
-    const storedStep = safeLocalStorageGet('inscriptionStep');
-    if (storedStep) {
-      const parsed = parseInt(storedStep, 10);
-      if (parsed >= 1 && parsed <= 6) {
-        return parsed;
+
+    // Si pas de paramètres URL, vérifier le stockage local
+    if (!searchParams) {
+      const storedStep = localStorage.getItem('inscriptionStep');
+      if (storedStep) {
+        const step = parseInt(storedStep, 10);
+        if (!isNaN(step) && step >= 1 && step <= 7) {
+          return step;
+        }
+      }
+      return 1;
+    }
+
+    // Vérifier les paramètres URL
+    const stepParam = searchParams.get('step');
+    if (stepParam) {
+      const step = parseInt(stepParam, 10);
+      if (!isNaN(step) && step >= 1 && step <= 7) {
+        return step;
       }
     }
-    
-    // Priorité 3: Déduction selon l'état de l'utilisateur connecté
-    const currentUser = getCurrentUser();
-    if (currentUser && isUserLoggedIn()) {
-      if (currentUser.emailVerified) {
-        return 4; // Email vérifié
-      } else {
-        return 3; // Connecté mais email non vérifié
-      }
+
+    // Vérifier le statut de vérification de l'email
+    if (searchParams.get('verified') === 'true') {
+      return 4;
     }
-    
-    // Valeur par défaut: nouvelle inscription
+
+    // Vérifier si l'email est déjà vérifié
+    if (isEmailVerified()) {
+      return 4;
+    }
+
+    // Par défaut, commencer à l'étape 1
     return 1;
   } catch (error) {
-    console.error('Erreur dans getInitialInscriptionStep:', error);
-    return 1; // Fallback sécurisé
+    console.error('Erreur lors de la détermination de l\'étape d\'inscription:', error);
+    return 1;
   }
 };
 

@@ -10,7 +10,7 @@ import Step4 from './components/Step4';
 import Step5 from './components/Step5';
 import Step6 from './components/Step6';
 import Step7 from './components/Step7';
-
+import { useRouter } from 'next/navigation';
 
 interface FormData {
   pseudo: string;
@@ -21,10 +21,9 @@ interface FormData {
   acceptTerms: boolean;
 }
 
-
-
 export default function Inscription() {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState<FormData>({
     pseudo: '',
     email: '',
@@ -34,12 +33,29 @@ export default function Inscription() {
     acceptTerms: false
   });
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   // Déterminer l'étape d'inscription avec la fonction centralisée
   useEffect(() => {
-    const step = getInitialInscriptionStep(searchParams ?? undefined);
-    setCurrentStep(step);
-  }, [searchParams]);
+    const initializeStep = async () => {
+      try {
+        const step = await getInitialInscriptionStep(searchParams ?? undefined);
+        if (step === 0) {
+          // Si le tutoriel est terminé, rediriger vers la page d'accueil
+          router.push('/');
+        } else {
+          setCurrentStep(step);
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'initialisation de l\'étape:', error);
+        setCurrentStep(1);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeStep();
+  }, [searchParams, router]);
   
   const handleStep1Submit = async (data: FormData) => {
     try {
@@ -90,8 +106,18 @@ export default function Inscription() {
   };
 
   const handleStep6Next = () => {
-    setCurrentStep(7); // ou redirection vers l'accueil
+    setCurrentStep(7);
   };
+
+  if (isLoading) {
+    return (
+      <div className="inscription">
+        <div className="inscription__loading">
+          <p>Chargement...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="inscription">

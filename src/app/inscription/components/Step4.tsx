@@ -1,12 +1,13 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { getCurrentUser, updateEmailVerificationStatus, isEmailVerified } from '@/utils/auth';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { getCurrentUser, updateEmailVerificationStatus, isEmailVerified, safeLocalStorageSet } from '@/utils/auth';
 import '../styles/Step4.scss';
 
 const Step4 = () => {
   const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     const checkVerificationStatus = async () => {
@@ -19,7 +20,6 @@ const Step4 = () => {
         if (verified === 'true') {
           setVerificationStatus('success');
           if (email) {
-            const emailDecoded = decodeURIComponent(email);
             updateEmailVerificationStatus(true);
           }
           return;
@@ -75,10 +75,10 @@ const Step4 = () => {
 
   const handleContinue = () => {
     // Marquer qu'on passe à l'étape 5
-    localStorage.setItem('inscriptionStep', '5');
+    safeLocalStorageSet('inscriptionStep', '5');
     
-    // Rediriger vers la page d'inscription qui affichera Step5
-    window.location.href = '/inscription';
+    // Rediriger vers l'étape 5 en utilisant le router
+    router.push('/inscription?step=5');
   };
 
   const renderContent = () => {
@@ -130,13 +130,13 @@ const Step4 = () => {
             <div className="step4__error-actions">
               <button 
                 className="btn-custom-inverse"
-                onClick={() => window.location.href = '/inscription'}
+                onClick={() => router.push('/inscription')}
               >
                 Retour à l&apos;inscription
               </button>
               <button 
                 className="step4__secondary-button" 
-                onClick={() => window.location.href = '/connexion'}
+                onClick={() => router.push('/connexion')}
               >
                 Retour à la connexion
               </button>
