@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { markEmailAsVerified } from '@/utils/emailVerification';
 import { getCurrentUser, updateEmailVerificationStatus } from '@/utils/auth';
 import '../styles/Step4.scss';
 

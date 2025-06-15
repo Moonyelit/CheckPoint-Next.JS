@@ -25,39 +25,56 @@ export const isUserLoggedIn = (): boolean => {
 export const getAuthData = (): AuthData | null => {
   if (typeof window === 'undefined') return null;
   
-  // Vérifier d'abord localStorage
-  let token = localStorage.getItem('authToken');
-  let user = localStorage.getItem('user');
-  
-  // Si pas trouvé, vérifier sessionStorage
-  if (!token || !user || token === 'undefined' || user === 'undefined') {
-    token = sessionStorage.getItem('authToken');
-    user = sessionStorage.getItem('user');
-  }
-  
-  // Validation stricte avant parsing
-  if (!token || !user || token === 'undefined' || user === 'undefined' || token === 'null' || user === 'null') {
-    return null;
-  }
-  
   try {
-    const parsedUser = JSON.parse(user);
-    // Vérifier que l'objet parsé a les propriétés requises
-    if (!parsedUser || typeof parsedUser !== 'object' || !parsedUser.email) {
+    // Vérifier d'abord localStorage
+    let token = localStorage.getItem('authToken');
+    let user = localStorage.getItem('user');
+    
+    // Si pas trouvé, vérifier sessionStorage
+    if (!token || !user || token === 'undefined' || user === 'undefined') {
+      token = sessionStorage.getItem('authToken');
+      user = sessionStorage.getItem('user');
+    }
+    
+    // Validation stricte avant parsing
+    if (!token || !user || token === 'undefined' || user === 'undefined' || token === 'null' || user === 'null') {
+      console.log('getAuthData: Aucune donnée d\'authentification trouvée');
       return null;
     }
     
-    return {
-      token,
-      user: parsedUser
-    };
+    try {
+      const parsedUser = JSON.parse(user);
+      // Vérifier que l'objet parsé a les propriétés requises
+      if (!parsedUser || typeof parsedUser !== 'object' || !parsedUser.email) {
+        console.error('getAuthData: Données utilisateur invalides:', parsedUser);
+        return null;
+      }
+      
+      console.log('getAuthData: Données d\'authentification récupérées:', {
+        token: token ? 'Présent' : 'Absent',
+        user: {
+          id: parsedUser.id,
+          email: parsedUser.email,
+          pseudo: parsedUser.pseudo,
+          emailVerified: parsedUser.emailVerified
+        }
+      });
+      
+      return {
+        token,
+        user: parsedUser
+      };
+    } catch (error) {
+      console.error('Erreur lors du parsing des données utilisateur:', error);
+      // Nettoyer les données corrompues
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('user');
+      return null;
+    }
   } catch (error) {
-    console.error('Erreur lors du parsing des données utilisateur:', error);
-    // Nettoyer les données corrompues
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('authToken');
-    sessionStorage.removeItem('user');
+    console.error('Erreur lors de la récupération des données d\'authentification:', error);
     return null;
   }
 };
@@ -100,6 +117,13 @@ export const saveAuthData = (userData: AuthData, rememberMe: boolean = false): v
   const storage = rememberMe ? localStorage : sessionStorage;
   
   try {
+    // Nettoyer d'abord les anciennes données
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('user');
+    
+    // Sauvegarder les nouvelles données
     storage.setItem('authToken', userData.token);
     storage.setItem('user', JSON.stringify(userData.user));
     
@@ -110,7 +134,15 @@ export const saveAuthData = (userData: AuthData, rememberMe: boolean = false): v
       localStorage.removeItem('rememberMe');
     }
 
-    console.log('Données d\'authentification sauvegardées avec succès');
+    console.log('Données d\'authentification sauvegardées avec succès:', {
+      storage: rememberMe ? 'localStorage' : 'sessionStorage',
+      user: {
+        id: userData.user.id,
+        email: userData.user.email,
+        pseudo: userData.user.pseudo,
+        emailVerified: userData.user.emailVerified
+      }
+    });
   } catch (error) {
     console.error('Erreur lors de la sauvegarde des données d\'authentification:', error);
     throw new Error('Impossible de sauvegarder les données d\'authentification');

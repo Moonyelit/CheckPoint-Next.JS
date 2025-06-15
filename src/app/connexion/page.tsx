@@ -151,12 +151,24 @@ export default function Connexion() {
         try {
           const errorData = await response.json();
           console.error('Données d\'erreur de l\'API:', errorData);
-          setError(errorData.message || `Erreur lors de la connexion (${response.status})`);
+          
+          // Gestion spécifique des erreurs 401
+          if (response.status === 401) {
+            setError('Email ou mot de passe incorrect');
+          } else {
+            setError(errorData.message || `Erreur lors de la connexion (${response.status})`);
+          }
         } catch (parseError) {
           console.error('Impossible de parser la réponse d\'erreur:', parseError);
           const errorText = await response.text();
           console.error('Contenu de la réponse d\'erreur:', errorText);
-          setError(`Erreur lors de la connexion (${response.status}): ${response.statusText}`);
+          
+          // Gestion spécifique des erreurs 401 même si pas de JSON
+          if (response.status === 401) {
+            setError('Email ou mot de passe incorrect');
+          } else {
+            setError(`Erreur lors de la connexion (${response.status}): ${response.statusText}`);
+          }
         }
       }
     } catch (error) {

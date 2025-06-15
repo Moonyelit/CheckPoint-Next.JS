@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, debugAuthState } from '@/utils/auth';
+import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, debugAuthState, saveAuthData, getAuthData } from '@/utils/auth';
 import '../styles/Step5.scss';
 
 // Extension de l'interface User pour inclure profileImage
@@ -62,9 +62,22 @@ const Step5 = ({ onNext }: Step5Props) => {
         });
 
         if (response.ok) {
-          // Mettre à jour l'utilisateur local
-          const updatedUser = { ...currentUser, profileImage: selectedAvatar };
-          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+          // Récupérer les données d'authentification actuelles
+          const authData = getAuthData();
+          if (!authData) {
+            console.error('Données d\'authentification non trouvées');
+            return;
+          }
+
+          // Mettre à jour uniquement l'avatar dans les données utilisateur
+          const updatedUser = {
+            ...authData.user,
+            profileImage: selectedAvatar
+          };
+
+          // Sauvegarder les données mises à jour avec le même token
+          const isRememberMe = localStorage.getItem('rememberMe') === 'true';
+          saveAuthData({ token: authData.token, user: updatedUser }, isRememberMe);
           
           // Continuer vers l'étape suivante
           if (onNext) {
@@ -149,6 +162,21 @@ const Step5 = ({ onNext }: Step5Props) => {
         // Mettre à jour l'avatar immédiatement pour l'aperçu
         if (result.avatarUrl) {
           setSelectedAvatar(result.avatarUrl);
+          
+          // Récupérer les données d'authentification actuelles
+          const authData = getAuthData();
+          if (authData) {
+            // Mettre à jour uniquement l'avatar dans les données utilisateur
+            const updatedUser = {
+              ...authData.user,
+              profileImage: result.avatarUrl
+            };
+
+            // Sauvegarder les données mises à jour avec le même token
+            const isRememberMe = localStorage.getItem('rememberMe') === 'true';
+            saveAuthData({ token: authData.token, user: updatedUser }, isRememberMe);
+          }
+          
           alert('Avatar uploadé avec succès ! Cliquez sur "Sauver et continuer" pour finaliser.');
         } else {
           // Fallback : utiliser une URL temporaire pour l'aperçu

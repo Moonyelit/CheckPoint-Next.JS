@@ -107,16 +107,9 @@
   ****************** BUTTONS ******************
   ****************************************************/
   &__continue-button {
-    width: 80%;
-    max-width: 300px;
-    margin: 0 auto;
-    padding: clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
-    font-size: clamp(1.2rem, 1rem + 0.8vw, 1.8rem);
-    font-family: var(--font-base);
-    font-weight: 700;
-    animation: slideIn 0.6s ease-out 1s both;
-    @include transition(all, 0.3s, ease);
+    letter-spacing: 0px;
 
+    
     &:active:not(:disabled) {
       transform: translateY(1px);
     }
