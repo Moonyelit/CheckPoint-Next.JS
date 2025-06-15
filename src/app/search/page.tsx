@@ -2,12 +2,15 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import "./search.scss";
+import ResultsGame from "./components/resultsGame";
 
 interface Game {
   id: number;
   title: string;
   coverUrl?: string;
   releaseDate?: string;
+  platforms?: string[];
+  totalRating?: number;
 }
 
 export default function SearchPage() {
@@ -26,7 +29,14 @@ export default function SearchPage() {
         if (!res.ok) throw new Error("Erreur lors de la recherche");
         return res.json();
       })
-      .then(data => setGames(data))
+      .then(data => {
+        console.log('Données reçues:', data);
+        if (Array.isArray(data.member)) {
+          setGames(data.member);
+        } else {
+          setGames([]);
+        }
+      })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, [query]);
@@ -39,13 +49,13 @@ export default function SearchPage() {
       <div className="search-page__results">
         {games.length === 0 && !loading && !error && <div>Aucun jeu trouvé.</div>}
         {games.map(game => (
-          <div key={game.id} className="search-page__game">
-            {game.coverUrl && <img src={game.coverUrl} alt={game.title} className="search-page__cover" />}
-            <div className="search-page__info">
-              <div className="search-page__title">{game.title}</div>
-              {game.releaseDate && <div className="search-page__date">{game.releaseDate}</div>}
-            </div>
-          </div>
+          <ResultsGame
+            key={game.id}
+            title={game.title}
+            coverUrl={game.coverUrl}
+            platforms={game.platforms}
+            score={game.totalRating}
+          />
         ))}
       </div>
     </div>
