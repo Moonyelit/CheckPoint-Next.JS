@@ -36,13 +36,16 @@ export default function Home() {
             } else {
               setIsConnected(true);
               setIsLoading(false);
+              router.push('/');
             }
           }
         } catch (error) {
           console.error('Erreur lors de la vérification du statut du tutoriel:', error);
+          setIsConnected(false);
           setIsLoading(false);
         }
       } else {
+        setIsConnected(false);
         setIsLoading(false);
       }
     };
