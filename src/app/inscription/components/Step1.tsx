@@ -36,6 +36,8 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
   const [legalModalTab, setLegalModalTab] = useState<'terms' | 'privacy'>('terms');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Fonction de sanitisation
   const sanitizeInput = (input: string): string => {
@@ -179,13 +181,21 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
           <div className="step1__input-container">
             <i className="bx bx-lock-alt step1__icon"></i>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               autoComplete="new-password"
             />
+            <button
+              type="button"
+              className="step1__password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            >
+              <i className={`bx ${showPassword ? 'bx-show' : 'bx-hide'}`}></i>
+            </button>
           </div>
           {errors.password && <span className="step1__error" role="alert" aria-live="polite">{errors.password}</span>}
         </div>
@@ -194,13 +204,21 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
           <div className="step1__input-container">
             <i className="bx bx-lock-alt step1__icon"></i>
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               id="confirmPassword"
               placeholder="Confirmation Password"
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               autoComplete="new-password"
             />
+            <button
+              type="button"
+              className="step1__password-toggle"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            >
+              <i className={`bx ${showConfirmPassword ? 'bx-show' : 'bx-hide'}`}></i>
+            </button>
           </div>
           {errors.confirmPassword && <span className="step1__error" role="alert" aria-live="polite">{errors.confirmPassword}</span>}
         </div>

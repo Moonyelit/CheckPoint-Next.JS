@@ -24,6 +24,7 @@ export default function Connexion() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Vérifier si l'email a été vérifié
   useEffect(() => {
@@ -148,7 +149,7 @@ export default function Connexion() {
             <div className="connexion__input-container">
               <i className="bx bx-lock-alt connexion__icon"></i>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 name="password"
                 placeholder="Mot de passe"
@@ -157,6 +158,14 @@ export default function Connexion() {
                 required
                 autoComplete="current-password"
               />
+              <button
+                type="button"
+                className="connexion__password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              >
+                <i className={`bx ${showPassword ? 'bx-show' : 'bx-hide'}`}></i>
+              </button>
             </div>
           </div>
 
