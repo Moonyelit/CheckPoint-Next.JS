@@ -1,0 +1,245 @@
+@import '../../../styles/variables.scss';
+@import '../../../styles/_mixins.scss';
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 24, 32, 0.92); // overlay très sombre
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s;
+
+  &__center {
+    background: var(--white);
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    padding: 3rem 2.5rem 2.5rem 2.5rem;
+    min-width: 350px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  &__label {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--bleu-fonce);
+    text-align: center;
+    display: block;
+  }
+  &__input {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    font-size: 1.2rem;
+    outline: none;
+    margin-bottom: 1.5rem;
+    background: var(--gris-clair);
+    color: var(--black);
+    transition: border 0.2s;
+  }
+  &__close {
+    position: absolute;
+    top: 2.5rem;
+    right: 3.5rem;
+    background: none;
+    border: none;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.2s;
+    &:hover .search-overlay__bar {
+      background: var(--bleu-fonce);
+    }
+    &--clicked .search-overlay__bar1 {
+      transform: translateY(-8px) rotate(-15deg) scaleX(1.2);
+      background: var(--bleu-clair-crystal);
+    }
+    &--clicked .search-overlay__bar2 {
+      transform: translateY(8px) rotate(15deg) scaleX(1.2);
+      background: var(--bleu-clair-crystal);
+    }
+  }
+  &__bar {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2.2rem;
+    height: 0.28rem;
+    background: var(--bleu-clair-crystal);
+    border-radius: 2px;
+    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: none;
+  }
+  &__bar1 {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  &__bar2 {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+  &__center--fullscreen {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+  &__form {
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    margin-left: 3vw;
+  }
+  &__input--giant {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--white);
+    font-size: 3.5rem;
+    font-family: var(--font-title, 'Karantina', cursive);
+    font-weight: 400;
+    width: 60vw;
+    max-width: 900px;
+    min-width: 250px;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    caret-color: var(--bleu-clair-crystal);
+    z-index: 2;
+  }
+  &__input--giant::placeholder {
+    color: var(--gris-fonce);
+    font-size: 3.5rem;
+    font-family: var(--font-title, 'Karantina', cursive);
+    font-weight: 400;
+    opacity: 0.85;
+    user-select: none;
+  }
+  &.fadeIn {
+    animation: overlayPopIn 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  &.fadeOut {
+    animation: fadeOut 0.35s forwards;
+  }
+}
+
+@include respond-to('small') {
+  .search-overlay__center {
+    min-width: 90vw;
+    padding: 2rem 1rem 1.5rem 1rem;
+  }
+  .search-page {
+    padding: 1rem;
+  }
+  .search-page__game {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+    padding: 1rem;
+  }
+  .search-page__cover {
+    width: 60px;
+    height: 80px;
+  }
+}
+
+@include respond-to('large') {
+  .search-overlay__input--giant, .search-overlay__input--giant::placeholder {
+    font-size: 2.2rem;
+    width: 80vw;
+    min-width: 120px;
+  }
+  .search-overlay__close {
+    top: 1.2rem;
+    right: 1.2rem;
+    font-size: 2.2rem;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes overlayPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.search-page {
+  max-width: 900px;
+  margin: 3rem auto 0 auto;
+  padding: 2rem;
+  background: var(--gris-clair);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  min-height: 60vh;
+  &__query {
+    color: var(--bleu-fonce);
+    font-weight: bold;
+  }
+  &__results {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  &__game {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--white);
+    border-radius: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    padding: 1.2rem 1.5rem;
+  }
+  &__cover {
+    width: 80px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 0.7rem;
+    background: var(--gris-fonce);
+  }
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  &__title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--black);
+  }
+  &__date {
+    font-size: 1rem;
+    color: var(--gris-fonce-2);
+  }
+  &__error {
+    color: var(--red-normal);
+    margin-top: 1.5rem;
+  }
+} 

@@ -8,6 +8,7 @@ import "./styles/NavBarMain.scss";
 import '../../styles/globals.scss';
 import { isUserLoggedIn, logout } from '@/utils/auth';
 import { useRouter } from 'next/navigation';
+import SearchOverlay from "@/components/common/SearchOverlay";
 
 //*******************************************************
 // Barre de navigation pour les utilisateurs non connectés
@@ -17,6 +18,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+  const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -106,7 +108,7 @@ export default function Navbar() {
               </li>
             </ul>
             <div className="navbar-right-auth">
-              <i className="bx bx-search navbar-right-auth-search"></i>
+              <i className="bx bx-search navbar-right-auth-search" onClick={() => setShowSearch(true)}></i>
               <Link href="/inscription" className="navbar-right-auth-link">
                 S&apos;inscrire
               </Link>
@@ -120,6 +122,8 @@ export default function Navbar() {
 
       {/* Burger Menu pour les petits écrans */}
       <BurgerMenu />
+
+      {showSearch && <SearchOverlay onClose={() => setShowSearch(false)} />}
     </nav>
   );
 }
