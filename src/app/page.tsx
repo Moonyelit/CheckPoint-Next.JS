@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export default function Home() {
             if (!userData.tutorialCompleted) {
               router.push('/inscription?step=5');
             } else {
-              // Si le tutoriel est terminé, on reste sur la page d'accueil
+              setIsConnected(true);
               setIsLoading(false);
             }
           }
@@ -64,6 +65,14 @@ export default function Home() {
     return (
       <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white' }}>Chargement...</p>
+      </main>
+    );
+  }
+
+  if (isConnected) {
+    return (
+      <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <p style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white' }}>Vous êtes connecté</p>
       </main>
     );
   }
