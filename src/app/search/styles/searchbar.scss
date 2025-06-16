@@ -1,0 +1,62 @@
+.searchbar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--gris-fonce);
+  border-radius: 0.2em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  margin-bottom: 1.5rem;
+  height: 44px;
+  position: relative;
+
+  input {
+    flex: 1;
+    padding: 0 1.2em;
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    color: var(--black);
+    border-radius: 0.2em 0 0 0.2em;
+    height: 100%;
+    font-family: var(--font-base);
+    &::placeholder {
+      color: var(--gris-fonce-2);
+      opacity: 1;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    outline: none;
+  }
+
+  button {
+    height: 100%;
+    width: 150px;
+    min-width: 70px;
+    border: none;
+    background: linear-gradient(170deg, var(--bleu-crystal-normal) 30%, var(--bleu-crystal-fonce) 100%);
+    border-radius: 0 0.2em 0.2em 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    box-shadow: none;
+    z-index: 1;
+    // Angle coupé à gauche
+    clip-path: polygon(18% 0, 100% 0, 100% 100%, 0 100%, 30% 0);
+    i {
+      color: white;
+      font-size: 1.6em;
+      font-weight: bold;
+      margin-left: 1.5rem;
+      transition: transform 0.18s cubic-bezier(0.4,0,0.2,1);
+    }
+    &:hover {
+      background: linear-gradient(135deg, var(--bleu-crystal-fonce) 70%, var(--bleu-crystal-normal) 100%);
+    }
+    &:hover i {
+      transform: scale(1.18);
+    }
+  }
+}

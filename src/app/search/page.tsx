@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import "./search.scss";
 import ResultsGame from "./components/resultsGame";
 import 'boxicons/css/boxicons.min.css';
+import SearchBar from "./components/searchbar";
 
 interface Game {
   id: number;
@@ -133,6 +134,17 @@ export default function SearchPage() {
   return (
     <div className="search-page main-container">
       <h1 className="search-page__title">Jeux</h1>
+      <SearchBar
+        initialQuery={query}
+        onSearch={newQuery => {
+          if (newQuery && newQuery !== query) {
+            const params = new URLSearchParams(window.location.search);
+            params.set("query", newQuery);
+            params.set("page", "1");
+            window.location.search = params.toString();
+          }
+        }}
+      />
       {loading && <div>Chargement...</div>}
       {error && <div className="search-page__error">{error}</div>}
       <section className="search-page__results">
