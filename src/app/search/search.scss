@@ -7,11 +7,15 @@
 
   &__title {
     font-family: "Karantina", cursive;
-    font-size: clamp(1.5625rem, 0rem + 6.6667vw, 6rem);
+    font-size: clamp(2.5625rem, 0rem + 6.6667vw, 6rem);
     font-weight: 700;
     color: var(--black);
     margin-bottom: 1.2rem;
     letter-spacing: 5px;
+
+    @include respond-to(medium) {
+      letter-spacing: 0.15rem;
+    }
   }
 
   &__pagination {
