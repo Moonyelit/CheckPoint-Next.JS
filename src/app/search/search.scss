@@ -24,7 +24,7 @@
 
   &__pagination-button {
     padding: 0.5rem 1rem;
-    background-color: var(--bleu-fonce);
+    background-color: var(--bleu-crystal-fonce);
     color: white;
     border: none;
     border-radius: 4px;
@@ -32,7 +32,8 @@
     transition: background-color 0.2s;
 
     &:hover:not(:disabled) {
-      background-color: var(--bleu-clair-crystal);
+      background-color: var(--bleu-crystal-normal);
+      color: var(--white);
     }
 
     &:disabled {

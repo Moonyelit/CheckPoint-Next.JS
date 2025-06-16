@@ -3,6 +3,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import "./search.scss";
 import ResultsGame from "./components/resultsGame";
+import 'boxicons/css/boxicons.min.css';
 
 interface Game {
   id: number;
@@ -21,6 +22,7 @@ interface PaginationInfo {
   currentPage: number;
   limit: number;
   offset: number;
+  totalCount?: number;
 }
 
 export default function SearchPage() {
@@ -32,7 +34,7 @@ export default function SearchPage() {
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: 1,
-    limit: 30,
+    limit: 20,
     offset: 0
   });
 
@@ -40,7 +42,7 @@ export default function SearchPage() {
     if (!query) return;
     setLoading(true);
     setError(null);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${page}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${page}&limit=20`)
       .then(res => {
         if (!res.ok) throw new Error("Erreur lors de la recherche");
         return res.json();
@@ -58,10 +60,74 @@ export default function SearchPage() {
       .finally(() => setLoading(false));
   }, [query, page]);
 
+  const totalPages = Math.ceil((pagination.totalCount || 0) / pagination.limit);
+
   const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return;
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set('page', newPage.toString());
     window.history.pushState({}, '', `${window.location.pathname}?${searchParams.toString()}`);
+    // Pour forcer le rechargement du composant
+    window.dispatchEvent(new Event('popstate'));
+  };
+
+  // Génération intelligente des numéros de pages
+  const renderPageNumbers = () => {
+    const pages = [];
+    const { currentPage } = pagination;
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+
+    // Toujours afficher la première page
+    if (startPage > 1 || currentPage === 1) {
+      pages.push(
+        <button
+          key={1}
+          className={`search-page__pagination-number${currentPage === 1 ? ' active' : ''}`}
+          onClick={() => handlePageChange(1)}
+          disabled={currentPage === 1}
+        >
+          1
+        </button>
+      );
+      if (startPage > 2) {
+        pages.push(<span key="start-ellipsis" className="search-page__pagination-ellipsis">...</span>);
+      }
+    }
+
+    // Affiche les pages autour de la page courante (hors 1 et dernière)
+    for (let i = startPage; i <= endPage; i++) {
+      if (i !== 1 && i !== totalPages) {
+        pages.push(
+          <button
+            key={i}
+            className={`search-page__pagination-number${currentPage === i ? ' active' : ''}`}
+            onClick={() => handlePageChange(i)}
+            disabled={currentPage === i}
+          >
+            {i}
+          </button>
+        );
+      }
+    }
+
+    // Toujours afficher la dernière page
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pages.push(<span key="end-ellipsis" className="search-page__pagination-ellipsis">...</span>);
+      }
+      pages.push(
+        <button
+          key={totalPages}
+          className={`search-page__pagination-number${currentPage === totalPages ? ' active' : ''}`}
+          onClick={() => handlePageChange(totalPages)}
+          disabled={currentPage === totalPages}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+    return pages;
   };
 
   return (
@@ -81,24 +147,40 @@ export default function SearchPage() {
           />
         ))}
       </section>
-      {games.length > 0 && (
+      {games.length > 0 && totalPages > 1 && (
         <div className="search-page__pagination">
-          <button 
+          <button
+            className="search-page__pagination-button"
+            onClick={() => handlePageChange(1)}
+            disabled={pagination.currentPage === 1}
+            aria-label="Première page"
+          >
+            <i className='bx bx-chevrons-left'></i>
+          </button>
+          <button
+            className="search-page__pagination-button"
             onClick={() => handlePageChange(pagination.currentPage - 1)}
             disabled={pagination.currentPage === 1}
-            className="search-page__pagination-button"
+            aria-label="Page précédente"
           >
-            Précédent
+            <i className='bx bx-chevron-left'></i>
           </button>
-          <span className="search-page__pagination-info">
-            Page {pagination.currentPage}
-          </span>
-          <button 
-            onClick={() => handlePageChange(pagination.currentPage + 1)}
-            disabled={games.length < pagination.limit}
+          {renderPageNumbers()}
+          <button
             className="search-page__pagination-button"
+            onClick={() => handlePageChange(pagination.currentPage + 1)}
+            disabled={pagination.currentPage === totalPages}
+            aria-label="Page suivante"
           >
-            Suivant
+            <i className='bx bx-chevron-right'></i>
+          </button>
+          <button
+            className="search-page__pagination-button"
+            onClick={() => handlePageChange(totalPages)}
+            disabled={pagination.currentPage === totalPages}
+            aria-label="Dernière page"
+          >
+            <i className='bx bx-chevrons-right'></i>
           </button>
         </div>
       )}
