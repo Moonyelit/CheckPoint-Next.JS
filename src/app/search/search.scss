@@ -50,4 +50,44 @@
     font-size: 1.1rem;
     color: var(--bleu-fonce);
   }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    font-family: var(--font-base);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--bleu-crystal-fonce);
+    background: linear-gradient(90deg, var(--bleu-crystal-fonce) 0%, var(--bleu-crystal-normal) 50%, var(--bleu-crystal-fonce) 100%);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 2s linear infinite;
+
+    &::before {
+      content: '';
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--bleu-crystal-fonce);
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  @keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }

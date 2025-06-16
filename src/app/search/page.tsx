@@ -145,7 +145,7 @@ export default function SearchPage() {
           }
         }}
       />
-      {loading && <div>Chargement...</div>}
+      {loading && <div className="search-page__loading">Chargement en cours...</div>}
       {error && <div className="search-page__error">{error}</div>}
       <section className="search-page__results">
         {games.length === 0 && !loading && !error && <div>Aucun jeu trouvé.</div>}
