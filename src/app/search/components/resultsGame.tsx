@@ -90,6 +90,33 @@ const DonutProgress: React.FC<{ value: number; size?: number; strokeWidth?: numb
   );
 };
 
+// Fonction pour formater les noms des plateformes
+const formatPlatform = (platform: string): string => {
+  const platformMap: { [key: string]: string } = {
+    "PC (Microsoft Windows)": "PC",
+    "Nintendo Switch": "Switch",
+    "PlayStation 4": "PS4",
+    "PlayStation 5": "PS5",
+    "Xbox One": "Xbox One",
+    "Xbox Series X|S": "Xbox Series",
+    "Nintendo 3DS": "3DS",
+    "Nintendo DS": "DS",
+    "PlayStation 3": "PS3",
+    "PlayStation 2": "PS2",
+    "PlayStation": "PS1",
+    "Xbox 360": "Xbox 360",
+    "Xbox": "Xbox",
+    "Nintendo 64": "N64",
+    "Game Boy Advance": "GBA",
+    "Game Boy Color": "GBC",
+    "Game Boy": "GB",
+    "PlayStation Vita": "PS Vita",
+    "PlayStation Portable": "PSP"
+  };
+
+  return platformMap[platform] || platform;
+};
+
 const ResultsGame: React.FC<ResultsGameProps> = ({ title, coverUrl, platforms, score }) => {
   const { donut, stroke } = useDonutSize();
   const defaultCover = "/images/Game/Default game.jpg";
@@ -101,7 +128,7 @@ const ResultsGame: React.FC<ResultsGameProps> = ({ title, coverUrl, platforms, s
         {platforms && platforms.length > 0 && (
           <div className="results-game__platforms">
             {platforms.map((p, i) => (
-              <span key={i} className="results-game__platform">{p}</span>
+              <span key={i} className="results-game__platform">{formatPlatform(p)}</span>
             ))}
           </div>
         )}
