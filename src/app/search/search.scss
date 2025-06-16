@@ -14,4 +14,35 @@
     letter-spacing: 5px;
   }
 
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  &__pagination-button {
+    padding: 0.5rem 1rem;
+    background-color: var(--bleu-fonce);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover:not(:disabled) {
+      background-color: var(--bleu-clair-crystal);
+    }
+
+    &:disabled {
+      background-color: var(--gris-clair);
+      cursor: not-allowed;
+    }
+  }
+
+  &__pagination-info {
+    font-size: 1.1rem;
+    color: var(--bleu-fonce);
+  }
 }

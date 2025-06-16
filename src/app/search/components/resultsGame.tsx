@@ -92,9 +92,10 @@ const DonutProgress: React.FC<{ value: number; size?: number; strokeWidth?: numb
 
 const ResultsGame: React.FC<ResultsGameProps> = ({ title, coverUrl, platforms, score }) => {
   const { donut, stroke } = useDonutSize();
+  const defaultCover = "/images/Game/Default game.jpg";
   return (
     <article className="results-game">
-      {coverUrl && <img src={coverUrl} alt={title} className="results-game__cover" />}
+      <img src={coverUrl || defaultCover} alt={title} className="results-game__cover" />
       <div className="results-game__info">
         <div className="results-game__title">{title}</div>
         {platforms && platforms.length > 0 && (
