@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/searchbar.scss";
 
 interface SearchBarProps {
@@ -8,6 +8,11 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ initialQuery = "", onSearch }) => {
   const [input, setInput] = useState(initialQuery);
+
+  // Synchronise l'input avec la prop initialQuery (reset si besoin)
+  useEffect(() => {
+    setInput(initialQuery);
+  }, [initialQuery]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

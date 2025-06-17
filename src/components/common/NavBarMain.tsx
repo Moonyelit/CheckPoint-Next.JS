@@ -98,7 +98,7 @@ export default function Navbar() {
                 </Link>
               </li>
               <li>
-                <Link href="/games">Jeux</Link>
+                <Link href="/search?query=top100_games">Jeux</Link>
               </li>
               <li>
                 <Link href="/lists">Listes</Link>

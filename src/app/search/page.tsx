@@ -6,16 +6,15 @@ import ResultsGame from "./components/resultsGame";
 import 'boxicons/css/boxicons.min.css';
 import SearchBar from "./components/searchbar";
 
-interface Game {
+// Définition d'un type générique pour les jeux reçus de l'API
+interface ApiGame {
   id: number;
-  name: string;
-  cover?: {
-    url: string;
-  };
-  first_release_date?: number;
-  platforms?: Array<{
-    name: string;
-  }>;
+  title?: string;
+  name?: string;
+  coverUrl?: string;
+  cover?: { url: string };
+  platforms?: (string | { name: string })[];
+  totalRating?: number;
   total_rating?: number;
 }
 
@@ -30,7 +29,7 @@ export default function SearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const page = parseInt(searchParams.get("page") || "1");
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<ApiGame[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationInfo>({
@@ -43,13 +42,54 @@ export default function SearchPage() {
     if (!query) return;
     setLoading(true);
     setError(null);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${page}&limit=20`)
+
+    let apiUrl = "";
+    if (query === "top100_games") {
+      apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100?limit=100`;
+    } else if (query === "top_year_games") {
+      apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100-year?limit=100`;
+    }
+
+    if (apiUrl) {
+      fetch(apiUrl)
+        .then(res => {
+          if (!res.ok) throw new Error("Erreur lors de la récupération des jeux populaires");
+          return res.json();
+        })
+        .then(data => {
+          if (Array.isArray(data)) {
+            setGames(data);
+            setPagination({
+              currentPage: 1,
+              limit: 100,
+              offset: 0,
+              totalCount: data.length
+            });
+          } else if (data && Array.isArray(data.member)) {
+            setGames(data.member);
+            setPagination({
+              currentPage: 1,
+              limit: 100,
+              offset: 0,
+              totalCount: data['hydra:totalItems'] || data.totalItems || data.member.length
+            });
+          } else {
+            setGames([]);
+          }
+        })
+        .catch(e => setError(e.message))
+        .finally(() => setLoading(false));
+      return;
+    }
+
+    // Sinon, on utilise la recherche normale
+    const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${page}&limit=20`;
+    fetch(searchUrl)
       .then(res => {
         if (!res.ok) throw new Error("Erreur lors de la recherche");
         return res.json();
       })
       .then(data => {
-        console.log('Données reçues:', data);
         if (Array.isArray(data.games)) {
           setGames(data.games);
           setPagination(data.pagination);
@@ -68,7 +108,6 @@ export default function SearchPage() {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.set('page', newPage.toString());
     window.history.pushState({}, '', `${window.location.pathname}?${searchParams.toString()}`);
-    // Pour forcer le rechargement du composant
     window.dispatchEvent(new Event('popstate'));
   };
 
@@ -135,7 +174,7 @@ export default function SearchPage() {
     <div className="search-page main-container">
       <h1 className="search-page__title">Jeux</h1>
       <SearchBar
-        initialQuery={query}
+        initialQuery={query === "top100_games" || query === "top_year_games" ? "" : query}
         onSearch={newQuery => {
           if (newQuery && newQuery !== query) {
             const params = new URLSearchParams(window.location.search);
@@ -152,14 +191,14 @@ export default function SearchPage() {
         {games.map(game => (
           <ResultsGame
             key={game.id}
-            title={game.name}
-            coverUrl={game.cover?.url ? `https:${game.cover.url}` : undefined}
-            platforms={game.platforms?.map(p => p.name)}
-            score={game.total_rating}
+            title={game.title || game.name || ''}
+            coverUrl={game.coverUrl ? (game.coverUrl.startsWith('http') ? game.coverUrl : `https:${game.coverUrl}`) : (game.cover && game.cover.url ? `https:${game.cover.url}` : undefined)}
+            platforms={game.platforms?.map(p => typeof p === 'string' ? p : p.name) || []}
+            score={game.totalRating ?? game.total_rating}
           />
         ))}
       </section>
-      {games.length > 0 && totalPages > 1 && (
+      {games.length > 0 && totalPages > 1 && query !== "top_year_games" && (
         <div className="search-page__pagination">
           <button
             className="search-page__pagination-button"
