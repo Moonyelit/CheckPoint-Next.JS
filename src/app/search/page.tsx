@@ -5,7 +5,7 @@ import "./search.scss";
 import ResultsGame from "./components/resultsGame";
 import 'boxicons/css/boxicons.min.css';
 import SearchBar from "./components/searchbar";
-import GenreFilter from "./components/GenreFilter";
+import FilterContainer from "./components/FilterContainer";
 
 // Définition d'un type générique pour les jeux reçus de l'API
 interface ApiGame {
@@ -26,6 +26,13 @@ interface PaginationInfo {
   totalCount?: number;
 }
 
+interface Filters {
+  genres: string[];
+  platforms: string[];
+  gameModes: string[];
+  perspectives: string[];
+}
+
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
@@ -38,7 +45,12 @@ export default function SearchPage() {
     limit: 20,
     offset: 0
   });
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [filters, setFilters] = useState<Filters>({
+    genres: [],
+    platforms: [],
+    gameModes: [],
+    perspectives: []
+  });
 
   useEffect(() => {
     if (!query) return;
@@ -102,6 +114,26 @@ export default function SearchPage() {
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
   }, [query, page]);
+
+  const handleFiltersChange = (newFilters: { [key: string]: string[] }) => {
+    // Conversion sécurisée des filtres
+    const convertedFilters: Filters = {
+      genres: newFilters.genres || [],
+      platforms: newFilters.platforms || [],
+      gameModes: newFilters.gameModes || [],
+      perspectives: newFilters.perspectives || []
+    };
+    
+    setFilters(convertedFilters);
+    
+    // Logique de filtrage basique (à implémenter selon vos besoins)
+    const hasActiveFilters = Object.values(convertedFilters).some(filterArray => filterArray.length > 0);
+    if (hasActiveFilters) {
+      console.log('Filtres actifs détectés:', convertedFilters);
+      // Ici vous pouvez ajouter la logique pour filtrer les jeux
+      // Par exemple : filtrerGames(convertedFilters);
+    }
+  };
 
   const totalPages = Math.ceil((pagination.totalCount || 0) / pagination.limit);
 
@@ -177,11 +209,7 @@ export default function SearchPage() {
       <div className="search-page__content">
         <aside className="search-page__filters">
           <h1 className="search-page__title">Jeux</h1>
-          <GenreFilter
-            selectedGenres={selectedGenres}
-            onChange={setSelectedGenres}
-          />
-          {/* Ajoute ici d'autres filtres si besoin */}
+          <FilterContainer onFiltersChange={handleFiltersChange} />
         </aside>
         <main className="search-page__main">
           <SearchBar
@@ -197,6 +225,26 @@ export default function SearchPage() {
           />
           {loading && <div className="search-page__loading">Chargement en cours...</div>}
           {error && <div className="search-page__error">{error}</div>}
+          
+          {/* Affichage des filtres actifs */}
+          {Object.values(filters).some(filterArray => filterArray.length > 0) && (
+            <div className="search-page__active-filters">
+              <h3>Filtres actifs :</h3>
+              {filters.genres.length > 0 && (
+                <div>Genres : {filters.genres.join(', ')}</div>
+              )}
+              {filters.platforms.length > 0 && (
+                <div>Plateformes : {filters.platforms.join(', ')}</div>
+              )}
+              {filters.gameModes.length > 0 && (
+                <div>Modes de jeu : {filters.gameModes.join(', ')}</div>
+              )}
+              {filters.perspectives.length > 0 && (
+                <div>Perspectives : {filters.perspectives.join(', ')}</div>
+              )}
+            </div>
+          )}
+          
           <section className="search-page__results">
             {games.length === 0 && !loading && !error && <div>Aucun jeu trouvé.</div>}
             {games.map(game => (
