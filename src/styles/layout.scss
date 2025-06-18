@@ -32,3 +32,16 @@
     gap: 1rem;
   }
 } 
+
+// Conteneur pour les filtres
+.search-page.main-container {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+aside {
+  min-width: 240px;
+}
+main {
+  flex: 1;
+}

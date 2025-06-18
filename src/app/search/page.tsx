@@ -5,6 +5,7 @@ import "./search.scss";
 import ResultsGame from "./components/resultsGame";
 import 'boxicons/css/boxicons.min.css';
 import SearchBar from "./components/searchbar";
+import GenreFilter from "./components/GenreFilter";
 
 // Définition d'un type générique pour les jeux reçus de l'API
 interface ApiGame {
@@ -37,6 +38,7 @@ export default function SearchPage() {
     limit: 20,
     offset: 0
   });
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   useEffect(() => {
     if (!query) return;
@@ -172,69 +174,80 @@ export default function SearchPage() {
 
   return (
     <div className="search-page main-container">
-      <h1 className="search-page__title">Jeux</h1>
-      <SearchBar
-        initialQuery={query === "top100_games" || query === "top_year_games" ? "" : query}
-        onSearch={newQuery => {
-          if (newQuery && newQuery !== query) {
-            const params = new URLSearchParams(window.location.search);
-            params.set("query", newQuery);
-            params.set("page", "1");
-            window.location.search = params.toString();
-          }
-        }}
-      />
-      {loading && <div className="search-page__loading">Chargement en cours...</div>}
-      {error && <div className="search-page__error">{error}</div>}
-      <section className="search-page__results">
-        {games.length === 0 && !loading && !error && <div>Aucun jeu trouvé.</div>}
-        {games.map(game => (
-          <ResultsGame
-            key={game.id}
-            title={game.title || game.name || ''}
-            coverUrl={game.coverUrl ? (game.coverUrl.startsWith('http') ? game.coverUrl : `https:${game.coverUrl}`) : (game.cover && game.cover.url ? `https:${game.cover.url}` : undefined)}
-            platforms={game.platforms?.map(p => typeof p === 'string' ? p : p.name) || []}
-            score={game.totalRating ?? game.total_rating}
+      <div className="search-page__content">
+        <aside className="search-page__filters">
+          <h1 className="search-page__title">Jeux</h1>
+          <GenreFilter
+            selectedGenres={selectedGenres}
+            onChange={setSelectedGenres}
           />
-        ))}
-      </section>
-      {games.length > 0 && totalPages > 1 && query !== "top_year_games" && (
-        <div className="search-page__pagination">
-          <button
-            className="search-page__pagination-button"
-            onClick={() => handlePageChange(1)}
-            disabled={pagination.currentPage === 1}
-            aria-label="Première page"
-          >
-            <i className='bx bx-chevrons-left'></i>
-          </button>
-          <button
-            className="search-page__pagination-button"
-            onClick={() => handlePageChange(pagination.currentPage - 1)}
-            disabled={pagination.currentPage === 1}
-            aria-label="Page précédente"
-          >
-            <i className='bx bx-chevron-left'></i>
-          </button>
-          {renderPageNumbers()}
-          <button
-            className="search-page__pagination-button"
-            onClick={() => handlePageChange(pagination.currentPage + 1)}
-            disabled={pagination.currentPage === totalPages}
-            aria-label="Page suivante"
-          >
-            <i className='bx bx-chevron-right'></i>
-          </button>
-          <button
-            className="search-page__pagination-button"
-            onClick={() => handlePageChange(totalPages)}
-            disabled={pagination.currentPage === totalPages}
-            aria-label="Dernière page"
-          >
-            <i className='bx bx-chevrons-right'></i>
-          </button>
-        </div>
-      )}
+          {/* Ajoute ici d'autres filtres si besoin */}
+        </aside>
+        <main className="search-page__main">
+          <SearchBar
+            initialQuery={query === "top100_games" || query === "top_year_games" ? "" : query}
+            onSearch={newQuery => {
+              if (newQuery && newQuery !== query) {
+                const params = new URLSearchParams(window.location.search);
+                params.set("query", newQuery);
+                params.set("page", "1");
+                window.location.search = params.toString();
+              }
+            }}
+          />
+          {loading && <div className="search-page__loading">Chargement en cours...</div>}
+          {error && <div className="search-page__error">{error}</div>}
+          <section className="search-page__results">
+            {games.length === 0 && !loading && !error && <div>Aucun jeu trouvé.</div>}
+            {games.map(game => (
+              <ResultsGame
+                key={game.id}
+                title={game.title || game.name || ''}
+                coverUrl={game.coverUrl ? (game.coverUrl.startsWith('http') ? game.coverUrl : `https:${game.coverUrl}`) : (game.cover && game.cover.url ? `https:${game.cover.url}` : undefined)}
+                platforms={game.platforms?.map(p => typeof p === 'string' ? p : p.name) || []}
+                score={game.totalRating ?? game.total_rating}
+              />
+            ))}
+          </section>
+          {games.length > 0 && totalPages > 1 && query !== "top_year_games" && (
+            <div className="search-page__pagination">
+              <button
+                className="search-page__pagination-button"
+                onClick={() => handlePageChange(1)}
+                disabled={pagination.currentPage === 1}
+                aria-label="Première page"
+              >
+                <i className='bx bx-chevrons-left'></i>
+              </button>
+              <button
+                className="search-page__pagination-button"
+                onClick={() => handlePageChange(pagination.currentPage - 1)}
+                disabled={pagination.currentPage === 1}
+                aria-label="Page précédente"
+              >
+                <i className='bx bx-chevron-left'></i>
+              </button>
+              {renderPageNumbers()}
+              <button
+                className="search-page__pagination-button"
+                onClick={() => handlePageChange(pagination.currentPage + 1)}
+                disabled={pagination.currentPage === totalPages}
+                aria-label="Page suivante"
+              >
+                <i className='bx bx-chevron-right'></i>
+              </button>
+              <button
+                className="search-page__pagination-button"
+                onClick={() => handlePageChange(totalPages)}
+                disabled={pagination.currentPage === totalPages}
+                aria-label="Dernière page"
+              >
+                <i className='bx bx-chevrons-right'></i>
+              </button>
+            </div>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
