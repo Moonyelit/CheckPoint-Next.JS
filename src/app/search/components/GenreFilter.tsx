@@ -120,8 +120,8 @@ const GenreFilter: React.FC<GenreFilterProps> = ({ selectedGenres, onChange }) =
           visibility: visible ? 'visible' : 'hidden',
         }}
       >
-        {displayedGenres.map(genre => (
-          <label key={genre} className="filter-card__item">
+        {displayedGenres.map((genre, index) => (
+          <label key={`${genre}-${index}`} className="filter-card__item">
             <input
               type="checkbox"
               checked={selectedGenres.includes(genre)}

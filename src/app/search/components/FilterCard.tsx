@@ -123,8 +123,8 @@ const FilterCard: React.FC<FilterCardProps> = ({
           visibility: visible ? 'visible' : 'hidden',
         }}
       >
-        {displayedValues.map(value => (
-          <label key={value} className="filter-card__item">
+        {displayedValues.map((value, index) => (
+          <label key={`${value}-${index}`} className="filter-card__item">
             <input
               type="checkbox"
               checked={selectedValues.includes(value)}
