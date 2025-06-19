@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
-import "../styles/genreFilter.scss";
+import "../styles/filterCard.scss";
 
 interface FilterCardProps {
   filterType: string;
