@@ -124,3 +124,24 @@
 .searchbar {
   margin-bottom: 2rem;
 }
+
+.search-results-info {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: var(--bleu-crystal-fonce);
+  color: white;
+  border-radius: 8px;
+  text-align: center;
+  font-family: var(--font-base);
+  font-size: 1rem;
+  font-weight: 500;
+
+  p {
+    margin: 0;
+  }
+
+  span {
+    opacity: 0.8;
+    font-size: 0.9rem;
+  }
+}

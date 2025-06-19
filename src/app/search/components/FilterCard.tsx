@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import "../styles/filterCard.scss";
 
 interface FilterCardProps {
-  filterType: string;
   label: string;
   values: string[];
   selectedValues: string[];
@@ -16,7 +15,6 @@ const EASE_OPEN = 'cubic-bezier(0.34,1.56,0.64,1)';
 const EASE_CLOSE = 'cubic-bezier(0.4,0,0.2,1)';
 
 const FilterCard: React.FC<FilterCardProps> = ({ 
-  filterType, 
   label, 
   values, 
   selectedValues, 

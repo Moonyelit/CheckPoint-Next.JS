@@ -5,7 +5,6 @@ import "./search.scss";
 import SearchBar from "./components/searchbar";
 import FilterContainer from "./components/FilterContainer";
 import SearchResults from "./components/SearchResults";
-import ActiveFilters from "./components/ActiveFilters";
 import Pagination from "./components/Pagination";
 
 // Définition d'un type générique pour les jeux reçus de l'API
@@ -18,6 +17,9 @@ interface ApiGame {
   platforms?: (string | { name: string })[];
   totalRating?: number;
   total_rating?: number;
+  genres?: (string | { name: string })[];
+  gameModes?: (string | { name: string })[];
+  perspectives?: (string | { name: string })[];
 }
 
 interface PaginationInfo {
@@ -52,6 +54,74 @@ export default function SearchPage() {
     gameModes: [],
     perspectives: [],
   });
+
+  // Fonction pour filtrer les jeux selon les critères sélectionnés
+  const filterGames = (games: ApiGame[], activeFilters: Filters): ApiGame[] => {
+    return games.filter(game => {
+      // Filtrage par genres
+      if (activeFilters.genres.length > 0) {
+        const gameGenres = game.genres || [];
+        const hasMatchingGenre = activeFilters.genres.some(selectedGenre =>
+          gameGenres.some(gameGenre => 
+            typeof gameGenre === 'string' 
+              ? gameGenre.toLowerCase().includes(selectedGenre.toLowerCase())
+              : gameGenre.name?.toLowerCase().includes(selectedGenre.toLowerCase())
+          )
+        );
+        if (!hasMatchingGenre) return false;
+      }
+
+      // Filtrage par plateformes
+      if (activeFilters.platforms.length > 0) {
+        const gamePlatforms = game.platforms || [];
+        const hasMatchingPlatform = activeFilters.platforms.some(selectedPlatform =>
+          gamePlatforms.some(gamePlatform => 
+            typeof gamePlatform === 'string' 
+              ? gamePlatform.toLowerCase().includes(selectedPlatform.toLowerCase())
+              : gamePlatform.name?.toLowerCase().includes(selectedPlatform.toLowerCase())
+          )
+        );
+        if (!hasMatchingPlatform) return false;
+      }
+
+      // Filtrage par modes de jeu
+      if (activeFilters.gameModes.length > 0) {
+        const gameModes = game.gameModes || [];
+        const hasMatchingGameMode = activeFilters.gameModes.some(selectedMode =>
+          gameModes.some(gameMode => 
+            typeof gameMode === 'string' 
+              ? gameMode.toLowerCase().includes(selectedMode.toLowerCase())
+              : gameMode.name?.toLowerCase().includes(selectedMode.toLowerCase())
+          )
+        );
+        if (!hasMatchingGameMode) return false;
+      }
+
+      // Filtrage par perspectives
+      if (activeFilters.perspectives.length > 0) {
+        const gamePerspectives = game.perspectives || [];
+        const hasMatchingPerspective = activeFilters.perspectives.some(selectedPerspective =>
+          gamePerspectives.some(gamePerspective => 
+            typeof gamePerspective === 'string' 
+              ? gamePerspective.toLowerCase().includes(selectedPerspective.toLowerCase())
+              : gamePerspective.name?.toLowerCase().includes(selectedPerspective.toLowerCase())
+          )
+        );
+        if (!hasMatchingPerspective) return false;
+      }
+
+      return true;
+    });
+  };
+
+  // État pour les jeux filtrés
+  const [filteredGames, setFilteredGames] = useState<ApiGame[]>([]);
+
+  // Appliquer les filtres quand les jeux ou les filtres changent
+  useEffect(() => {
+    const filtered = filterGames(games, filters);
+    setFilteredGames(filtered);
+  }, [games, filters]);
 
   useEffect(() => {
     if (!query) return;
@@ -134,16 +204,6 @@ export default function SearchPage() {
     };
 
     setFilters(convertedFilters);
-
-    // Logique de filtrage basique (à implémenter selon vos besoins)
-    const hasActiveFilters = Object.values(convertedFilters).some(
-      (filterArray) => filterArray.length > 0
-    );
-    if (hasActiveFilters) {
-      console.log("Filtres actifs détectés:", convertedFilters);
-      // Ici vous pouvez ajouter la logique pour filtrer les jeux
-      // Par exemple : filtrerGames(convertedFilters);
-    }
   };
 
   const totalPages = Math.ceil((pagination.totalCount || 0) / pagination.limit);
@@ -187,11 +247,25 @@ export default function SearchPage() {
             onSearch={handleSearch}
           />
 
-          <ActiveFilters filters={filters} />
+          <SearchResults games={filteredGames} loading={loading} error={error} />
 
-          <SearchResults games={games} loading={loading} error={error} />
+          {/* Message indiquant le nombre de résultats */}
+          {!loading && !error && (
+            <div className="search-results-info">
+              {filters.genres.length > 0 || filters.platforms.length > 0 || filters.gameModes.length > 0 || filters.perspectives.length > 0 ? (
+                <p>
+                  {filteredGames.length} résultat{filteredGames.length > 1 ? 's' : ''} trouvé{filteredGames.length > 1 ? 's' : ''} 
+                  {games.length !== filteredGames.length && (
+                    <span> (sur {games.length} jeu{games.length > 1 ? 'x' : ''} au total)</span>
+                  )}
+                </p>
+              ) : (
+                <p>{filteredGames.length} jeu{filteredGames.length > 1 ? 'x' : ''} trouvé{filteredGames.length > 1 ? 's' : ''}</p>
+              )}
+            </div>
+          )}
 
-          {games.length > 0 && totalPages > 1 && (
+          {filteredGames.length > 0 && totalPages > 1 && (
             <Pagination
               pagination={pagination}
               totalPages={totalPages}
