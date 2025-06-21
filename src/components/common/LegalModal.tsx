@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import './LegalModal.scss';
+import './styles/LegalModal.scss';
 
 interface LegalModalProps {
   isOpen: boolean;
