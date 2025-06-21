@@ -6,6 +6,11 @@ import SearchBar from "./components/searchbar";
 import FilterContainer from "./components/FilterContainer";
 import SearchResults from "./components/SearchResults";
 import Pagination from "./components/Pagination";
+import SortingDropdown, {
+  SortDirection,
+  SortOption,
+} from "./components/SortingDropdown";
+import { useRouter } from "next/navigation";
 
 // Définition d'un type générique pour les jeux reçus de l'API
 interface ApiGame {
@@ -20,6 +25,8 @@ interface ApiGame {
   genres?: (string | { name: string })[];
   gameModes?: (string | { name: string })[];
   perspectives?: (string | { name: string })[];
+  releaseDate?: string; // From Symfony Game entity
+  first_release_date?: number; // From IGDB API (timestamp)
 }
 
 interface PaginationInfo {
@@ -54,18 +61,23 @@ export default function SearchPage() {
     gameModes: [],
     perspectives: [],
   });
+  const router = useRouter();
+  const [sortOption, setSortOption] = useState<SortOption>("note");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   // Fonction pour filtrer les jeux selon les critères sélectionnés
   const filterGames = (games: ApiGame[], activeFilters: Filters): ApiGame[] => {
-    return games.filter(game => {
+    return games.filter((game) => {
       // Filtrage par genres
       if (activeFilters.genres.length > 0) {
         const gameGenres = game.genres || [];
-        const hasMatchingGenre = activeFilters.genres.some(selectedGenre =>
-          gameGenres.some(gameGenre => 
-            typeof gameGenre === 'string' 
+        const hasMatchingGenre = activeFilters.genres.some((selectedGenre) =>
+          gameGenres.some((gameGenre) =>
+            typeof gameGenre === "string"
               ? gameGenre.toLowerCase().includes(selectedGenre.toLowerCase())
-              : gameGenre.name?.toLowerCase().includes(selectedGenre.toLowerCase())
+              : gameGenre.name
+                  ?.toLowerCase()
+                  .includes(selectedGenre.toLowerCase())
           )
         );
         if (!hasMatchingGenre) return false;
@@ -74,12 +86,17 @@ export default function SearchPage() {
       // Filtrage par plateformes
       if (activeFilters.platforms.length > 0) {
         const gamePlatforms = game.platforms || [];
-        const hasMatchingPlatform = activeFilters.platforms.some(selectedPlatform =>
-          gamePlatforms.some(gamePlatform => 
-            typeof gamePlatform === 'string' 
-              ? gamePlatform.toLowerCase().includes(selectedPlatform.toLowerCase())
-              : gamePlatform.name?.toLowerCase().includes(selectedPlatform.toLowerCase())
-          )
+        const hasMatchingPlatform = activeFilters.platforms.some(
+          (selectedPlatform) =>
+            gamePlatforms.some((gamePlatform) =>
+              typeof gamePlatform === "string"
+                ? gamePlatform
+                    .toLowerCase()
+                    .includes(selectedPlatform.toLowerCase())
+                : gamePlatform.name
+                    ?.toLowerCase()
+                    .includes(selectedPlatform.toLowerCase())
+            )
         );
         if (!hasMatchingPlatform) return false;
       }
@@ -87,12 +104,15 @@ export default function SearchPage() {
       // Filtrage par modes de jeu
       if (activeFilters.gameModes.length > 0) {
         const gameModes = game.gameModes || [];
-        const hasMatchingGameMode = activeFilters.gameModes.some(selectedMode =>
-          gameModes.some(gameMode => 
-            typeof gameMode === 'string' 
-              ? gameMode.toLowerCase().includes(selectedMode.toLowerCase())
-              : gameMode.name?.toLowerCase().includes(selectedMode.toLowerCase())
-          )
+        const hasMatchingGameMode = activeFilters.gameModes.some(
+          (selectedMode) =>
+            gameModes.some((gameMode) =>
+              typeof gameMode === "string"
+                ? gameMode.toLowerCase().includes(selectedMode.toLowerCase())
+                : gameMode.name
+                    ?.toLowerCase()
+                    .includes(selectedMode.toLowerCase())
+            )
         );
         if (!hasMatchingGameMode) return false;
       }
@@ -100,12 +120,17 @@ export default function SearchPage() {
       // Filtrage par perspectives
       if (activeFilters.perspectives.length > 0) {
         const gamePerspectives = game.perspectives || [];
-        const hasMatchingPerspective = activeFilters.perspectives.some(selectedPerspective =>
-          gamePerspectives.some(gamePerspective => 
-            typeof gamePerspective === 'string' 
-              ? gamePerspective.toLowerCase().includes(selectedPerspective.toLowerCase())
-              : gamePerspective.name?.toLowerCase().includes(selectedPerspective.toLowerCase())
-          )
+        const hasMatchingPerspective = activeFilters.perspectives.some(
+          (selectedPerspective) =>
+            gamePerspectives.some((gamePerspective) =>
+              typeof gamePerspective === "string"
+                ? gamePerspective
+                    .toLowerCase()
+                    .includes(selectedPerspective.toLowerCase())
+                : gamePerspective.name
+                    ?.toLowerCase()
+                    .includes(selectedPerspective.toLowerCase())
+            )
         );
         if (!hasMatchingPerspective) return false;
       }
@@ -116,12 +141,58 @@ export default function SearchPage() {
 
   // État pour les jeux filtrés
   const [filteredGames, setFilteredGames] = useState<ApiGame[]>([]);
+  const [sortedGames, setSortedGames] = useState<ApiGame[]>([]);
 
   // Appliquer les filtres quand les jeux ou les filtres changent
   useEffect(() => {
     const filtered = filterGames(games, filters);
     setFilteredGames(filtered);
   }, [games, filters]);
+
+  // Trier les jeux lorsque les filtres ou les options de tri changent
+  useEffect(() => {
+    const gamesToSort = [...filteredGames];
+
+    gamesToSort.sort((a, b) => {
+      let valA, valB;
+
+      switch (sortOption) {
+        case "note":
+          valA = a.total_rating ?? a.totalRating ?? 0;
+          valB = b.total_rating ?? b.totalRating ?? 0;
+          break;
+        case "releaseDate":
+          valA = a.first_release_date
+            ? a.first_release_date * 1000
+            : a.releaseDate
+            ? new Date(a.releaseDate).getTime()
+            : 0;
+          valB = b.first_release_date
+            ? b.first_release_date * 1000
+            : b.releaseDate
+            ? new Date(b.releaseDate).getTime()
+            : 0;
+          break;
+        case "name":
+          valA = a.name ?? a.title ?? "";
+          valB = b.name ?? b.title ?? "";
+          if (sortDirection === "asc") {
+            return valA.localeCompare(valB);
+          } else {
+            return valB.localeCompare(valA);
+          }
+      }
+
+      // Pour note et date, on compare numériquement
+      if (sortDirection === "asc") {
+        return (valA ?? 0) > (valB ?? 0) ? 1 : -1;
+      } else {
+        return (valB ?? 0) > (valA ?? 0) ? 1 : -1;
+      }
+    });
+
+    setSortedGames(gamesToSort);
+  }, [filteredGames, sortOption, sortDirection]);
 
   useEffect(() => {
     if (!query) return;
@@ -229,6 +300,11 @@ export default function SearchPage() {
     }
   };
 
+  const handleSort = (option: SortOption, direction: SortDirection) => {
+    setSortOption(option);
+    setSortDirection(direction);
+  };
+
   return (
     <div className="search-page main-container">
       <h1 className="search-page__title">Jeux</h1>
@@ -238,29 +314,45 @@ export default function SearchPage() {
           <FilterContainer onFiltersChange={handleFiltersChange} />
         </aside>
         <main className="search-page__main">
-          <SearchBar
-            initialQuery={
-              query === "top100_games" || query === "top_year_games"
-                ? ""
-                : query
-            }
-            onSearch={handleSearch}
-          />
+          <div className="search-page__search-controls">
+            <SearchBar
+              initialQuery={
+                query === "top100_games" || query === "top_year_games"
+                  ? ""
+                  : query
+              }
+              onSearch={handleSearch}
+            />
+            <SortingDropdown onSort={handleSort} />
+          </div>
 
-          <SearchResults games={filteredGames} loading={loading} error={error} />
+          <SearchResults games={sortedGames} loading={loading} error={error} />
 
           {/* Message indiquant le nombre de résultats */}
           {!loading && !error && (
             <div className="search-results-info">
-              {filters.genres.length > 0 || filters.platforms.length > 0 || filters.gameModes.length > 0 || filters.perspectives.length > 0 ? (
+              {filters.genres.length > 0 ||
+              filters.platforms.length > 0 ||
+              filters.gameModes.length > 0 ||
+              filters.perspectives.length > 0 ? (
                 <p>
-                  {filteredGames.length} résultat{filteredGames.length > 1 ? 's' : ''} trouvé{filteredGames.length > 1 ? 's' : ''} 
+                  {filteredGames.length} résultat
+                  {filteredGames.length > 1 ? "s" : ""} trouvé
+                  {filteredGames.length > 1 ? "s" : ""}
                   {games.length !== filteredGames.length && (
-                    <span> (sur {games.length} jeu{games.length > 1 ? 'x' : ''} au total)</span>
+                    <span>
+                      {" "}
+                      (sur {games.length} jeu{games.length > 1 ? "x" : ""} au
+                      total)
+                    </span>
                   )}
                 </p>
               ) : (
-                <p>{filteredGames.length} jeu{filteredGames.length > 1 ? 'x' : ''} trouvé{filteredGames.length > 1 ? 's' : ''}</p>
+                <p>
+                  {filteredGames.length} jeu
+                  {filteredGames.length > 1 ? "x" : ""} trouvé
+                  {filteredGames.length > 1 ? "s" : ""}
+                </p>
               )}
             </div>
           )}

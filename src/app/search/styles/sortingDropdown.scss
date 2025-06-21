@@ -1,0 +1,81 @@
+@import "../../../styles/variables";
+@import "../../../styles/mixins";
+
+.sorting-dropdown {
+  position: relative;
+  width: fit-content;
+  margin-left: auto;
+  font-size: 0.9rem;
+  color: var(--white);
+  font-weight: 900;
+
+  .sorting-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: background-color 0.5s ease;
+
+    .direction-button {
+      cursor: pointer;
+      display: flex;
+
+      i {
+        transition: transform 0.3s ease;
+        font-size: 1.5rem;
+      }
+
+      &.desc i {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .sorting-options {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: var(--gris-fonce);
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    min-width: 150px;
+    animation: slideDown 0.5s ease-out;
+
+    .sort-option {
+      display: block;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-top: 1px solid var(--gris-fonce-2);
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.5s ease;
+
+      &:first-child {
+        border-top: none;
+      }
+
+      &:hover {
+        background: var(--gris-fonce-2);
+      }
+
+      &.active {
+        color: var(--bleu-crystal-fonce);
+        background: var(--gris-fonce-2);
+      }
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 
