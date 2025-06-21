@@ -57,12 +57,22 @@ const SortingDropdown: React.FC<SortingDropdownProps> = ({ onSort }) => {
     onSort(selectedOption, newDirection);
   };
 
+  // Fonction pour déterminer la classe CSS selon la direction
+  const getDirectionClass = () => {
+    // Pour les notes et dates : on inverse la logique CSS pour que la rotation fonctionne
+    if (selectedOption === "note" || selectedOption === "releaseDate") {
+      return direction === "desc" ? "asc" : "desc";
+    }
+    // Pour le nom : logique normale
+    return direction;
+  };
+
   return (
     <div className="sorting-dropdown" ref={dropdownRef}>
       <div className="sorting-header" onClick={() => setIsOpen(!isOpen)}>
         <span>Trier par : {getOptionLabel(selectedOption)}</span>
         <button 
-          className={`direction-button ${direction === "asc" ? "asc" : "desc"}`}
+          className={`direction-button ${getDirectionClass()}`}
           onClick={(e) => {
             e.stopPropagation();
             toggleDirection();
