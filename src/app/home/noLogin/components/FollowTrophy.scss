@@ -117,10 +117,10 @@
 }
 
 .trophyParagraph {
-  flex: 0 0 40%;
+  flex: 1 0 40%;
   text-align: justify;
   gap: 3rem;
-  max-width: 40%;
+  max-width: 48%;
   p {
     margin-bottom: 1.5rem;
   }
@@ -177,7 +177,6 @@
   }
 
   .titleTrophy {
-    width: 40%;
     left: 3rem;
   }
 } 
