@@ -80,6 +80,7 @@ main {
 
 /************************** POLICES ***************************/
 
+/*****************TITRES******************/
 /*KARANTINA*/
 .Title1-Karantina {
   font-size: clamp(4rem, 5vw, 5.5rem);
@@ -102,14 +103,16 @@ main {
   }
 
   @include respond-to('small') {
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+    letter-spacing: 0.1rem;
   }
-}
+} 
 
-/*PARAGRAPHE*/
+/*****************PARAGRAPHE******************/
 .Paragraphe1 {
   font-size: clamp(1rem, 2vw, 1.125rem);
   font-family: "DM Sans", sans-serif;
+  font-weight: 600;
   line-height: 1.6;
   margin-bottom: 1.5rem;
 } 
