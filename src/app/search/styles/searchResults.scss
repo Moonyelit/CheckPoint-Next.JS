@@ -1,0 +1,29 @@
+.search-results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; // Espacement entre les jeux dans la liste
+  
+  // Classe pour déclencher l'animation au montage
+  &.animate-in .results-game {
+    animation: fadeInStagger 0.6s ease-out both;
+  }
+}
+
+// Génère un délai d'animation progressif pour chaque jeu de la liste
+@for $i from 1 through 20 {
+  .search-results-container.animate-in .results-game:nth-child(#{$i}) {
+    animation-delay: #{$i * 0.05}s; // Délai légèrement plus court pour une liste
+  }
+}
+
+// L'animation reste la même : fondu et glissement vers le haut
+@keyframes fadeInStagger {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

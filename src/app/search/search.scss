@@ -121,27 +121,119 @@
   }
 }
 
-.searchbar {
-  margin-bottom: 2rem;
-}
-
-.search-results-info {
-  margin: 1rem 0;
-  padding: 1rem;
+// ==========================================================================
+// MOBILE FILTERS
+// ==========================================================================
+.search-page__filter-fab {
+  display: none; 
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
   background-color: var(--bleu-crystal-fonce);
-  color: white;
-  border-radius: 8px;
-  text-align: center;
-  font-family: var(--font-base);
+  color: var(--white);
+  padding: 1rem 1.5rem;
+  border-radius: 50px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: transform 0.5s ease-in-out, background-color 0.5s;
 
-  p {
-    margin: 0;
+  &:hover {
+    background-color: var(--bleu-crystal-normal);
+    transform: scale(1.05);
   }
 
-  span {
-    opacity: 0.8;
-    font-size: 0.9rem;
+  .bx {
+    font-size: 1.2rem;
+  }
+}
+
+.search-page__filters-header,
+.search-page__overlay {
+  display: none; 
+}
+
+// Styles pour tablette et mobile
+@include respond-to("medium") {
+  .search-page__content {
+    flex-direction: column;
+  }
+
+  .search-page__filter-fab {
+    display: flex; 
+  }
+
+  .search-page__filters {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100%;
+    background-color: darken(#8f8883, 5%);
+    z-index: 1050;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.8);
+    padding: 1.5rem;
+    overflow-y: auto;
+
+    &.is-visible {
+      transform: translateX(0);
+    }
+  }
+
+  .search-page__filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--white);
+
+    .search-page__filters-title {
+      font-size: 2.5rem;
+      font-family: "Karantina", cursive;
+      letter-spacing: 0.15rem;
+      font-weight: 700;
+      color: var(--white);
+      margin: 0;
+    }
+
+    .search-page__filters-close {
+      background: none;
+      border: none;
+      font-size: 2.5rem;
+      cursor: pointer;
+      color: var(--white);
+      @include transition(all, 0.2s, ease);
+
+      &:hover {
+        color: var(--bleu-clair-crystal);
+        transform: rotate(90deg) scale(1.2);
+      }
+    }
+  }
+
+  .search-page__overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 1040;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    pointer-events: auto;
+  }
+
+  .search-page__filters.is-visible ~ .search-page__overlay {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
