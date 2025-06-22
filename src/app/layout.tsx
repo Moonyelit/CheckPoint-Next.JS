@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/layout.scss";
 import ConditionalLayout from '@/components/layout/ConditionalLayout';
-import Preloader from '@/components/common/Preloader';
 import ResourcePreloader from '@/components/common/ResourcePreloader';
 
 const geistSans = Geist({
@@ -52,11 +51,9 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <ResourcePreloader resources={criticalResources} />
-        <Preloader>
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
-        </Preloader>
+        <ConditionalLayout>
+          {children}
+        </ConditionalLayout>
       </body>
     </html>
   );
