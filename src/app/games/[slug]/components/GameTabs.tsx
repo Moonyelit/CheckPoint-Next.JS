@@ -3,14 +3,11 @@
 import { useState } from 'react';
 import './styles/GameTabs.scss';
 
-// Je définis les types pour les props du composant.
-// Pour l'instant, `game` est de type `any` mais on pourra le typer plus précisément.
 interface GameTabsProps {
-  game: any;
   ficheContent: React.ReactNode;
 }
 
-export default function GameTabs({ game, ficheContent }: GameTabsProps) {
+export default function GameTabs({ ficheContent }: GameTabsProps) {
   const [activeTab, setActiveTab] = useState('fiche');
 
   const tabs = [
@@ -43,4 +40,4 @@ export default function GameTabs({ game, ficheContent }: GameTabsProps) {
       </div>
     </div>
   );
-} 
+}

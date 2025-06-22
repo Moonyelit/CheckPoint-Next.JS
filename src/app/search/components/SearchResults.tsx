@@ -2,7 +2,6 @@ import React from "react";
 import ResultsGame from "./resultsGame";
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import "../styles/searchResults.scss";
-import slugify from "slugify";
 
 interface ApiGame {
   id: number;
@@ -53,20 +52,36 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
     <div className="search-results-container animate-in">
       {games.map((game, index) => {
         const title = game.name ?? game.title ?? "Titre inconnu";
-        const slug = game.slug ?? slugify(title, { lower: true, strict: true });
+        const coverUrl = game.cover?.url ?? game.coverUrl;
+        const score = game.total_rating ?? game.totalRating;
+        
+        // Pour les jeux d'IGDB, on génère un slug
+        // Pour les jeux de notre base, on utilise le slug existant
+        let slug = game.slug;
+        if (!slug && title) {
+          // Fallback : génération d'un slug basique pour les jeux d'IGDB
+          slug = title.toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+        }
+        
+        if (!slug) {
+          console.warn(`Jeu sans slug : ${title}`);
+          return null;
+        }
 
         return (
           <ResultsGame
             key={game.id}
             slug={slug}
             title={title}
-            coverUrl={game.cover?.url ?? game.coverUrl}
+            coverUrl={coverUrl}
             platforms={
               game.platforms?.map((p) =>
                 typeof p === "string" ? p : p.name
               ) ?? []
             }
-            score={game.total_rating ?? game.totalRating}
+            score={score}
             style={{ animationDelay: `${index * 0.1}s` }}
           />
         );

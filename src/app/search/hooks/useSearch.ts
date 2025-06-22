@@ -92,7 +92,7 @@ export function useSearch() {
       let cacheKey = '';
 
       if (query === 'top100_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100?limit=100`;
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games?limit=100`;
         cacheKey = 'top100_games';
       } else if (query === 'top_year_games') {
         apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100-year?limit=100`;
