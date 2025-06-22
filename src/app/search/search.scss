@@ -6,9 +6,12 @@
   @include flex(column, flex-start, flex-start);
 }
 
+
+// ================== BLOCK: search-page ==================
 .search-page {
   margin-block: 8rem;
 
+  // ================== ELEMENTS ==================
   &__content {
     display: flex;
     flex-direction: row;
@@ -29,10 +32,6 @@
     font-weight: 700;
     color: var(--black);
     letter-spacing: 5px;
-
-    @include respond-to(medium) {
-      letter-spacing: 0.15rem;
-    }
   }
 
   &__main {
@@ -108,139 +107,143 @@
     }
   }
 
-  @keyframes shine {
-    to {
-      background-position: 200% center;
-    }
+  &__filter-fab {
+    display: none;
   }
 
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-}
-
-// ==========================================================================
-// MOBILE FILTERS
-// ==========================================================================
-
-
-
-
-.search-page__filter-fab {
-  display: none; 
-
-  @include respond-to("medium") {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background-color: var(--bleu-crystal-fonce);
-  color: var(--white);
-  padding: 1rem 1.5rem;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: transform 0.5s ease-in-out, background-color 0.5s;
-
-  &:hover {
-    background-color: var(--bleu-crystal-normal);
-    transform: scale(1.05);
+  &__filters-header {
+    display: none;
   }
 
-  .bx {
-    font-size: 1.2rem;
-  }
-}
-}
-
-.search-page__filters-header,
-.search-page__overlay {
-  display: none; 
-}
-
-// Styles pour tablette et mobile
-@include respond-to("medium") {
-  .search-page__content {
-    flex-direction: column;
+  &__overlay {
+    display: none;
   }
 
-  .search-page__filter-fab {
-    display: flex; 
-  }
+  // ================== MODIFIERS ==================
+  &--mobile {
+    @include respond-to("medium") {
+      .search-page__content {
+        flex-direction: column;
+      }
 
-  .search-page__filters {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 320px;
-    height: 100%;
-    background-color: darken(#8f8883, 5%);
-    z-index: 1050;
-    transform: translateX(100%);
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: -4px 0 15px rgba(0, 0, 0, 0.8);
-    padding: 1.5rem;
-    overflow-y: auto;
+      .search-page__filter-fab {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background-color: var(--bleu-crystal-fonce);
+        color: var(--white);
+        padding: 1rem 1.5rem;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.5s ease-in-out, background-color 0.5s;
 
-    &.is-visible {
-      transform: translateX(0);
-    }
-  }
+        &:hover {
+          background-color: var(--bleu-crystal-normal);
+          transform: scale(1.05);
+        }
 
-  .search-page__filters-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 1rem;
-    border-bottom: 2px solid var(--white);
+        .bx {
+          font-size: 1.2rem;
+        }
+      }
 
-    .search-page__filters-title {
-      font-size: 2.5rem;
-      font-family: "Karantina", cursive;
-      letter-spacing: 0.15rem;
-      font-weight: 700;
-      color: var(--white);
-      margin: 0;
-    }
+      .search-page__filters {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 320px;
+        height: 100%;
+        background-color: darken(#8f8883, 5%);
+        z-index: 1050;
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        box-shadow: -4px 0 15px rgba(0, 0, 0, 0.8);
+        padding: 1.5rem;
+        overflow-y: auto;
 
-    .search-page__filters-close {
-      background: none;
-      border: none;
-      font-size: 2.5rem;
-      cursor: pointer;
-      color: var(--white);
-      @include transition(all, 0.2s, ease);
+        &--visible {
+          transform: translateX(0);
+        }
+      }
 
-      &:hover {
-        color: var(--bleu-clair-crystal);
-        transform: rotate(90deg) scale(1.2);
+      .search-page__filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--white);
+      }
+
+      .search-page__filters-title {
+        font-size: 2.5rem;
+        font-family: "Karantina", cursive;
+        letter-spacing: 0.15rem;
+        font-weight: 700;
+        color: var(--white);
+        margin: 0;
+      }
+
+      .search-page__filters-close {
+        background: none;
+        border: none;
+        font-size: 2.5rem;
+        cursor: pointer;
+        color: var(--white);
+        @include transition(all, 0.2s, ease);
+
+        &:hover {
+          color: var(--bleu-clair-crystal);
+          transform: rotate(90deg) scale(1.2);
+        }
+      }
+
+      .search-page__overlay {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.75);
+        z-index: 1040;
+        opacity: 1;
+        transition: opacity 0.4s ease;
+        pointer-events: auto;
+      }
+
+      .search-page__filters--visible ~ .search-page__overlay {
+        opacity: 1;
+        pointer-events: auto;
       }
     }
   }
+}
 
-  .search-page__overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
-    z-index: 1040;
-    opacity: 1;
-    transition: opacity 0.4s ease;
-    pointer-events: auto;
+// ================== BLOCK: main-container ==================
+.main-container {
+  @include flex(column, flex-start, flex-start);
+
+  &--search-page {
+    // Styles spécifiques pour la page de recherche
   }
+}
 
-  .search-page__filters.is-visible ~ .search-page__overlay {
-    opacity: 1;
-    pointer-events: auto;
+// ================== ANIMATIONS ==================
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
