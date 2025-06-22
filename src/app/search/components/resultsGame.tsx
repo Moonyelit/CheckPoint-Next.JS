@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import LazyImage from "@/components/common/LazyImage";
 import "../styles/resultsGame.scss";
+import Link from "next/link";
 
 interface ResultsGameProps {
+  slug: string;
   title: string;
   coverUrl?: string;
   platforms?: string[];
@@ -120,6 +122,7 @@ const formatPlatform = (platform: string): string => {
 };
 
 const ResultsGame: React.FC<ResultsGameProps> = ({
+  slug,
   title,
   coverUrl,
   platforms,
@@ -131,44 +134,46 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
   const [showAllPlatforms, setShowAllPlatforms] = useState(false);
 
   return (
-    <article className="results-game" style={style}>
-      <div className="results-game__cover">
-        <LazyImage
-          src={coverUrl || defaultCover}
-          alt={title}
-          width={120}
-          height={160}
-          className="results-game__image"
-        />
-      </div>
-      
-      <div className="results-game__info">
-        <div className="results-game__title">{title}</div>
-        {platforms && platforms.length > 0 && (
-          <div className="results-game__platforms">
-            {(showAllPlatforms ? platforms : platforms.slice(0, 3)).map((platform, index) => (
-              <span key={index} className="results-game__platform">
-                {formatPlatform(platform)}
-              </span>
-            ))}
-            {platforms.length > 3 && !showAllPlatforms && (
-              <span
-                className="results-game__platform-more"
-                onClick={() => setShowAllPlatforms(true)}
-              >
-                +{platforms.length - 3}
-              </span>
-            )}
+    <Link href={`/games/${slug}`} className="results-game-link">
+      <article className="results-game" style={style}>
+        <div className="results-game__cover">
+          <LazyImage
+            src={coverUrl || defaultCover}
+            alt={title}
+            width={120}
+            height={160}
+            className="results-game__image"
+          />
+        </div>
+        
+        <div className="results-game__info">
+          <div className="results-game__title">{title}</div>
+          {platforms && platforms.length > 0 && (
+            <div className="results-game__platforms">
+              {(showAllPlatforms ? platforms : platforms.slice(0, 3)).map((platform, index) => (
+                <span key={index} className="results-game__platform">
+                  {formatPlatform(platform)}
+                </span>
+              ))}
+              {platforms.length > 3 && !showAllPlatforms && (
+                <span
+                  className="results-game__platform-more"
+                  onClick={() => setShowAllPlatforms(true)}
+                >
+                  +{platforms.length - 3}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        
+        {typeof score === 'number' && (
+          <div className="results-game__score">
+            <DonutProgress value={score} size={donut} strokeWidth={stroke} />
           </div>
         )}
-      </div>
-      
-      {typeof score === 'number' && (
-        <div className="results-game__score">
-          <DonutProgress value={score} size={donut} strokeWidth={stroke} />
-        </div>
-      )}
-    </article>
+      </article>
+    </Link>
   );
 };
 

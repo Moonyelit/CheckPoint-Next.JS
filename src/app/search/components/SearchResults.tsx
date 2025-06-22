@@ -2,6 +2,7 @@ import React from "react";
 import ResultsGame from "./resultsGame";
 import LoadingSkeleton from "@/components/common/LoadingSkeleton";
 import "../styles/searchResults.scss";
+import slugify from "slugify";
 
 interface ApiGame {
   id: number;
@@ -12,6 +13,7 @@ interface ApiGame {
   platforms?: (string | { name: string })[];
   totalRating?: number;
   total_rating?: number;
+  slug?: string;
 }
 
 interface SearchResultsProps {
@@ -49,16 +51,26 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
 
   return (
     <div className="search-results-container animate-in">
-      {games.map((game, index) => (
-        <ResultsGame
-          key={game.id}
-          title={game.name ?? game.title ?? "Titre inconnu"}
-          coverUrl={game.cover?.url ?? game.coverUrl}
-          platforms={(game.platforms as any)?.map((p: any) => p.name ?? p) ?? []}
-          score={game.total_rating ?? game.totalRating}
-          style={{ animationDelay: `${index * 0.1}s` }}
-        />
-      ))}
+      {games.map((game, index) => {
+        const title = game.name ?? game.title ?? "Titre inconnu";
+        const slug = game.slug ?? slugify(title, { lower: true, strict: true });
+
+        return (
+          <ResultsGame
+            key={game.id}
+            slug={slug}
+            title={title}
+            coverUrl={game.cover?.url ?? game.coverUrl}
+            platforms={
+              game.platforms?.map((p) =>
+                typeof p === "string" ? p : p.name
+              ) ?? []
+            }
+            score={game.total_rating ?? game.totalRating}
+            style={{ animationDelay: `${index * 0.1}s` }}
+          />
+        );
+      })}
     </div>
   );
 };
