@@ -8,21 +8,26 @@
  * - Gestion des filtres et du tri côté client
  * - Pagination des résultats
  * - Synchronisation avec l'URL pour la navigation
- * - Debouncing des requêtes API (300ms)
+ * - Debouncing des requêtes API (200ms)
+ * - Cache des résultats pour éviter les requêtes répétées
  * 
  * Le hook utilise useMemo pour optimiser les performances en évitant
  * les recalculs inutiles lors des re-renders.
  * ==========================================================================
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ApiGame, Filters, PaginationInfo, SortState } from '../types';
 import { filterGames, sortGames } from '../lib/game-logic';
 import { SortDirection, SortOption } from '../components/SortingDropdown';
 
-// Délai de debouncing pour éviter les appels API trop fréquents
-const DEBOUNCE_TIME = 300; // 300ms
+// Délai de debouncing réduit pour une meilleure réactivité
+const DEBOUNCE_TIME = 200; // 200ms au lieu de 300ms
+
+// Cache simple pour éviter les requêtes répétées
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export function useSearch() {
   // ==========================================================================
@@ -48,61 +53,103 @@ export function useSearch() {
   const [clientCurrentPage, setClientCurrentPage] = useState(1); // Page courante côté client
   const [sortKey, setSortKey] = useState(0); // Clé pour forcer le re-render lors du tri
 
+  // Référence pour le timeout de debouncing
+  const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
   // ==========================================================================
-  // EFFET DE RÉCUPÉRATION DES DONNÉES - Appels API avec debouncing
+  // FONCTION DE CACHE - Gestion du cache des requêtes
+  // ==========================================================================
+  const getCachedData = (key: string) => {
+    const cached = cache.get(key);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.data;
+    }
+    return null;
+  };
+
+  const setCachedData = (key: string, data: any) => {
+    cache.set(key, { data, timestamp: Date.now() });
+  };
+
+  // ==========================================================================
+  // EFFET DE RÉCUPÉRATION DES DONNÉES - Appels API avec debouncing et cache
   // ==========================================================================
   useEffect(() => {
     if (!query) return; // Pas de requête = pas d'appel API
 
-    // Debouncing : attend 300ms avant de faire l'appel API
-    const handler = setTimeout(() => {
-        setLoading(true);
-        setError(null);
+    // Nettoyer le timeout précédent
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
 
-        // Construction de l'URL selon le type de requête
-        let apiUrl = '';
-        if (query === 'top100_games') {
-          // Récupération des 100 meilleurs jeux
-          apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100?limit=100`;
-        } else if (query === 'top_year_games') {
-          // Récupération des meilleurs jeux de l'année
-          apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100-year?limit=100`;
+    // Debouncing : attend 200ms avant de faire l'appel API
+    debounceRef.current = setTimeout(async () => {
+      setLoading(true);
+      setError(null);
+
+      // Construction de l'URL selon le type de requête
+      let apiUrl = '';
+      let cacheKey = '';
+
+      if (query === 'top100_games') {
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100?limit=100`;
+        cacheKey = 'top100_games';
+      } else if (query === 'top_year_games') {
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100-year?limit=100`;
+        cacheKey = 'top_year_games';
+      } else {
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${pageFromUrl}&limit=20`;
+        cacheKey = `search_${query}_${pageFromUrl}`;
+      }
+
+      // Vérifier le cache d'abord
+      const cachedData = getCachedData(cacheKey);
+      if (cachedData) {
+        if (query === 'top100_games' || query === 'top_year_games') {
+          const gamesData = cachedData.member ?? cachedData;
+          setGames(Array.isArray(gamesData) ? gamesData : []);
+          setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: gamesData.length });
+        } else {
+          setGames(cachedData.games ?? []);
+          setPagination(cachedData.pagination);
         }
+        setLoading(false);
+        return;
+      }
 
-        // Appel API pour les jeux populaires
-        if (apiUrl) {
-          fetch(apiUrl)
-            .then(res => res.json())
-            .then(data => {
-              const gamesData = data.member ?? data;
-              setGames(Array.isArray(gamesData) ? gamesData : []);
-              setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: gamesData.length });
-            })
-            .catch(e => {
-              console.error("Erreur lors de la récupération des jeux populaires:", e);
-              setError('Erreur de chargement des jeux populaires.');
-            })
-            .finally(() => setLoading(false));
-          return;
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const data = await response.json();
+        
+        // Mettre en cache les données
+        setCachedData(cacheKey, data);
 
-        // Appel API pour la recherche de jeux
-        const searchUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${pageFromUrl}&limit=20`;
-        fetch(searchUrl)
-          .then(res => res.json())
-          .then(data => {
-            setGames(data.games ?? []);
-            setPagination(data.pagination);
-          })
-          .catch(e => {
-            console.error("Erreur lors de la recherche de jeux:", e);
-            setError('Erreur de recherche.');
-          })
-          .finally(() => setLoading(false));
+        if (query === 'top100_games' || query === 'top_year_games') {
+          const gamesData = data.member ?? data;
+          setGames(Array.isArray(gamesData) ? gamesData : []);
+          setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: gamesData.length });
+        } else {
+          setGames(data.games ?? []);
+          setPagination(data.pagination);
+        }
+      } catch (e) {
+        console.error("Erreur lors de la récupération des données:", e);
+        setError('Erreur de chargement des données.');
+      } finally {
+        setLoading(false);
+      }
     }, DEBOUNCE_TIME);
 
     // Nettoyage du timeout si la requête change
-    return () => clearTimeout(handler);
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
   }, [query, pageFromUrl]);
   
   // ==========================================================================

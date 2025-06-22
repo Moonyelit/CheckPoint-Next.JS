@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import FilterCard from "./FilterCard";
+import LoadingSkeleton from "@/components/common/LoadingSkeleton";
+import "../styles/filterCard.scss";
 
 interface FilterData {
   [key: string]: {
@@ -177,7 +179,10 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ onFiltersChange }) =>
   if (loading) {
     return (
       <div className="filter-container">
-        <div className="filter-loading">Chargement des filtres...</div>
+        <LoadingSkeleton type="filter-card" />
+        <LoadingSkeleton type="filter-card" />
+        <LoadingSkeleton type="filter-card" />
+        <LoadingSkeleton type="filter-card" />
       </div>
     );
   }

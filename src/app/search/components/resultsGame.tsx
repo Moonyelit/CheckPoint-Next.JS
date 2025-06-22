@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import LazyImage from "@/components/common/LazyImage";
 import "../styles/resultsGame.scss";
 
 interface ResultsGameProps {
@@ -6,6 +7,7 @@ interface ResultsGameProps {
   coverUrl?: string;
   platforms?: string[];
   score?: number;
+  style?: React.CSSProperties;
 }
 
 // Hook pour la taille responsive
@@ -117,22 +119,46 @@ const formatPlatform = (platform: string): string => {
   return platformMap[platform] || platform;
 };
 
-const ResultsGame: React.FC<ResultsGameProps> = ({ title, coverUrl, platforms, score }) => {
+const ResultsGame: React.FC<ResultsGameProps> = ({
+  title,
+  coverUrl,
+  platforms,
+  score,
+  style
+}) => {
   const { donut, stroke } = useDonutSize();
   const defaultCover = "/images/Game/Default game.jpg";
+
   return (
-    <article className="results-game">
-      <img src={coverUrl || defaultCover} alt={title} className="results-game__cover" />
+    <article className="results-game" style={style}>
+      <div className="results-game__cover">
+        <LazyImage
+          src={coverUrl || defaultCover}
+          alt={title}
+          width={120}
+          height={160}
+          className="results-game__image"
+        />
+      </div>
+      
       <div className="results-game__info">
         <div className="results-game__title">{title}</div>
         {platforms && platforms.length > 0 && (
           <div className="results-game__platforms">
-            {platforms.map((p, i) => (
-              <span key={i} className="results-game__platform">{formatPlatform(p)}</span>
+            {platforms.slice(0, 3).map((platform, index) => (
+              <span key={index} className="results-game__platform">
+                {formatPlatform(platform)}
+              </span>
             ))}
+            {platforms.length > 3 && (
+              <span className="results-game__platform-more">
+                +{platforms.length - 3}
+              </span>
+            )}
           </div>
         )}
       </div>
+      
       {typeof score === 'number' && (
         <div className="results-game__score">
           <DonutProgress value={score} size={donut} strokeWidth={stroke} />
