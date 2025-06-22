@@ -124,8 +124,14 @@
 // ==========================================================================
 // MOBILE FILTERS
 // ==========================================================================
+
+
+
+
 .search-page__filter-fab {
   display: none; 
+
+  @include respond-to("medium") {
   position: fixed;
   bottom: 2rem;
   right: 2rem;
@@ -151,6 +157,7 @@
   .bx {
     font-size: 1.2rem;
   }
+}
 }
 
 .search-page__filters-header,

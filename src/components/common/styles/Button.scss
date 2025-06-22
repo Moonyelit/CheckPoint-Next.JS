@@ -33,18 +33,11 @@
     background: var(--gris-button);
     color: var(--black);
 
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: var(--crystal-overlay);
-      opacity: 0;
-      transition: opacity 1s ease;
-      z-index: -1;
-    }
-
     &:hover {
       color: var(--white);
+      background: var(--crystal-overlay);
+
+      
       
       &::before {
         opacity: 1;
