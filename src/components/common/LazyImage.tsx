@@ -1,5 +1,27 @@
+/**
+ * LazyImage - Composant d'image à chargement paresseux et optimisé.
+ *
+ * Ce composant a pour but d'améliorer les performances et l'expérience utilisateur
+ * en ne chargeant les images que lorsqu'elles deviennent visibles à l'écran.
+ *
+ * Fonctionnalités clés :
+ * 1. Lazy Loading : Utilise l'API `IntersectionObserver` pour différer le chargement
+ *    des images qui ne sont pas encore dans la fenêtre d'affichage (viewport).
+ * 2. Skeleton Placeholder : Affiche un squelette de chargement animé qui
+ *    réserve l'espace de l'image pour éviter les décalages de mise en page (CLS).
+ * 3. Fallback : Gère les erreurs de chargement (ex: image non trouvée) en
+ *    affichant un message de remplacement propre.
+ * 4. Transitions fluides : Applique des animations douces (fondu, échelle)
+ *    lorsque l'image apparaît.
+ *
+ * Avantages :
+ * - Réduit considérablement le temps de chargement initial de la page.
+ * - Améliore les scores Core Web Vitals (LCP, CLS), bénéfique pour le SEO.
+ * - Économise la bande passante de l'utilisateur.
+ * - Offre une expérience de navigation plus fluide et professionnelle.
+ */
 import React, { useState, useEffect, useRef } from 'react';
-import './LazyImage.scss';
+import './styles/LazyImage.scss';
 
 interface LazyImageProps {
   src: string;
