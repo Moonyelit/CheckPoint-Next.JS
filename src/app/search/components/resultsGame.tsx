@@ -128,6 +128,7 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
 }) => {
   const { donut, stroke } = useDonutSize();
   const defaultCover = "/images/Game/Default game.jpg";
+  const [showAllPlatforms, setShowAllPlatforms] = useState(false);
 
   return (
     <article className="results-game" style={style}>
@@ -145,13 +146,16 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
         <div className="results-game__title">{title}</div>
         {platforms && platforms.length > 0 && (
           <div className="results-game__platforms">
-            {platforms.slice(0, 3).map((platform, index) => (
+            {(showAllPlatforms ? platforms : platforms.slice(0, 3)).map((platform, index) => (
               <span key={index} className="results-game__platform">
                 {formatPlatform(platform)}
               </span>
             ))}
-            {platforms.length > 3 && (
-              <span className="results-game__platform-more">
+            {platforms.length > 3 && !showAllPlatforms && (
+              <span
+                className="results-game__platform-more"
+                onClick={() => setShowAllPlatforms(true)}
+              >
                 +{platforms.length - 3}
               </span>
             )}

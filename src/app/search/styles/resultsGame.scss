@@ -64,6 +64,29 @@
     max-width: 100%;
   }
 
+  &__platform-more {
+    background: var(--bleu-crystal-normal);
+    color: var(--white);
+    border-radius: 5px;
+    padding: 5px 1rem;
+    font-size: clamp(9px, 1.5vw, 10px);
+    font-weight: 700;
+    letter-spacing: -0.1px;
+    font-family: "DM Sans", sans-serif;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-left: 0.5rem;
+    user-select: none;
+    outline: none;
+    border: none;
+    display: inline-block;
+    &:hover,
+    &:focus {
+      background: var(--bleu-crystal-fonce);
+      color: var(--white);
+    }
+  }
+
   // Tablette (medium)
   @include respond-to("medium") {
     flex-direction: row;
