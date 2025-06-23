@@ -4,6 +4,7 @@ import GameTabs from "./components/GameTabs";
 import RadarChart from "./components/RadarChart";
 import { notFound } from "next/navigation";
 import { AxiosError } from "axios";
+import { Suspense } from "react";
 
 // Typage des données attendues de l'API
 interface Game {
@@ -40,10 +41,25 @@ interface Game {
   };
 }
 
+// Cache pour les données de jeu
+const gameCache = new Map<string, { data: Game; timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 async function getGameData(slug: string): Promise<Game> {
+  // Vérifier le cache d'abord
+  const cached = gameCache.get(slug);
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data;
+  }
+
   try {
     // D'abord, on essaie de récupérer le jeu depuis notre base de données
-    const response = await api.get(`/api/games/${slug}`);
+    const response = await api.get(`/api/games/${slug}`, {
+      timeout: 10000, // Timeout de 10 secondes
+    });
+    
+    // Mettre en cache
+    gameCache.set(slug, { data: response.data, timestamp: Date.now() });
     return response.data;
   } catch (error) {
     // Si le jeu n'est pas trouvé (404), on essaie de l'importer depuis IGDB
@@ -53,12 +69,16 @@ async function getGameData(slug: string): Promise<Game> {
       try {
         // On essaie d'importer le jeu depuis IGDB en utilisant le slug comme titre
         const title = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(title)}`);
+        const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(title)}`, {
+          timeout: 15000, // Timeout plus long pour l'import
+        });
         
         if (importResponse.data && importResponse.data.length > 0) {
           // On cherche le jeu importé avec le bon slug
           const importedGame = importResponse.data.find((game: Game) => game.slug === slug);
           if (importedGame) {
+            // Mettre en cache
+            gameCache.set(slug, { data: importedGame, timestamp: Date.now() });
             return importedGame;
           }
         }
@@ -71,6 +91,26 @@ async function getGameData(slug: string): Promise<Game> {
     // Si le jeu n'est pas trouvé et ne peut pas être importé, on redirige vers la page 404
     notFound();
   }
+}
+
+// Composant de chargement pour le contenu de la fiche
+function GameContentSkeleton() {
+  return (
+    <div className="game-content-skeleton">
+      <div className="skeleton-header">
+        <div className="skeleton-cover"></div>
+        <div className="skeleton-info">
+          <div className="skeleton-title"></div>
+          <div className="skeleton-studio"></div>
+        </div>
+      </div>
+      <div className="skeleton-content">
+        <div className="skeleton-actions"></div>
+        <div className="skeleton-synopsis"></div>
+        <div className="skeleton-platforms"></div>
+      </div>
+    </div>
+  );
 }
 
 export default async function GamePage({ params }: { params: { slug: string } }) {
@@ -144,11 +184,19 @@ export default async function GamePage({ params }: { params: { slug: string } })
       <header className="game-header">
         <div className="game-header__background">
           {/* Assurez-vous que le chemin est correct depuis la racine 'public' */}
-          <img src={game.backgroundUrl} alt={`Background de ${game.title}`} />
+          <img 
+            src={game.backgroundUrl} 
+            alt={`Background de ${game.title}`}
+            loading="eager"
+          />
         </div>
         <div className="game-header__content main-container">
           <div className="game-header__cover">
-            <img src={game.coverUrl} alt={`Jaquette de ${game.title}`} />
+            <img 
+              src={game.coverUrl} 
+              alt={`Jaquette de ${game.title}`}
+              loading="eager"
+            />
           </div>
           <div className="game-header__info">
             <h1 className="game-header__title">{game.title} ({game.year})</h1>
@@ -161,7 +209,9 @@ export default async function GamePage({ params }: { params: { slug: string } })
       </header>
       
       <main className="main-container">
-        <GameTabs ficheContent={FicheTabContent} />
+        <Suspense fallback={<GameContentSkeleton />}>
+          <GameTabs ficheContent={FicheTabContent} />
+        </Suspense>
       </main>
     </div>
   );
