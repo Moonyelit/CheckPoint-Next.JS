@@ -3,19 +3,55 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
+// Interface étendue pour Window avec les propriétés de performance
+interface ExtendedWindow extends Window {
+  gc?: () => void;
+}
+
+interface ExtendedPerformance extends Performance {
+  memory?: {
+    usedJSHeapSize: number;
+    jsHeapSizeLimit: number;
+  };
+}
+
 /**
- * Hook pour optimiser les performances
- * - Debouncing des fonctions
- * - Throttling des événements
- * - Gestion de la mémoire
- * - Optimisation des re-renders
+ * HOOKS D'OPTIMISATION DES PERFORMANCES
+ * 
+ * Ce fichier contient une collection de hooks React spécialement conçus pour améliorer
+ * les performances de l'application CheckPoint. Chaque hook cible un aspect spécifique
+ * de l'optimisation :
+ * 
+ * 🚀 AMÉLIORATIONS APPORTÉES :
+ * - Réduction des re-renders inutiles
+ * - Optimisation de la navigation entre pages
+ * - Gestion intelligente de la mémoire
+ * - Debouncing et throttling des événements
+ * - Lazy loading optimisé
+ * - Préchargement des ressources critiques
+ * - Surveillance des performances en temps réel
  */
 
-export function useDebounce<T extends (...args: any[]) => any>(
+/**
+ * Hook useDebounce - Optimisation des événements fréquents
+ * 
+ * UTILITÉ : Évite l'exécution excessive de fonctions lors d'événements répétitifs
+ * (recherche, scroll, resize, etc.)
+ * 
+ * AMÉLIORATIONS :
+ * - Réduit les appels API inutiles lors de la saisie utilisateur
+ * - Améliore les performances de recherche en temps réel
+ * - Diminue la charge CPU lors du scroll ou resize
+ * 
+ * EXEMPLE D'UTILISATION :
+ * const debouncedSearch = useDebounce(searchFunction, 300);
+ * // La fonction ne s'exécute qu'après 300ms d'inactivité
+ */
+export function useDebounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): T {
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   return useCallback(
     ((...args: Parameters<T>) => {
@@ -28,12 +64,25 @@ export function useDebounce<T extends (...args: any[]) => any>(
   );
 }
 
-export function useThrottle<T extends (...args: any[]) => any>(
+/**
+ * Hook useThrottle - Limitation de la fréquence d'exécution
+ * 
+ * UTILITÉ : Limite le nombre d'exécutions d'une fonction sur une période donnée
+ * 
+ * AMÉLIORATIONS :
+ * - Contrôle la fréquence des événements de scroll
+ * - Optimise les animations et transitions
+ * - Évite la surcharge lors d'événements rapides
+ * 
+ * EXEMPLE D'UTILISATION :
+ * const throttledScroll = useThrottle(handleScroll, 16); // ~60fps
+ */
+export function useThrottle<T extends (...args: unknown[]) => unknown>(
   func: T,
   delay: number
 ): T {
-  const lastCall = useRef(0);
-  const lastCallTimer = useRef<NodeJS.Timeout>();
+  const lastCall = useRef<number>(0);
+  const lastCallTimer = useRef<NodeJS.Timeout | undefined>(undefined);
 
   return useCallback(
     ((...args: Parameters<T>) => {
@@ -55,6 +104,21 @@ export function useThrottle<T extends (...args: any[]) => any>(
   );
 }
 
+/**
+ * Hook useIntersectionObserver - Lazy loading intelligent
+ * 
+ * UTILITÉ : Détecte quand les éléments deviennent visibles pour optimiser le chargement
+ * 
+ * AMÉLIORATIONS :
+ * - Charge les images uniquement quand elles sont visibles
+ * - Réduit la bande passante initiale
+ * - Améliore le First Contentful Paint (FCP)
+ * - Optimise le chargement des composants lourds
+ * 
+ * EXEMPLE D'UTILISATION :
+ * const { observe, unobserve } = useIntersectionObserver(callback);
+ * observe(imageElement); // Commence l'observation
+ */
 export function useIntersectionObserver(
   callback: IntersectionObserverCallback,
   options: IntersectionObserverInit = {}
@@ -92,6 +156,20 @@ export function useIntersectionObserver(
   return { observe, unobserve };
 }
 
+/**
+ * Hook useLocalStorage - Persistance des données avec optimisation
+ * 
+ * UTILITÉ : Gère le stockage local avec gestion d'erreurs et synchronisation
+ * 
+ * AMÉLIORATIONS :
+ * - Évite les erreurs de SSR (Server-Side Rendering)
+ * - Gestion robuste des erreurs de stockage
+ * - Synchronisation automatique entre onglets
+ * - Optimise l'accès aux données persistantes
+ * 
+ * EXEMPLE D'UTILISATION :
+ * const [theme, setTheme] = useLocalStorage('theme', 'light');
+ */
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
@@ -123,6 +201,19 @@ export function useLocalStorage<T>(
   return [storedValue, setValue];
 }
 
+/**
+ * Hook useSessionStorage - Stockage de session optimisé
+ * 
+ * UTILITÉ : Gère le stockage de session avec les mêmes optimisations que localStorage
+ * 
+ * AMÉLIORATIONS :
+ * - Données persistantes pendant la session uniquement
+ * - Gestion d'erreurs robuste
+ * - Compatible SSR
+ * 
+ * EXEMPLE D'UTILISATION :
+ * const [filters, setFilters] = useSessionStorage('search-filters', {});
+ */
 export function useSessionStorage<T>(
   key: string,
   initialValue: T
@@ -154,20 +245,46 @@ export function useSessionStorage<T>(
   return [storedValue, setValue];
 }
 
+/**
+ * Hook usePerformance - Optimisation globale des performances
+ * 
+ * UTILITÉ : Hook principal qui combine toutes les optimisations de performance
+ * 
+ * AMÉLIORATIONS APPORTÉES :
+ * 
+ * 🚀 NAVIGATION OPTIMISÉE :
+ * - Préchargement intelligent des pages
+ * - Mesure des temps de navigation
+ * - Évitement des navigations multiples
+ * 
+ * 📊 SURVEILLANCE DES PERFORMANCES :
+ * - Monitoring en temps réel
+ * - Détection des fuites mémoire
+ * - Garbage collection automatique
+ * 
+ * 🖼️ OPTIMISATION DES RESSOURCES :
+ * - Préchargement des images critiques
+ * - Optimisation du scroll
+ * - Gestion intelligente de la mémoire
+ * 
+ * EXEMPLE D'UTILISATION :
+ * const { navigateWithPerformance, preloadImage } = usePerformance();
+ * navigateWithPerformance('/games'); // Navigation optimisée
+ */
 export function usePerformance() {
   const router = useRouter();
   const pathname = usePathname();
   const navigationStartTime = useRef<number>(0);
   const isNavigating = useRef<boolean>(false);
 
-  // Optimisation de la navigation
+  // Optimisation de la navigation avec préchargement
   const navigateWithPerformance = useCallback((href: string) => {
     if (isNavigating.current) return; // Éviter les navigations multiples
     
     isNavigating.current = true;
     navigationStartTime.current = performance.now();
     
-    // Précharger la page avant la navigation
+    // Précharger la page avant la navigation pour améliorer la vitesse perçue
     const preloadPage = async () => {
       try {
         await fetch(href, { method: 'HEAD' });
@@ -182,7 +299,7 @@ export function usePerformance() {
     router.push(href);
   }, [router]);
 
-  // Mesure des performances de navigation
+  // Mesure des performances de navigation pour l'optimisation continue
   useEffect(() => {
     if (navigationStartTime.current > 0) {
       const navigationTime = performance.now() - navigationStartTime.current;
@@ -194,12 +311,12 @@ export function usePerformance() {
     }
   }, [pathname]);
 
-  // Optimisation du scroll
+  // Optimisation du scroll pour une expérience fluide
   const scrollToTop = useCallback(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  // Préchargement intelligent des pages
+  // Préchargement intelligent des pages populaires
   const preloadPage = useCallback((href: string) => {
     const link = document.createElement('link');
     link.rel = 'prefetch';
@@ -207,27 +324,28 @@ export function usePerformance() {
     document.head.appendChild(link);
   }, []);
 
-  // Optimisation des images
+  // Optimisation des images avec préchargement
   const preloadImage = useCallback((src: string) => {
     const img = new Image();
     img.src = src;
   }, []);
 
-  // Nettoyage de la mémoire
+  // Nettoyage automatique de la mémoire pour éviter les fuites
   const cleanupMemory = useCallback(() => {
     if ('memory' in performance) {
-      const memory = (performance as any).memory;
-      if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.8) {
+      const extendedPerformance = performance as ExtendedPerformance;
+      if (extendedPerformance.memory && extendedPerformance.memory.usedJSHeapSize > extendedPerformance.memory.jsHeapSizeLimit * 0.8) {
         console.warn('Utilisation mémoire élevée détectée');
         // Forcer le garbage collection si disponible
-        if (window.gc) {
-          window.gc();
+        const extendedWindow = window as ExtendedWindow;
+        if (extendedWindow.gc) {
+          extendedWindow.gc();
         }
       }
     }
   }, []);
 
-  // Surveillance des performances
+  // Surveillance des performances en temps réel
   useEffect(() => {
     const observer = new PerformanceObserver((list) => {
       for (const entry of list.getEntries()) {
@@ -247,7 +365,7 @@ export function usePerformance() {
     return () => observer.disconnect();
   }, []);
 
-  // Nettoyage périodique
+  // Nettoyage périodique de la mémoire
   useEffect(() => {
     const interval = setInterval(cleanupMemory, 30000); // Toutes les 30 secondes
     return () => clearInterval(interval);
