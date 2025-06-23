@@ -220,10 +220,6 @@
 // ================== BLOCK: main-container ==================
 .main-container {
   @include flex(column, flex-start, flex-start);
-
-  &--search-page {
-    // Styles spécifiques pour la page de recherche
-  }
 }
 
 // ================== ANIMATIONS ==================
