@@ -1,4 +1,7 @@
+'use client';
+
 import { useEffect, useRef, useCallback, useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 /**
  * Hook pour optimiser les performances
@@ -151,41 +154,111 @@ export function useSessionStorage<T>(
   return [storedValue, setValue];
 }
 
-// Hook pour nettoyer la mémoire
-export function useMemoryCleanup() {
-  useEffect(() => {
-    const cleanup = () => {
-      // Force le garbage collection si disponible
-      if (window.gc) {
-        window.gc();
+export function usePerformance() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const navigationStartTime = useRef<number>(0);
+  const isNavigating = useRef<boolean>(false);
+
+  // Optimisation de la navigation
+  const navigateWithPerformance = useCallback((href: string) => {
+    if (isNavigating.current) return; // Éviter les navigations multiples
+    
+    isNavigating.current = true;
+    navigationStartTime.current = performance.now();
+    
+    // Précharger la page avant la navigation
+    const preloadPage = async () => {
+      try {
+        await fetch(href, { method: 'HEAD' });
+      } catch (error) {
+        console.warn('Erreur lors du préchargement:', error);
       }
     };
+    
+    preloadPage();
+    
+    // Navigation avec mesure de performance
+    router.push(href);
+  }, [router]);
 
-    // Nettoyage périodique
-    const interval = setInterval(cleanup, 30000); // Toutes les 30 secondes
+  // Mesure des performances de navigation
+  useEffect(() => {
+    if (navigationStartTime.current > 0) {
+      const navigationTime = performance.now() - navigationStartTime.current;
+      console.log(`Navigation vers ${pathname} terminée en ${navigationTime.toFixed(2)}ms`);
+      
+      // Reset pour la prochaine navigation
+      navigationStartTime.current = 0;
+      isNavigating.current = false;
+    }
+  }, [pathname]);
 
-    return () => {
-      clearInterval(interval);
-      cleanup();
-    };
+  // Optimisation du scroll
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
-}
 
-// Hook pour optimiser les images
-export function useImageOptimization() {
-  const preloadImage = useCallback((src: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = reject;
-      img.src = src;
+  // Préchargement intelligent des pages
+  const preloadPage = useCallback((href: string) => {
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = href;
+    document.head.appendChild(link);
+  }, []);
+
+  // Optimisation des images
+  const preloadImage = useCallback((src: string) => {
+    const img = new Image();
+    img.src = src;
+  }, []);
+
+  // Nettoyage de la mémoire
+  const cleanupMemory = useCallback(() => {
+    if ('memory' in performance) {
+      const memory = (performance as any).memory;
+      if (memory.usedJSHeapSize > memory.jsHeapSizeLimit * 0.8) {
+        console.warn('Utilisation mémoire élevée détectée');
+        // Forcer le garbage collection si disponible
+        if (window.gc) {
+          window.gc();
+        }
+      }
+    }
+  }, []);
+
+  // Surveillance des performances
+  useEffect(() => {
+    const observer = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (entry.entryType === 'navigation') {
+          const navEntry = entry as PerformanceNavigationTiming;
+          console.log('Performance navigation:', {
+            domContentLoaded: navEntry.domContentLoadedEventEnd - navEntry.domContentLoadedEventStart,
+            loadComplete: navEntry.loadEventEnd - navEntry.loadEventStart,
+            total: navEntry.loadEventEnd - navEntry.fetchStart,
+          });
+        }
+      }
     });
+
+    observer.observe({ entryTypes: ['navigation'] });
+
+    return () => observer.disconnect();
   }, []);
 
-  const preloadImages = useCallback(async (srcs: string[]) => {
-    const promises = srcs.map(src => preloadImage(src));
-    await Promise.allSettled(promises);
-  }, [preloadImage]);
+  // Nettoyage périodique
+  useEffect(() => {
+    const interval = setInterval(cleanupMemory, 30000); // Toutes les 30 secondes
+    return () => clearInterval(interval);
+  }, [cleanupMemory]);
 
-  return { preloadImage, preloadImages };
+  return {
+    navigateWithPerformance,
+    scrollToTop,
+    preloadPage,
+    preloadImage,
+    cleanupMemory,
+    isNavigating: isNavigating.current,
+  };
 } 
