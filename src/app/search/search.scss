@@ -4,12 +4,13 @@
 
 .search-page.main-container {
   @include flex(column, flex-start, flex-start);
+  margin-block: 8rem;
+
 }
 
 
 // ================== BLOCK: search-page ==================
 .search-page {
-  margin-block: 8rem;
 
   // ================== ELEMENTS ==================
   &__content {

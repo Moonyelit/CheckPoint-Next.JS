@@ -92,10 +92,10 @@ export function useSearch() {
       let cacheKey = '';
 
       if (query === 'top100_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games?limit=100`;
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/top100?limit=100`;
         cacheKey = 'top100_games';
       } else if (query === 'top_year_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/top100-year?limit=100`;
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/year/top100?limit=100`;
         cacheKey = 'top_year_games';
       } else {
         apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${pageFromUrl}&limit=20`;
