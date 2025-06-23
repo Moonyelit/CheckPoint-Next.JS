@@ -1,6 +1,7 @@
 // src/app/home/noLogin/GameCard.tsx
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import "./GameCard.scss";
 import Image from 'next/image';
 
@@ -9,16 +10,18 @@ export interface GameCardProps {
   subtitle?: string;
   imageUrl: string;
   alt: string;
+  slug?: string; // Ajout du slug pour la navigation
 }
 
-export default function GameCard({ title, subtitle, imageUrl, alt }: GameCardProps) {
+export default function GameCard({ title, subtitle, imageUrl, alt, slug }: GameCardProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const router = useRouter();
 
   // Log pour déboguer les URLs d'images
   React.useEffect(() => {
-    console.log(`🎮 GameCard: ${title}`, { imageUrl, imageError, imageLoaded });
-  }, [title, imageUrl, imageError, imageLoaded]);
+    console.log(`🎮 GameCard: ${title}`, { imageUrl, imageError, imageLoaded, slug });
+  }, [title, imageUrl, imageError, imageLoaded, slug]);
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     console.error(`❌ Erreur de chargement d'image pour: ${title}`, {
@@ -34,8 +37,21 @@ export default function GameCard({ title, subtitle, imageUrl, alt }: GameCardPro
     setImageError(false);
   };
 
+  const handleCardClick = () => {
+    if (slug) {
+      console.log(`🎯 Navigation vers le jeu: ${title} (slug: ${slug})`);
+      router.push(`/games/${slug}`);
+    } else {
+      console.warn(`⚠️ Pas de slug disponible pour le jeu: ${title}`);
+    }
+  };
+
   return (
-    <div className="game-card">
+    <div 
+      className="game-card" 
+      onClick={handleCardClick}
+      style={{ cursor: slug ? 'pointer' : 'default' }}
+    >
       <div className="game-card-image">
         {!imageError && imageUrl ? (
           <Image

@@ -13,6 +13,7 @@ interface Game {
   title: string;
   coverUrl: string;
   releaseDate: string;
+  slug: string;
 }
 
 // HeroBanner est le composant principal de la page d'accueil
@@ -105,6 +106,7 @@ export default function HeroBanner() {
                     subtitle={new Date(game.releaseDate).toLocaleDateString("fr-FR")}
                     imageUrl={game.coverUrl}
                     alt={game.title}
+                    slug={game.slug}
                   />
                 </div>
               ))}
