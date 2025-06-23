@@ -86,7 +86,7 @@ export function useCarouselAnimation(total: number, config: CarouselConfig = {})
   };
 
   return {
-    activeIndex,
+    currentIndex: activeIndex,
     isAutoPlaying,
     goToNext,
     goToPrev,

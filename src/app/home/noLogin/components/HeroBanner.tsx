@@ -26,7 +26,8 @@ export default function HeroBanner() {
     goToNext,
     goToPrev,
     goToIndex,
-    getCardClass
+    getCardClass,
+    currentIndex
   } = useCarouselAnimation(total, {
     autoPlayInterval: 5000, // 5 secondes entre chaque carte
     resumeDelay: 8000 // Reprend après 8 secondes d'inactivité
@@ -43,6 +44,12 @@ export default function HeroBanner() {
     if (oldClass.includes('left')) return 'hero-banner__card hero-banner__card--left';
     if (oldClass.includes('box--hide')) return 'hero-banner__card hero-banner__card--hide';
     return 'hero-banner__card';
+  };
+
+  // Gestionnaire de clic sur une carte
+  const handleCardClick = (index: number) => {
+    console.log(`🎯 Clic sur la carte ${index}, déplacement au centre`);
+    goToIndex(index);
   };
 
   // Récupération des 5 meilleurs jeux de l'année
@@ -98,7 +105,6 @@ export default function HeroBanner() {
                 <div
                   key={game.id}
                   className={getBemCardClass(idx)}
-                  onClick={() => goToIndex(idx)}
                   style={{ cursor: 'pointer' }}
                 >
                   <GameCard
@@ -107,6 +113,9 @@ export default function HeroBanner() {
                     imageUrl={game.coverUrl}
                     alt={game.title}
                     slug={game.slug}
+                    isActive={idx === currentIndex}
+                    onCardClick={handleCardClick}
+                    index={idx}
                   />
                 </div>
               ))}
