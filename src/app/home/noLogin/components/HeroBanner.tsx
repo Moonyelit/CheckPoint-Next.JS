@@ -44,45 +44,26 @@ export default function HeroBanner() {
     return 'hero-banner__card';
   };
 
-  // Récupération des 5 meilleurs jeux avec système de fallback simplifié
+  // Récupération des 5 meilleurs jeux de l'année
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        // 1er choix : Top 30 jeux de l'année (365 derniers jours, 100+ votes, note 75+)
-        console.log('🎮 Tentative de récupération des jeux de l\'année...');
-        const yearData = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/top100-year?limit=5`)
-          .then(res => res.json());
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/year/top100?limit=5`);
         
-        if (yearData && yearData.length > 0) {
-          console.log('✅ Jeux de l\'année récupérés :', yearData.map((g: Game) => g.title));
-          setCardsData(yearData);
-          return;
-        }
-        
-        throw new Error('Aucun jeu de l\'année trouvé');
-        
-      } catch (err) {
-        console.error('❌ Erreur jeux de l\'année :', err);
-        
-        // 2ème choix : Top 100 de tous les temps (50+ votes, note 85+)
-        try {
-          console.log('🏆 Fallback vers Top 100 de tous les temps...');
-          const top100Data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/top100?limit=5`)
-            .then(res => res.json());
-            
-          if (top100Data && top100Data.length > 0) {
-            console.log('✅ Top 100 récupéré :', top100Data.map((g: Game) => g.title));
-            setCardsData(top100Data);
+        if (response.ok) {
+          const data = await response.json();
+          if (data && data.length > 0) {
+            setCardsData(data);
             return;
           }
-          
-          throw new Error('Aucun jeu Top 100 trouvé');
-          
-        } catch (finalErr) {
-          console.error('❌ Échec total des deux endpoints de qualité :', finalErr);
-          // Aucun fallback supplémentaire - affichage vide si les deux endpoints échouent
-          setCardsData([]);
         }
+        
+        // Fallback simple si aucun jeu trouvé
+        setCardsData([]);
+        
+      } catch (err) {
+        console.error('Erreur lors de la récupération des jeux :', err);
+        setCardsData([]);
       }
     };
     
