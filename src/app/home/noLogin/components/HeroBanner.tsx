@@ -48,7 +48,7 @@ export default function HeroBanner() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games/year/top100?limit=5`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/year/top100?limit=5`);
         
         if (response.ok) {
           const data = await response.json();
