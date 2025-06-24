@@ -6,9 +6,10 @@ interface GameHeaderProps {
     year: number;
     studio: string;
     coverUrl: string;
-    backgroundUrl: string;
+    backgroundUrl?: string;
     totalRating?: number;
     userRating?: number;
+    firstScreenshotUrl?: string;
 }
 
 export default function GameHeader({ 
@@ -18,13 +19,14 @@ export default function GameHeader({
     coverUrl, 
     backgroundUrl,
     totalRating,
-    userRating 
+    userRating,
+    firstScreenshotUrl
 }: GameHeaderProps) {
     return (
         <header className="game-header">
             <div className="game-header__background">
                 <Image
-                    src={backgroundUrl}
+                    src={firstScreenshotUrl || backgroundUrl || coverUrl}
                     alt={`Image de fond pour ${name}`}
                     layout="fill"
                     objectFit="cover"

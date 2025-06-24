@@ -9,16 +9,36 @@ const api = axios.create({
 // Types pour les données de jeux
 export interface Game {
   id: number
-  name: string
+  title: string
   slug: string
-  description?: string
-  coverImage?: string
-  screenshots?: string[]
-  genres?: string[]
+  coverUrl?: string
+  firstScreenshotUrl?: string
+  summary?: string
+  totalRating?: number
   platforms?: string[]
+  genres?: string[]
+  developer?: string
   releaseDate?: string
-  rating?: number
-  // Ajoutez d'autres propriétés selon votre API
+  gameModes?: string[]
+  perspectives?: string[]
+  year?: number
+  studio?: string
+  backgroundUrl?: string
+  synopsis?: string
+  playerPerspective?: string
+  publisher?: string
+  igdbId?: string
+  series?: string
+  titles?: string
+  releaseDates?: { platform: string; date: string }[]
+  ageRatings?: { pegi: string; esrb: string }
+  stats?: {
+    ost: number
+    maniabilite: number
+    gameplay: number
+    graphismes: number
+    duree_de_vie: number
+  }
 }
 
 export interface SearchResults {

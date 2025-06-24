@@ -99,6 +99,7 @@ export default async function GamePage({ params }: { params: { slug: string } })
         coverUrl={game.coverUrl || "/placeholder-cover.jpg"}
         backgroundUrl={game.backgroundUrl || game.coverUrl || "/placeholder-background.jpg"}
         totalRating={game.totalRating}
+        firstScreenshotUrl={game.firstScreenshotUrl}
       />
       
       <main className="main-container">
