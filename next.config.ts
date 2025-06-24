@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
     // Préchargement des pages
     optimizeCss: true,
     // Améliore le streaming SSR
-    serverComponentsExternalPackages: ['@react-three/fiber', '@react-three/drei'],
+    serverComponentsExternalPackages: ['@react-three/fiber', '@react-three/drei', 'ioredis'],
   },
   // Configuration pour réduire les erreurs d'hydratation
   onDemandEntries: {
@@ -96,6 +96,30 @@ const nextConfig: NextConfig = {
             },
           },
         },
+      };
+    }
+    
+    // Configuration webpack pour exclure ioredis du bundle client
+    if (!isServer) {
+      // Exclure ioredis du bundle côté client
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        dns: false,
+        net: false,
+        tls: false,
+        fs: false,
+        path: false,
+        os: false,
+        crypto: false,
+        stream: false,
+        util: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        events: false,
+        querystring: false,
       };
     }
     
