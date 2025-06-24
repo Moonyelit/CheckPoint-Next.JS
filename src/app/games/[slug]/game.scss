@@ -13,6 +13,14 @@ $border-color: #4a4e69;
 $border-radius-small: 4px;
 $border-radius-medium: 8px;
 
+// Imports des composants
+@import "./components/styles/GameHeader.scss";
+@import "./components/styles/GameActions.scss";
+@import "./components/styles/GameInfo.scss";
+@import "./components/styles/GameSidebar.scss";
+@import "./components/styles/GameFicheContent.scss";
+@import "./components/styles/GameTabs.scss";
+
 .game-page {
   min-height: 100vh;
   background: $dark-background-color;
@@ -388,85 +396,13 @@ $border-radius-medium: 8px;
   }
 }
 
-// Optimisations pour les animations
-.game-tabs,
-.game-actions button {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-// Optimisations pour les images lazy loading
-img[loading="lazy"] {
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
-
-img[loading="lazy"].loaded {
-  opacity: 1;
-}
-
 // Optimisations pour les performances de rendu
-.game-header,
-.game-content,
-.game-additional-info {
+.game-page {
   contain: layout style;
-}
-
-// Optimisations pour les interactions
-.btn,
-.tag {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
 }
 
 // Optimisations pour les polices
 .game-header__title,
 .game-header__studio {
   font-display: swap;
-}
-
-// Optimisations pour les animations
-.game-tabs,
-.game-actions button {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-// Optimisations pour les images lazy loading
-img[loading="lazy"] {
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
-
-img[loading="lazy"].loaded {
-  opacity: 1;
-}
-
-// Optimisations pour les performances de rendu
-.game-header,
-.game-content,
-.game-additional-info {
-  contain: layout style;
-}
-
-// Optimisations pour les interactions
-.btn,
-.tag {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-// Optimisations pour les polices
-.game-header__title,
-.game-header__studio {
-  font-display: swap;
-}
-
-// Optimisations pour les animations CSS
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
 } 
