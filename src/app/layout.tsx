@@ -1,36 +1,65 @@
 //head title, description, icon, langue
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import "../styles/layout.scss";
 import ConditionalLayout from '@/components/layout/ConditionalLayout';
 import ResourcePreloader from '@/components/common/ResourcePreloader';
 import PagePreloader from '@/components/common/PagePreloader';
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: 'swap',
-  preload: true,
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: 'swap',
-  preload: true,
-});
+import ServiceWorkerManager from "@/components/common/ServiceWorkerManager";
+import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Checkout",
-  icons: {
-    icon: "/images/Logo/Crystal.png", 
+  title: "CheckPoint - Découvrez et évaluez vos jeux vidéo",
+  description: "Plateforme communautaire pour découvrir, évaluer et partager vos jeux vidéo préférés. Rejoignez CheckPoint et explorez un univers de jeux infini.",
+  keywords: "jeux vidéo, évaluation, communauté, gaming, plateforme, découverte",
+  authors: [{ name: "CheckPoint Team" }],
+  creator: "CheckPoint",
+  publisher: "CheckPoint",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
-  description: "La plateforme gamifiée pour suivre ta progression et gérer ta collection de jeux vidéo",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
-  robots: "index, follow",
-  other: {
-    "theme-color": "#000000",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: "CheckPoint - Découvrez et évaluez vos jeux vidéo",
+    description: "Plateforme communautaire pour découvrir, évaluer et partager vos jeux vidéo préférés.",
+    url: '/',
+    siteName: 'CheckPoint',
+    images: [
+      {
+        url: '/images/Logo/Crystal.png',
+        width: 1200,
+        height: 630,
+        alt: 'CheckPoint - Plateforme de jeux vidéo',
+      },
+    ],
+    locale: 'fr_FR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "CheckPoint - Découvrez et évaluez vos jeux vidéo",
+    description: "Plateforme communautaire pour découvrir, évaluer et partager vos jeux vidéo préférés.",
+    images: ['/images/Logo/Crystal.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
   },
 };
 
@@ -56,7 +85,6 @@ export default function RootLayout({
         
         {/* Préchargement des polices */}
         <link rel="preload" href="/_next/static/media/geist-sans-var.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/_next/static/media/geist-mono-var.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         
         {/* Préchargement des pages populaires */}
         <link rel="prefetch" href="/search" />
@@ -68,7 +96,7 @@ export default function RootLayout({
         <meta name="format-detection" content="telephone=no" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        className={`${GeistSans.variable} antialiased min-h-screen flex flex-col`}
         suppressHydrationWarning={true}
       >
         <ResourcePreloader resources={criticalResources} />
@@ -77,6 +105,9 @@ export default function RootLayout({
             {children}
           </ConditionalLayout>
         </PagePreloader>
+        
+        {/* Gestionnaire de Service Worker pour le cache offline */}
+        <ServiceWorkerManager />
       </body>
     </html>
   );
