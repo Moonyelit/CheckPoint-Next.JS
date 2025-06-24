@@ -1,0 +1,220 @@
+.cache-monitor {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  width: 300px;
+  background: var(--gris-fonce);
+  border: 1px solid var(--gris-clair);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.cache-monitor__toggle-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: var(--gris-fonce);
+  color: var(--blanc);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--gris-clair);
+    transform: scale(1.1);
+  }
+}
+
+.cache-monitor__panel {
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  z-index: 1000;
+  width: 300px;
+  background: var(--gris-fonce);
+  border: 1px solid var(--gris-clair);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.cache-monitor__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gris-clair);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px 12px 0 0;
+
+  h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--blanc);
+  }
+}
+
+.cache-monitor__close-button {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--gris-clair);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--gris-clair);
+    color: var(--gris-fonce);
+  }
+}
+
+.cache-monitor__content {
+  padding: 1rem;
+}
+
+.cache-monitor__loading {
+  text-align: center;
+  color: var(--gris-clair);
+  font-size: 0.75rem;
+  padding: 1rem;
+}
+
+.cache-monitor__section {
+  margin-bottom: 1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--blanc);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.cache-monitor__stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0;
+  color: var(--gris-clair);
+  font-size: 0.75rem;
+
+  span:first-child {
+    color: var(--gris-clair);
+  }
+
+  span:last-child {
+    font-weight: 600;
+    color: var(--blanc);
+  }
+}
+
+.cache-monitor__connected {
+  color: #4ade80 !important;
+}
+
+.cache-monitor__disconnected {
+  color: #f87171 !important;
+}
+
+.cache-monitor__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.cache-monitor__refresh-button,
+.cache-monitor__clear-button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--gris-clair);
+  color: var(--gris-fonce);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.cache-monitor__refresh-button:hover:not(:disabled) {
+  background: var(--bleu-principal);
+  color: var(--blanc);
+}
+
+.cache-monitor__clear-button:hover:not(:disabled) {
+  background: var(--rouge-principal);
+  color: var(--blanc);
+}
+
+.cache-monitor__error {
+  color: var(--rouge-principal);
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .cache-monitor__toggle-button {
+    top: 10px;
+    left: 10px;
+  }
+
+  .cache-monitor__panel {
+    top: 60px;
+    left: 10px;
+    right: 10px;
+    width: auto;
+  }
+} 
