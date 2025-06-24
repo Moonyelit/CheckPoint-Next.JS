@@ -1,0 +1,226 @@
+@import "../../../../../styles/variables";
+@import "../../../../../styles/mixins";
+
+.game-info {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid #4a4e69;
+
+  &__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  &__synopsis {
+    &-text {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #adb5bd;
+      margin-top: 1rem;
+    }
+  }
+
+  &__section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3a86ff;
+    display: inline-block;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  &__tag {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+
+    &--platform {
+      background-color: #4a4e69;
+      color: #ffffff;
+      border: 1px solid #5a5e79;
+
+      &:hover {
+        background-color: #5a5e79;
+        transform: translateY(-1px);
+      }
+    }
+
+    &--genre {
+      background-color: #3a86ff;
+      color: #ffffff;
+      border: 1px solid #4a96ff;
+
+      &:hover {
+        background-color: #4a96ff;
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  &__no-data {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 0.9rem;
+  }
+
+  &__additional {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-top: 2.5rem;
+  }
+
+  &__section {
+    background-color: #2b2d42;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #4a4e69;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    color: #adb5bd;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1.4;
+  }
+
+  &__release-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__release-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #4a4e69;
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+
+  &__release-platform {
+    font-weight: 500;
+    color: #ffffff;
+    font-size: 0.9rem;
+  }
+
+  &__release-date {
+    color: #adb5bd;
+    font-size: 0.9rem;
+  }
+
+  &__age-ratings {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  &__rating-image {
+    height: 60px;
+    width: auto;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Responsive design
+@media (max-width: 992px) {
+  .game-info {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+
+    &__additional {
+      padding-top: 0;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .game-info {
+    padding: 1.5rem 0;
+
+    &__main {
+      gap: 1.5rem;
+    }
+
+    &__section {
+      padding: 1rem;
+    }
+
+    &__grid {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    &__tags {
+      gap: 0.5rem;
+    }
+
+    &__tag {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    &__section-title {
+      font-size: 1.1rem;
+    }
+
+    &__synopsis-text {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Optimisations pour les interactions tactiles
+@media (hover: none) and (pointer: coarse) {
+  .game-info {
+    &__tag {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+} 
