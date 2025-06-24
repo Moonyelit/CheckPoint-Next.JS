@@ -56,6 +56,17 @@ export function useSearch() {
   // Référence pour le timeout de debouncing
   const debounceRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
+  // Synchronisation de clientCurrentPage avec la page de l'URL
+  useEffect(() => {
+    if (query === 'top100_games' || query === 'top_year_games') {
+      // Pour les listes spéciales, utiliser la pagination côté client
+      setClientCurrentPage(1);
+    } else {
+      // Pour les recherches normales, synchroniser avec l'URL
+      setClientCurrentPage(pageFromUrl);
+    }
+  }, [query, pageFromUrl]);
+
   // ==========================================================================
   // FONCTION DE CACHE - Gestion du cache des requêtes
   // ==========================================================================
@@ -163,13 +174,28 @@ export function useSearch() {
   const sortedGames = useMemo(() => sortGames(filteredGames, sort), [filteredGames, sort]);
   
   // Calcul du nombre total de pages
-  const totalPages = useMemo(() => Math.ceil(sortedGames.length / pagination.limit), [sortedGames, pagination.limit]);
+  // Pour les recherches normales, utiliser la pagination côté serveur
+  // Pour les top100/top_year, utiliser la pagination côté client
+  const totalPages = useMemo(() => {
+    if (query === 'top100_games' || query === 'top_year_games') {
+      return Math.ceil(sortedGames.length / pagination.limit);
+    } else {
+      // Utiliser la pagination côté serveur pour les recherches normales
+      return pagination.totalCount ? Math.ceil(pagination.totalCount / pagination.limit) : 1;
+    }
+  }, [sortedGames, pagination, query]);
 
   // Pagination : découpage des jeux pour afficher seulement la page courante
   const paginatedGames = useMemo(() => {
-    const offset = (clientCurrentPage - 1) * pagination.limit;
-    return sortedGames.slice(offset, offset + pagination.limit);
-  }, [sortedGames, clientCurrentPage, pagination.limit]);
+    if (query === 'top100_games' || query === 'top_year_games') {
+      // Pagination côté client pour les listes spéciales
+      const offset = (clientCurrentPage - 1) * pagination.limit;
+      return sortedGames.slice(offset, offset + pagination.limit);
+    } else {
+      // Pour les recherches normales, les jeux sont déjà paginés côté serveur
+      return sortedGames;
+    }
+  }, [sortedGames, clientCurrentPage, pagination.limit, query]);
 
   // ==========================================================================
   // GESTIONNAIRES D'ÉVÉNEMENTS - Fonctions pour les interactions utilisateur
@@ -208,7 +234,16 @@ export function useSearch() {
    * @param newPage - Numéro de la nouvelle page
    */
   const handlePageChange = (newPage: number) => {
-    setClientCurrentPage(newPage);
+    if (query === 'top100_games' || query === 'top_year_games') {
+      // Pagination côté client pour les listes spéciales
+      setClientCurrentPage(newPage);
+    } else {
+      // Pour les recherches normales, mettre à jour l'URL pour déclencher une nouvelle requête API
+      const url = new URL(window.location.href);
+      url.searchParams.set('page', newPage.toString());
+      window.history.pushState({}, '', url.toString());
+      // La nouvelle requête sera déclenchée automatiquement par l'effet qui écoute les changements d'URL
+    }
     window.scrollTo(0, 0); // Scroll vers le haut de la page
   };
   
