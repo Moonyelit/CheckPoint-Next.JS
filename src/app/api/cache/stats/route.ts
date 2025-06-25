@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       { 
         error: 'Erreur lors de la récupération des statistiques',
-        redis: { connected: false },
         memory: { size: 0, entries: 0 }
       },
       { status: 500 }
