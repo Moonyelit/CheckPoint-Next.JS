@@ -28,7 +28,7 @@ const nextConfig: NextConfig = {
     // Préchargement des pages
     optimizeCss: true,
     // Améliore le streaming SSR
-    serverComponentsExternalPackages: ['@react-three/fiber', '@react-three/drei', 'ioredis'],
+    // serverComponentsExternalPackages: ['@react-three/fiber', '@react-three/drei', 'ioredis'],
   },
   // Configuration pour réduire les erreurs d'hydratation
   onDemandEntries: {

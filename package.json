@@ -27,7 +27,6 @@
     "critters": "^0.0.23",
     "dompurify": "^3.2.6",
     "geist": "^1.4.2",
-    "ioredis": "^5.6.1",
     "next": "15.2.5",
     "nodemailer": "^7.0.3",
     "react": "^19.0.0",
