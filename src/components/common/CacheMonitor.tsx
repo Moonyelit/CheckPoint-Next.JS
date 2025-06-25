@@ -91,28 +91,6 @@ export default function CacheMonitor() {
             ) : stats ? (
               <>
                 <div className="cache-monitor__section">
-                  <h4>Redis</h4>
-                  <div className="cache-monitor__stat">
-                    <span>Statut:</span>
-                    <span className={stats.redis.connected ? 'cache-monitor__connected' : 'cache-monitor__disconnected'}>
-                      {stats.redis.connected ? '✅ Connecté' : '❌ Déconnecté'}
-                    </span>
-                  </div>
-                  {stats.redis.connected && (
-                    <>
-                      <div className="cache-monitor__stat">
-                        <span>Clés:</span>
-                        <span>{stats.redis.keysCount || 0}</span>
-                      </div>
-                      <div className="cache-monitor__stat">
-                        <span>Mémoire:</span>
-                        <span>{stats.redis.memoryUsage ? `${Math.round(stats.redis.memoryUsage / 1024)} KB` : 'N/A'}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                <div className="cache-monitor__section">
                   <h4>Mémoire</h4>
                   <div className="cache-monitor__stat">
                     <span>Entrées:</span>
