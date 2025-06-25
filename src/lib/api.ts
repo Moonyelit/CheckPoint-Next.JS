@@ -66,7 +66,7 @@ export async function getGameBySlug(slug: string): Promise<Game | null> {
     const game = response.data
 
     // Mettre en cache
-    await GameCache.set(cacheKey, game, CACHE_TTL.GAME_DATA)
+    await GameCache.set(cacheKey, game)
     
     return game
   } catch (error) {
@@ -92,14 +92,14 @@ export async function searchGames(
   }
 
   try {
-    // Récupérer depuis l'API
-    const response = await api.get('/games/search', {
-      params: { q: query, page, limit }
+    // Récupérer depuis l'API avec le bon endpoint
+    const response = await api.get(`/api/games/search/${encodeURIComponent(query)}`, {
+      params: { page, limit }
     })
     const results = response.data
 
     // Mettre en cache
-    await GameCache.set(cacheKey, results, CACHE_TTL.SEARCH_RESULTS)
+    await GameCache.set(cacheKey, results)
     
     return results
   } catch (error) {
@@ -128,7 +128,7 @@ export async function getPopularGames(limit: number = 20): Promise<Game[] | null
     const games = response.data
 
     // Mettre en cache
-    await GameCache.set(cacheKey, games, CACHE_TTL.POPULAR_GAMES)
+    await GameCache.set(cacheKey, games)
     
     return games
   } catch (error) {
@@ -157,7 +157,7 @@ export async function getRecentGames(limit: number = 20): Promise<Game[] | null>
     const games = response.data
 
     // Mettre en cache
-    await GameCache.set(cacheKey, games, CACHE_TTL.POPULAR_GAMES)
+    await GameCache.set(cacheKey, games)
     
     return games
   } catch (error) {
