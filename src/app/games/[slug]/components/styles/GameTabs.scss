@@ -2,7 +2,6 @@
 @import "../../../../../styles/mixins";
 
 // Variables de couleur pour correspondre à game.scss et à la maquette.
-$dark-background-color: #1c1d2a;
 $primary-color: #3a86ff;
 
 .game-tabs {
@@ -55,6 +54,5 @@ $primary-color: #3a86ff;
 }
 
 .tab-content {
-  background-color: $dark-background-color;
   padding-top: 2rem;
 } 
