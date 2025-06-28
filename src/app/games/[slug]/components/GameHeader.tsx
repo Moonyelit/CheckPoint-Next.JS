@@ -87,11 +87,12 @@ export default function GameHeader({
     return (
         <header className="game-header">
             <div className="game-header__background">
+                <div className="game-header__overlay"></div>
                 <Image
                     src={backgroundImageUrl}
                     alt={`Image de fond pour ${name}`}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: 'cover' }}
                     quality={85}
                     priority
                     className="game-header__background-image"

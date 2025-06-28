@@ -79,3 +79,14 @@ $font-sizes: (
     --breakpoint-#{$name}: #{$val};
   }
 }
+
+.game-header__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, #748599 0%, #a8bbc5 100%);
+    opacity: 0.85; // Tu peux ajuster l'opacité pour voir l'image en dessous
+    z-index: 2;
+}
