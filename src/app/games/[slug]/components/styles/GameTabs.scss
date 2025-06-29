@@ -1,5 +1,5 @@
-@import "../../../../../styles/variables";
-@import "../../../../../styles/mixins";
+@use '../../../../../styles/_variables' as *;
+@use '../../../../../styles/mixins' as *;
 
 // Variables de couleur pour correspondre à game.scss et à la maquette.
 $primary-color: #3a86ff;

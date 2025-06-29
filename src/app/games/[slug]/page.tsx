@@ -17,81 +17,61 @@ const CACHE_DURATION = 10 * 60 * 1000; // 10 minutes
 async function getGameData(slug: string): Promise<Game> {
   const startTime = Date.now();
   
+  // 1. Vérifier le cache Redis en premier
   const cacheKey = CACHE_KEYS.GAME_BY_SLUG(slug);
   const cachedData = await GameCache.get<Game>(cacheKey);
   
   if (cachedData) {
+    console.log(`⚡ Cache hit pour ${slug} (${Date.now() - startTime}ms)`);
     return cachedData;
   }
 
+  // 2. Vérifier le cache mémoire
   const memoryCached = gameCache.get(slug);
   if (memoryCached && Date.now() - memoryCached.timestamp < CACHE_DURATION) {
+    console.log(`⚡ Cache mémoire hit pour ${slug} (${Date.now() - startTime}ms)`);
     return memoryCached.data;
   }
 
   try {
-    // 3. Récupérer depuis la base de données
+    // 3. Récupérer depuis la base de données avec un seul appel
+    console.log(`🔍 Recherche du jeu: ${slug}`);
     const response = await api.get(`/api/games/${slug}`, {
-      timeout: 5000, // Timeout réduit à 5 secondes
+      timeout: 3000, // Timeout réduit à 3 secondes
     });
     
     // Mettre en cache Redis (24h) et mémoire (10min)
     await GameCache.set(cacheKey, response.data);
     gameCache.set(slug, { data: response.data, timestamp: Date.now() });
     
+    console.log(`✅ Jeu trouvé: ${response.data.title} (${Date.now() - startTime}ms)`);
     return response.data;
   } catch (error) {
-    // 4. Si le jeu n'est pas trouvé, essayer l'import depuis IGDB avec plusieurs variantes
+    // 4. Si le jeu n'est pas trouvé, essayer l'import depuis IGDB avec une seule tentative
     if (error instanceof AxiosError && error.response?.status === 404) {
-      // Générer plusieurs variantes du titre pour améliorer les chances de correspondance
-      const titleVariants = generateTitleVariants(slug);
+      console.log(`🔄 Jeu non trouvé, tentative d'import IGDB: ${slug}`);
       
-      // Ajouter aussi le slug original comme variante
-      titleVariants.unshift(slug);
-      
-      // Ajouter des variantes spécifiques pour certains jeux
-      const specificVariants = getSpecificVariants(slug);
-      titleVariants.unshift(...specificVariants);
-      
-      for (const titleVariant of titleVariants) {
-        try {
+      try {
+        // Une seule tentative d'import avec le titre le plus probable
+        const titleVariant = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        
           const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(titleVariant)}`, {
-            timeout: 8000, // Timeout réduit à 8 secondes
+          timeout: 5000, // Timeout réduit à 5 secondes
           });
           
           if (importResponse.data && importResponse.data.length > 0) {
-            // Chercher le jeu avec le slug exact ou le plus proche
-            const importedGame = findBestMatch(importResponse.data, slug);
-            if (importedGame) {
+          // Prendre le premier jeu trouvé (le plus pertinent)
+          const importedGame = importResponse.data[0];
+          
               // Mettre en cache Redis (24h) et mémoire (10min)
               await GameCache.set(cacheKey, importedGame);
               gameCache.set(slug, { data: importedGame, timestamp: Date.now() });
               
+          console.log(`✅ Jeu importé: ${importedGame.title} (${Date.now() - startTime}ms)`);
               return importedGame;
             }
-          }
         } catch (importError) {
-          continue; // Essayer la variante suivante
-        }
-      }
-      
-      // Dernière tentative : recherche directe par slug dans la base
-      try {
-        const directResponse = await api.get(`/api/games/search-local/${encodeURIComponent(slug)}`, {
-          timeout: 5000,
-        });
-        
-        if (directResponse.data && directResponse.data.games && directResponse.data.games.length > 0) {
-          const directGame = directResponse.data.games.find((game: Game) => game.slug === slug);
-          if (directGame) {
-            await GameCache.set(cacheKey, directGame);
-            gameCache.set(slug, { data: directGame, timestamp: Date.now() });
-            
-            return directGame;
-          }
-        }
-      } catch (directError) {
-        // Ignorer l'erreur
+        console.log(`❌ Échec de l'import IGDB pour ${slug}`);
       }
     }
     

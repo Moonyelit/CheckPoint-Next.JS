@@ -1,5 +1,5 @@
-@import '../../../../styles/mixins';
-@import '../../../../styles/variables.scss';
+@use '../../../../styles/mixins' as *;
+@use '../../../../styles/_variables' as *;
 
 .game-card {
   width: 100%;

@@ -1,5 +1,5 @@
-@import "../../../../../styles/variables";
-@import "../../../../../styles/mixins";
+@use '../../../../../styles/_variables' as *;
+@use '../../../../../styles/mixins' as *;
 
 .game-fiche-content {
   display: flex;

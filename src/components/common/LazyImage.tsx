@@ -57,7 +57,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
       return;
     }
 
-    const processedUrl = getImageUrl(src);
+    // Si c'est une image locale (commence par /), ne pas la traiter avec getImageUrl
+    const processedUrl = src.startsWith('/') ? src : getImageUrl(src);
     
     if (!processedUrl) {
       setShowFallback(true);

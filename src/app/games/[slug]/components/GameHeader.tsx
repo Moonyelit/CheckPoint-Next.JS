@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import LazyImage from "@/components/common/LazyImage";
 import { getImageUrl } from "@/lib/imageUtils";
+import DebugPanel from "@/components/common/DebugPanel";
 import "./styles/GameHeader.scss";
 
 interface GameHeaderProps {
@@ -26,78 +27,60 @@ export default function GameHeader({
     userRating,
     firstScreenshotUrl
 }: GameHeaderProps) {
-    const [backgroundImageError, setBackgroundImageError] = useState(false);
-    const [coverImageError, setCoverImageError] = useState(false);
+    const [isClient, setIsClient] = useState(false);
 
-    // Debug: Log des props reçues
+    // Éviter l'erreur d'hydratation en rendant le debug seulement côté client
     useEffect(() => {
-        if (!game) return;
+        setIsClient(true);
+    }, []);
 
-        // Déterminer l'image de fond
-        let backgroundUrl = '';
-        
-        if (game.backgroundUrl) {
-            backgroundUrl = getImageUrl(game.backgroundUrl);
-        } else if (game.firstScreenshotUrl) {
-            backgroundUrl = getImageUrl(game.firstScreenshotUrl);
-        } else if (game.coverUrl) {
-            backgroundUrl = getImageUrl(game.coverUrl);
-        }
+    // Simplification de la logique de fallback pour le debug
+    const backgroundImageUrl = firstScreenshotUrl || backgroundUrl || coverUrl || "/images/Game/Default game.jpg";
+    const coverImageUrl = coverUrl || "/images/Game/Default game.jpg";
 
-        // Déterminer l'image de couverture
-        let coverUrl = '';
-        if (game.coverUrl) {
-            coverUrl = getImageUrl(game.coverUrl);
-        }
+    // Traiter les URLs avec imageUtils seulement si ce ne sont pas des images locales
+    const processedBackgroundUrl = backgroundImageUrl.startsWith('/') ? backgroundImageUrl : getImageUrl(backgroundImageUrl);
+    const processedCoverUrl = coverImageUrl.startsWith('/') ? coverImageUrl : getImageUrl(coverImageUrl);
 
-        setBackgroundImage(backgroundUrl);
-        setCoverImage(coverUrl);
-    }, [game]);
+    // Debug: afficher les URLs pour diagnostiquer
+    console.log('🔍 Debug GameHeader:', {
+        name,
+        firstScreenshotUrl,
+        backgroundUrl,
+        coverUrl,
+        backgroundImageUrl,
+        coverImageUrl,
+        processedBackgroundUrl,
+        processedCoverUrl
+    });
 
-    // Fonction pour obtenir l'URL de l'image de fond avec fallback
-    const getBackgroundImageUrl = () => {
-        if (backgroundImageError) {
-            return "/placeholder-background.jpg";
-        }
-        if (firstScreenshotUrl) {
-            return firstScreenshotUrl;
-        }
-        if (backgroundUrl) {
-            return backgroundUrl;
-        }
-        if (coverUrl) {
-            return coverUrl;
-        }
-        return "/placeholder-background.jpg";
+    const debugData = {
+        name,
+        firstScreenshotUrl,
+        backgroundUrl,
+        coverUrl,
+        backgroundImageUrl,
+        coverImageUrl,
+        processedBackgroundUrl,
+        processedCoverUrl
     };
-
-    // Fonction pour obtenir l'URL de la couverture avec fallback
-    const getCoverImageUrl = () => {
-        if (coverImageError) {
-            return "/images/Game/Default game.jpg";
-        }
-        if (coverUrl) {
-            return coverUrl;
-        }
-        return "/images/Game/Default game.jpg";
-    };
-
-    // Traiter les URLs avec imageUtils
-    const backgroundImageUrl = getImageUrl(getBackgroundImageUrl());
-    const coverImageUrl = getImageUrl(getCoverImageUrl());
 
     return (
         <header className="game-header">
+            {/* Debug panel seulement côté client */}
+            {isClient && <DebugPanel title="GameHeader" data={debugData} />}
+
             <div className="game-header__background">
                 <div className="game-header__overlay"></div>
                 <LazyImage
-                    src={backgroundImageUrl}
+                    src={processedBackgroundUrl}
                     alt={`Image de fond pour ${name}`}
                     className="game-header__background-image"
-                    onLoad={() => console.log('✅ Image de fond chargée avec succès')}
+                    onLoad={() => {
+                        console.log('✅ Image de fond chargée avec succès:', processedBackgroundUrl);
+                    }}
                     onError={() => {
-                        console.log('❌ Erreur lors du chargement de l\'image de fond');
-                        setBackgroundImageError(true);
+                        console.log('❌ Erreur lors du chargement de l\'image de fond:', processedBackgroundUrl);
                     }}
                 />
                 <div className="game-header__overlay"></div>
@@ -106,15 +89,16 @@ export default function GameHeader({
             <div className="game-header__content main-container">
                 <div className="game-header__cover">
                     <LazyImage
-                        src={coverImageUrl}
+                        src={processedCoverUrl}
                         alt={`Jaquette de ${name}`}
                         width={260}
                         height={345}
                         className="game-header__cover-image"
-                        onLoad={() => console.log('✅ Couverture chargée avec succès')}
+                        onLoad={() => {
+                            console.log('✅ Couverture chargée avec succès:', processedCoverUrl);
+                        }}
                         onError={() => {
-                            console.log('❌ Erreur lors du chargement de la couverture');
-                            setCoverImageError(true);
+                            console.log('❌ Erreur lors du chargement de la couverture:', processedCoverUrl);
                         }}
                     />
                     <div className="game-header__cover-overlay">

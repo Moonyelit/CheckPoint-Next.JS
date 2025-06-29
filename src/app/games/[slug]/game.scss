@@ -1,5 +1,5 @@
-@import "../../../styles/variables";
-@import "../../../styles/mixins";
+@use '../../../styles/_variables' as *;
+@use '../../../styles/mixins' as *;
 
 // Variables de couleur et de style pour la page de jeu, basées sur la maquette.
 $light-text-color: #ffffff;
@@ -13,12 +13,12 @@ $border-radius-small: 4px;
 $border-radius-medium: 8px;
 
 // Imports des composants
-@import "./components/styles/GameHeader.scss";
-@import "./components/styles/GameActions.scss";
-@import "./components/styles/GameInfo.scss";
-@import "./components/styles/GameSidebar.scss";
-@import "./components/styles/GameFicheContent.scss";
-@import "./components/styles/GameTabs.scss";
+@use './components/styles/GameHeader' as *;
+@use './components/styles/GameActions' as *;
+@use './components/styles/GameInfo' as *;
+@use './components/styles/GameSidebar' as *;
+@use './components/styles/GameFicheContent' as *;
+@use './components/styles/GameTabs' as *;
 
 .game-page {
   min-height: 100vh;

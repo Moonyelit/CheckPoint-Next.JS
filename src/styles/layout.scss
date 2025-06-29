@@ -1,5 +1,5 @@
-@import './mixins';
-@import './variables.scss';
+@use './mixins' as *;
+@use './_variables' as *;
 
 // Conteneur principal de la page
 .main-container {

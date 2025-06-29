@@ -1,5 +1,5 @@
 @use '@/styles/mixins' as *;
-@use '../../../styles/variables' as vars;
+@use '../../../styles/_variables' as vars;
 
 .navbar {
   position: fixed;
