@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import LazyImage from "@/components/common/LazyImage";
 import "../styles/resultsGame.scss";
 import Link from "next/link";
@@ -133,21 +133,61 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
   const { donut, stroke } = useDonutSize();
   const defaultCover = "/images/Game/Default game.jpg";
   const [showAllPlatforms, setShowAllPlatforms] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   // Transforme l'URL de l'image si nécessaire
-  const imageUrl = getImageUrl(coverUrl);
+  const imageUrl = useMemo(() => {
+    if (!coverUrl) return defaultCover;
+    try {
+      return getImageUrl(coverUrl);
+    } catch (error) {
+      console.error('Erreur lors du traitement de l\'URL:', error);
+      return defaultCover;
+    }
+  }, [coverUrl]);
+
+  const handleImageError = useCallback(() => {
+    setImageError(true);
+  }, []);
+
+  const handleImageLoad = useCallback(() => {
+    setImageError(false);
+  }, []);
 
   return (
     <Link href={`/games/${slug}`} className="results-game-link">
       <article className="results-game" style={style}>
         <div className="results-game__cover">
-          <LazyImage
-            src={imageUrl || defaultCover}
-            alt={title}
-            width={120}
-            height={160}
-            className="results-game__image"
-          />
+          {!imageError ? (
+            <LazyImage
+              src={imageUrl}
+              alt={title}
+              width={120}
+              height={160}
+              className="results-game__image"
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+            />
+          ) : (
+            <div
+              className="results-game__fallback"
+              style={{
+                width: 120,
+                height: 160,
+                backgroundColor: 'var(--gris-fonce)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '0.7rem',
+                textAlign: 'center',
+                padding: '0.5rem',
+                borderRadius: '8px'
+              }}
+            >
+              {title}
+            </div>
+          )}
         </div>
         
         <div className="results-game__info">
@@ -162,7 +202,10 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
               {platforms.length > 3 && !showAllPlatforms && (
                 <span
                   className="results-game__platform-more"
-                  onClick={() => setShowAllPlatforms(true)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowAllPlatforms(true);
+                  }}
                 >
                   +{platforms.length - 3}
                 </span>

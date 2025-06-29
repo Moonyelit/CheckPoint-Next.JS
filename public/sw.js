@@ -36,16 +36,21 @@ const CACHE_STRATEGIES = {
 
 // Installation du Service Worker
 self.addEventListener('install', (event) => {
-  console.log('🚀 Service Worker installé');
+  console.log('🔄 Installation du Service Worker');
   
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
-      console.log('📦 Mise en cache des ressources statiques');
-      return cache.addAll(STATIC_RESOURCES);
+      return cache.addAll([
+        '/',
+        '/offline',
+        '/images/Logo/Crystal.png',
+        '/images/default-game-cover.png',
+        '/images/Game/Default game.jpg'
+      ]);
     })
   );
   
-  // Activation immédiate
+  // Prise de contrôle immédiate
   self.skipWaiting();
 });
 
@@ -81,6 +86,19 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  // Ignorer les requêtes chrome-extension et autres schémas non supportés
+  if (url.protocol === 'chrome-extension:' || 
+      url.protocol === 'moz-extension:' || 
+      url.protocol === 'safari-extension:' ||
+      url.protocol === 'edge-extension:') {
+    return;
+  }
+  
+  // Ignorer les requêtes vers des domaines externes non autorisés
+  if (!isAllowedDomain(url)) {
+    return;
+  }
+  
   // Stratégie selon le type de ressource
   if (isStaticResource(url)) {
     event.respondWith(cacheFirst(request));
@@ -92,6 +110,18 @@ self.addEventListener('fetch', (event) => {
 });
 
 // Fonctions utilitaires
+function isAllowedDomain(url) {
+  const allowedDomains = [
+    'localhost',
+    '127.0.0.1',
+    'images.igdb.com',
+    'checkpoint.local',
+    'checkpoint.com'
+  ];
+  
+  return allowedDomains.some(domain => url.hostname.includes(domain));
+}
+
 function isStaticResource(url) {
   return url.pathname.startsWith('/images/') ||
          url.pathname.startsWith('/_next/static/') ||
@@ -114,21 +144,23 @@ function isPageRequest(url) {
 
 // Stratégie Cache First
 async function cacheFirst(request) {
-  const cache = await caches.open(STATIC_CACHE);
-  const cachedResponse = await cache.match(request);
-  
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-  
   try {
+    const cache = await caches.open(STATIC_CACHE);
+    const cachedResponse = await cache.match(request);
+    
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
       cache.put(request, networkResponse.clone());
     }
     return networkResponse;
   } catch (error) {
+    console.warn('Erreur cache first:', error);
     // Retourner une page d'erreur offline si disponible
+    const cache = await caches.open(STATIC_CACHE);
     const offlineResponse = await cache.match('/offline');
     return offlineResponse || new Response('Ressource non disponible offline', { status: 503 });
   }
@@ -136,38 +168,55 @@ async function cacheFirst(request) {
 
 // Stratégie Network First
 async function networkFirst(request) {
-  const cache = await caches.open(API_CACHE);
-  
   try {
+    const cache = await caches.open(API_CACHE);
+    
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
       cache.put(request, networkResponse.clone());
     }
     return networkResponse;
   } catch (error) {
+    console.warn('Erreur réseau, utilisation du cache:', error);
+    const cache = await caches.open(API_CACHE);
     const cachedResponse = await cache.match(request);
     if (cachedResponse) {
       return cachedResponse;
     }
-    throw error;
+    // Retourner une réponse d'erreur appropriée
+    return new Response('Service temporairement indisponible', { 
+      status: 503,
+      headers: { 'Content-Type': 'text/plain' }
+    });
   }
 }
 
 // Stratégie Stale While Revalidate
 async function staleWhileRevalidate(request) {
-  const cache = await caches.open(STATIC_CACHE);
-  const cachedResponse = await cache.match(request);
-  
-  // Toujours essayer de récupérer depuis le réseau
-  const networkPromise = fetch(request).then((response) => {
-    if (response.ok) {
-      cache.put(request, response.clone());
-    }
-    return response;
-  }).catch(() => cachedResponse);
-  
-  // Retourner le cache immédiatement si disponible
-  return cachedResponse || networkPromise;
+  try {
+    const cache = await caches.open(STATIC_CACHE);
+    const cachedResponse = await cache.match(request);
+    
+    // Toujours essayer de récupérer depuis le réseau
+    const networkPromise = fetch(request).then((response) => {
+      if (response.ok) {
+        cache.put(request, response.clone());
+      }
+      return response;
+    }).catch((error) => {
+      console.warn('Erreur réseau, utilisation du cache:', error);
+      return cachedResponse;
+    });
+    
+    // Retourner le cache immédiatement si disponible
+    return cachedResponse || networkPromise;
+  } catch (error) {
+    console.warn('Erreur stale while revalidate:', error);
+    return new Response('Page temporairement indisponible', { 
+      status: 503,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
 }
 
 // Gestion des messages du client

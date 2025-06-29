@@ -20,7 +20,7 @@
  * - Économise la bande passante de l'utilisateur.
  * - Offre une expérience de navigation plus fluide et professionnelle.
  */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './styles/LazyImage.scss';
 import { getImageUrl } from '@/lib/imageUtils';
 
@@ -46,13 +46,31 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [isInView, setIsInView] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string>('');
   const imgRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Transforme l'URL si c'est une image IGDB
-  const imageUrl = getImageUrl(src);
+  // Transforme l'URL si c'est une image IGDB de manière sécurisée
+  const processImageUrl = useCallback((url: string): string => {
+    if (!url) return '';
+    try {
+      return getImageUrl(url);
+    } catch (error) {
+      console.error('Erreur lors du traitement de l\'URL:', error);
+      return url; // Retourne l'URL originale en cas d'erreur
+    }
+  }, []);
 
   useEffect(() => {
+    if (src) {
+      const processedUrl = processImageUrl(src);
+      setImageSrc(processedUrl);
+    }
+  }, [src, processImageUrl]);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -68,9 +86,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
       }
     );
 
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
+    observer.observe(containerRef.current);
 
     return () => {
       if (containerRef.current) {
@@ -79,17 +95,17 @@ const LazyImage: React.FC<LazyImageProps> = ({
     };
   }, []);
 
-  const handleImageLoad = () => {
+  const handleImageLoad = useCallback(() => {
     setIsLoading(false);
     setHasError(false);
     onLoad?.();
-  };
+  }, [onLoad]);
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     setIsLoading(false);
     setHasError(true);
     onError?.();
-  };
+  }, [onError]);
 
   const containerStyle: React.CSSProperties = {
     width: width ? `${width}px` : '100%',
@@ -97,10 +113,39 @@ const LazyImage: React.FC<LazyImageProps> = ({
     ...(width && height ? { aspectRatio: `${width}/${height}` } : {})
   };
 
+  // Si pas d'URL, afficher directement le fallback
+  if (!imageSrc) {
+    return (
+      <div
+        ref={containerRef}
+        className={`lazy-image error ${className}`}
+        style={containerStyle}
+      >
+        <div
+          className="lazy-image__fallback"
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'var(--gris-fonce)',
+            color: 'white',
+            fontSize: '0.8rem',
+            textAlign: 'center',
+            padding: '0.5rem'
+          }}
+        >
+          Image non disponible
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
-      className={`lazy-image ${isLoading ? 'loading' : ''} ${className}`}
+      className={`lazy-image ${isLoading ? 'loading' : ''} ${hasError ? 'error' : ''} ${className}`}
       style={containerStyle}
     >
       {/* Skeleton loading */}
@@ -111,10 +156,10 @@ const LazyImage: React.FC<LazyImageProps> = ({
       )}
 
       {/* Image */}
-      {isInView && !hasError && (
+      {isInView && !hasError && imageSrc && (
         <img
           ref={imgRef}
-          src={imageUrl}
+          src={imageSrc}
           alt={alt}
           className={`lazy-image__img ${isLoading ? 'loading' : 'loaded'}`}
           onLoad={handleImageLoad}
