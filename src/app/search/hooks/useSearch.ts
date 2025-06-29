@@ -26,7 +26,13 @@ import { SortDirection, SortOption } from '../components/SortingDropdown';
 const DEBOUNCE_TIME = 200; // 200ms au lieu de 300ms
 
 // Cache simple pour éviter les requêtes répétées
-const cache = new Map<string, { data: any; timestamp: number }>();
+interface CacheData {
+  member?: ApiGame[];
+  games?: ApiGame[];
+  pagination?: PaginationInfo;
+}
+
+const cache = new Map<string, { data: CacheData; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export function useSearch() {
@@ -78,7 +84,7 @@ export function useSearch() {
     return null;
   };
 
-  const setCachedData = (key: string, data: any) => {
+  const setCachedData = (key: string, data: CacheData) => {
     cache.set(key, { data, timestamp: Date.now() });
   };
 
@@ -119,10 +125,10 @@ export function useSearch() {
         if (query === 'top100_games' || query === 'top_year_games') {
           const gamesData = cachedData.member ?? cachedData;
           setGames(Array.isArray(gamesData) ? gamesData : []);
-          setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: gamesData.length });
+          setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: Array.isArray(gamesData) ? gamesData.length : 0 });
         } else {
           setGames(cachedData.games ?? []);
-          setPagination(cachedData.pagination);
+          setPagination(cachedData.pagination ?? { currentPage: 1, limit: 20, offset: 0 });
         }
         setLoading(false);
         return;
@@ -181,6 +187,10 @@ export function useSearch() {
       return Math.ceil(sortedGames.length / pagination.limit);
     } else {
       // Utiliser la pagination côté serveur pour les recherches normales
+      // Priorité à totalPages si disponible (nouvelle API), sinon calculer avec totalCount
+      if (pagination.totalPages !== undefined) {
+        return pagination.totalPages;
+      }
       return pagination.totalCount ? Math.ceil(pagination.totalCount / pagination.limit) : 1;
     }
   }, [sortedGames, pagination, query]);
@@ -193,6 +203,7 @@ export function useSearch() {
       return sortedGames.slice(offset, offset + pagination.limit);
     } else {
       // Pour les recherches normales, les jeux sont déjà paginés côté serveur
+      // Pas besoin de re-paginer, on utilise directement les jeux reçus
       return sortedGames;
     }
   }, [sortedGames, clientCurrentPage, pagination.limit, query]);

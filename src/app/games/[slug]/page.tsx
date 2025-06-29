@@ -36,7 +36,7 @@ async function getGameData(slug: string): Promise<Game> {
   try {
     // 3. Récupérer depuis la base de données avec un seul appel
     console.log(`🔍 Recherche du jeu: ${slug}`);
-    const response = await api.get(`/api/games/${slug}`, {
+    const response = await api.get(`/api/custom/games/${slug}`, {
       timeout: 3000, // Timeout réduit à 3 secondes
     });
     
@@ -47,32 +47,46 @@ async function getGameData(slug: string): Promise<Game> {
     console.log(`✅ Jeu trouvé: ${response.data.title} (${Date.now() - startTime}ms)`);
     return response.data;
   } catch (error) {
-    // 4. Si le jeu n'est pas trouvé, essayer l'import depuis IGDB avec une seule tentative
+    // 4. Si le jeu n'est pas trouvé, essayer l'import depuis IGDB avec plusieurs variantes
     if (error instanceof AxiosError && error.response?.status === 404) {
       console.log(`🔄 Jeu non trouvé, tentative d'import IGDB: ${slug}`);
       
-      try {
-        // Une seule tentative d'import avec le titre le plus probable
-        const titleVariant = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        
-        const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(titleVariant)}`, {
-          timeout: 5000, // Timeout réduit à 5 secondes
-        });
+      // Générer plusieurs variantes du titre (incluant les chiffres romains)
+      const titleVariants = generateTitleVariants(slug);
+      console.log(`🔍 Tentative avec les variantes:`, titleVariants);
+      
+      for (const titleVariant of titleVariants) {
+        try {
+          console.log(`🔍 Test de la variante: "${titleVariant}"`);
+          const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(titleVariant)}`, {
+            timeout: 5000, // Timeout réduit à 5 secondes
+          });
+            
+          console.log(`📊 Réponse pour "${titleVariant}":`, importResponse.data);
           
-        if (importResponse.data && Array.isArray(importResponse.data) && importResponse.data.length > 0) {
-          // Prendre le premier jeu trouvé (le plus pertinent)
-          const importedGame = importResponse.data[0];
-          
-          // Mettre en cache Redis (24h) et mémoire (10min)
-          await GameCache.set(cacheKey, importedGame);
-          gameCache.set(slug, { data: importedGame, timestamp: Date.now() });
-              
-          console.log(`✅ Jeu importé: ${importedGame.title} (${Date.now() - startTime}ms)`);
-          return importedGame;
+          if (importResponse.data && Array.isArray(importResponse.data) && importResponse.data.length > 0) {
+            // Prendre le premier jeu trouvé (le plus pertinent)
+            const importedGame = importResponse.data[0];
+            
+            // Mettre en cache Redis (24h) et mémoire (10min)
+            await GameCache.set(cacheKey, importedGame);
+            gameCache.set(slug, { data: importedGame, timestamp: Date.now() });
+                
+            console.log(`✅ Jeu importé: ${importedGame.title} avec la variante "${titleVariant}" (${Date.now() - startTime}ms)`);
+            return importedGame;
+          } else {
+            console.log(`⚠️ Aucun jeu trouvé pour la variante "${titleVariant}"`);
+          }
+        } catch (importError) {
+          console.log(`❌ Échec de l'import IGDB pour la variante "${titleVariant}":`, importError);
+          if (importError instanceof AxiosError) {
+            console.log(`📊 Status: ${importError.response?.status}, Data:`, importError.response?.data);
+          }
+          // Continuer avec la variante suivante
         }
-      } catch (importError) {
-        console.log(`❌ Échec de l'import IGDB pour ${slug}:`, importError);
       }
+      
+      console.log(`❌ Aucune variante n'a fonctionné pour ${slug}`);
     }
     
     console.error("Failed to fetch game data:", error);
@@ -81,61 +95,6 @@ async function getGameData(slug: string): Promise<Game> {
 }
 
 // Fonction pour obtenir des variantes spécifiques pour certains jeux
-function getSpecificVariants(slug: string): string[] {
-  const variants: string[] = [];
-  
-  // Cas spéciaux pour des jeux connus
-  const specialCases: { [key: string]: string[] } = {
-    'pac-man-world': ['Pac-Man World', 'Pacman World', 'Pac Man World'],
-    'ape-escape': ['Ape Escape', 'Ape\'s Escape', 'Apes Escape'],
-    'suikoden-star-leap': ['Suikoden Star Leap', 'Suikoden: Star Leap'],
-    'suikoden-i-hd-remaster-gate-rune-war': [
-      'Suikoden I HD Remaster',
-      'Suikoden I HD Remaster: Gate Rune War',
-      'Suikoden I Remaster',
-      'Suikoden I'
-    ],
-    'suikoden-ii-hd-remaster-dunan-unification-war': [
-      'Suikoden II HD Remaster',
-      'Suikoden II HD Remaster: Dunan Unification War',
-      'Suikoden II Remaster',
-      'Suikoden II'
-    ],
-    'project-zero-2-wii-edition': [
-      'Project Zero 2 Wii Edition',
-      'Fatal Frame II Wii Edition',
-      'Fatal Frame 2 Wii Edition',
-      'Project Zero 2'
-    ],
-    'spyro-reignited-trilogy': [
-      'Spyro Reignited Trilogy',
-      'Spyro: Reignited Trilogy',
-      'Spyro Trilogy',
-      'Spyro'
-    ]
-  };
-  
-  // Ajouter les variantes spécifiques si elles existent
-  if (specialCases[slug]) {
-    variants.push(...specialCases[slug]);
-  }
-  
-  // Variantes génériques pour les jeux avec tirets
-  if (slug.includes('-')) {
-    // Version avec deux-points au lieu de tiret
-    const colonVersion = slug.replace(/-/g, ': ');
-    variants.push(colonVersion);
-    
-    // Version avec parenthèses
-    const parts = slug.split('-');
-    if (parts.length >= 2) {
-      const parenthesesVersion = `${parts[0]} (${parts.slice(1).join(' ')})`;
-      variants.push(parenthesesVersion);
-    }
-  }
-  
-  return variants;
-}
 
 // Fonction pour générer plusieurs variantes du titre à partir du slug
 function generateTitleVariants(slug: string): string[] {
@@ -160,51 +119,6 @@ function generateTitleVariants(slug: string): string[] {
   variants.push(romanTitle);
   
   return variants;
-}
-
-// Fonction pour trouver le meilleur match entre les jeux importés et le slug
-function findBestMatch(games: Game[], slug: string): Game | null {
-  let bestMatch: Game | null = null;
-  let bestDistance = Infinity;
-
-  for (const game of games) {
-    const distance = levenshteinDistance(game.slug, slug);
-    if (distance < bestDistance) {
-      bestDistance = distance;
-      bestMatch = game;
-    }
-  }
-
-  return bestMatch;
-}
-
-// Fonction pour calculer la distance de Levenshtein entre deux chaînes de caractères
-function levenshteinDistance(a: string, b: string): number {
-  const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
-
-  for (let i = 0; i <= a.length; i++) {
-    matrix[i][0] = i;
-  }
-
-  for (let j = 0; j <= b.length; j++) {
-    matrix[0][j] = j;
-  }
-
-  for (let i = 1; i <= a.length; i++) {
-    for (let j = 1; j <= b.length; j++) {
-      if (a[i - 1] === b[j - 1]) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j - 1] + 1
-        );
-      }
-    }
-  }
-
-  return matrix[a.length][b.length];
 }
 
 export default async function GamePage({ params }: { params: { slug: string } }) {

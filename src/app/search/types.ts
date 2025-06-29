@@ -47,6 +47,7 @@ export interface PaginationInfo {
   limit: number;
   offset: number;
   totalCount?: number;
+  totalPages?: number;
 }
 
 /**
