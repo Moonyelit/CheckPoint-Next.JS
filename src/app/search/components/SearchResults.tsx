@@ -13,6 +13,7 @@ interface ApiGame {
   totalRating?: number;
   total_rating?: number;
   slug?: string;
+  igdbId?: number;
 }
 
 interface SearchResultsProps {
@@ -50,7 +51,18 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
 
   return (
     <div className="search-results-container animate-in">
-      {games.map((game, index) => {
+      {games
+        .filter(game => {
+          // Validation des données : filtrer les jeux invalides
+          if (!game || typeof game !== 'object') return false;
+          if (!game.id || typeof game.id !== 'number') return false;
+          
+          const title = game.name ?? game.title;
+          if (!title || typeof title !== 'string' || title.trim() === '') return false;
+          
+          return true;
+        })
+        .map((game, index) => {
         const title = game.name ?? game.title ?? "Titre inconnu";
         const coverUrl = game.cover?.url ?? game.coverUrl;
         const score = game.total_rating ?? game.totalRating;
@@ -79,9 +91,16 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
           score
         });
 
+        // Génération d'une clé unique pour React
+        const uniqueKey =
+          (game.id && `db-${game.id}`) ||
+          (game.igdbId && `igdb-${game.igdbId}`) ||
+          (slug && `slug-${slug}-${index}`) ||
+          `fallback-${index}`;
+
         return (
           <ResultsGame
-            key={game.id}
+            key={uniqueKey}
             slug={slug}
             title={title}
             coverUrl={coverUrl}

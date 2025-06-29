@@ -194,12 +194,14 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
           <div className="results-game__title">{title}</div>
           {platforms && platforms.length > 0 && (
             <div className="results-game__platforms">
-              {(showAllPlatforms ? platforms : platforms.slice(0, 3)).map((platform, index) => (
-                <span key={index} className="results-game__platform">
+              {(showAllPlatforms ? platforms : platforms.slice(0, 3))
+                .filter(platform => platform && typeof platform === 'string' && platform.trim() !== '')
+                .map((platform, index) => (
+                <span key={`${platform}-${index}`} className="results-game__platform">
                   {formatPlatform(platform)}
                 </span>
               ))}
-              {platforms.length > 3 && !showAllPlatforms && (
+              {platforms.filter(p => p && typeof p === 'string' && p.trim() !== '').length > 3 && !showAllPlatforms && (
                 <span
                   className="results-game__platform-more"
                   onClick={(e) => {
@@ -207,7 +209,7 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
                     setShowAllPlatforms(true);
                   }}
                 >
-                  +{platforms.length - 3}
+                  +{platforms.filter(p => p && typeof p === 'string' && p.trim() !== '').length - 3}
                 </span>
               )}
             </div>

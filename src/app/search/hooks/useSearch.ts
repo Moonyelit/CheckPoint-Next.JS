@@ -152,6 +152,15 @@ export function useSearch() {
         } else {
           setGames(data.games ?? []);
           setPagination(data.pagination);
+          
+          // Debug: afficher les informations de pagination
+          console.log('🔍 Debug pagination:', {
+            gamesCount: data.games?.length || 0,
+            pagination: data.pagination,
+            totalPages: data.pagination?.totalPages,
+            totalCount: data.pagination?.totalCount,
+            calculatedPages: data.pagination?.totalCount ? Math.ceil(data.pagination.totalCount / data.pagination.limit) : 1
+          });
         }
       } catch (e) {
         console.error("Erreur lors de la récupération des données:", e);
