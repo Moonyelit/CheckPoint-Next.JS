@@ -83,6 +83,12 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//images.igdb.com" />
         <link rel="preconnect" href="//images.igdb.com" crossOrigin="anonymous" />
         
+        {/* Import des polices Google Fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Karantina&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Changa+One:ital@0;1&family=DM+Sans:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
+        
         {/* Préchargement des polices */}
         <link rel="preload" href="/_next/static/media/geist-sans-var.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         

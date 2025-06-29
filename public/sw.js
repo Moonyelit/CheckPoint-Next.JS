@@ -38,13 +38,21 @@ const CACHE_STRATEGIES = {
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
-      return cache.addAll([
+      // Utiliser addAll avec gestion d'erreur pour éviter les échecs
+      const cachePromises = [
         '/',
         '/offline',
         '/images/Logo/Crystal.png',
         '/images/default-game-cover.png',
         '/images/Game/Default game.jpg'
-      ]);
+      ].map(url => 
+        cache.add(url).catch(error => {
+          console.warn(`Échec du cache pour ${url}:`, error);
+          return null;
+        })
+      );
+      
+      return Promise.all(cachePromises);
     })
   );
   
@@ -95,7 +103,9 @@ self.addEventListener('fetch', (event) => {
   }
   
   // Stratégie selon le type de ressource
-  if (isStaticResource(url)) {
+  if (isImageRequest(url)) {
+    event.respondWith(imageStrategy(request));
+  } else if (isStaticResource(url)) {
     event.respondWith(cacheFirst(request));
   } else if (isApiRequest(url)) {
     event.respondWith(networkFirst(request));
@@ -117,6 +127,13 @@ function isAllowedDomain(url) {
   return allowedDomains.some(domain => url.hostname.includes(domain));
 }
 
+function isImageRequest(url) {
+  return url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i) ||
+         url.hostname === 'images.igdb.com' ||
+         url.pathname.startsWith('/api/proxy-image') ||
+         url.pathname.startsWith('/images/');
+}
+
 function isStaticResource(url) {
   return url.pathname.startsWith('/images/') ||
          url.pathname.startsWith('/_next/static/') ||
@@ -126,8 +143,7 @@ function isStaticResource(url) {
 }
 
 function isApiRequest(url) {
-  return url.pathname.startsWith('/api/') ||
-         url.hostname === 'images.igdb.com';
+  return url.pathname.startsWith('/api/');
 }
 
 function isPageRequest(url) {
@@ -135,6 +151,45 @@ function isPageRequest(url) {
          url.pathname === '/search' ||
          url.pathname === '/connexion' ||
          url.pathname === '/inscription';
+}
+
+// Stratégie spéciale pour les images
+async function imageStrategy(request) {
+  try {
+    const cache = await caches.open(STATIC_CACHE);
+    const cachedResponse = await cache.match(request);
+    
+    // Si l'image est en cache, la retourner immédiatement
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    
+    // Essayer de récupérer depuis le réseau
+    const networkResponse = await fetch(request);
+    
+    // Ne mettre en cache que si la réponse est OK
+    if (networkResponse.ok) {
+      cache.put(request, networkResponse.clone());
+    }
+    
+    return networkResponse;
+  } catch (error) {
+    console.warn('Erreur lors du chargement de l\'image:', error);
+    
+    // Retourner une image par défaut si disponible
+    const cache = await caches.open(STATIC_CACHE);
+    const defaultImage = await cache.match('/images/default-game-cover.png');
+    
+    if (defaultImage) {
+      return defaultImage;
+    }
+    
+    // Sinon, retourner une réponse d'erreur appropriée
+    return new Response('Image non disponible', { 
+      status: 404,
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  }
 }
 
 // Stratégie Cache First

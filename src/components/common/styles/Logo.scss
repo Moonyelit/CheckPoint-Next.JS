@@ -1,4 +1,6 @@
 @use '@/styles/mixins' as *;
+@use '@/styles/_variables' as *;
+
 
 .logo {
   @include flex(row, flex-start, center);
