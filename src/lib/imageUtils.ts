@@ -62,4 +62,65 @@ export const IGDB_IMAGE_SIZES = {
 export function useOptimizedImageUrl(url: string, size?: string): string {
   if (!url) return '';
   return improveIgdbImageQuality(url, size);
+}
+
+/**
+ * Utilitaires pour la gestion des images
+ */
+
+/**
+ * Transforme une URL IGDB en URL proxy pour éviter les problèmes CORS
+ * @param url L'URL originale de l'image
+ * @returns L'URL proxy ou l'URL originale si ce n'est pas une image IGDB
+ */
+export function getImageUrl(url?: string): string {
+  if (!url) return '';
+  
+  if (url.includes('images.igdb.com')) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    return `${apiUrl}/api/proxy/image?url=${encodeURIComponent(url)}`;
+  }
+  
+  return url;
+}
+
+/**
+ * Vérifie si une URL est une image IGDB
+ * @param url L'URL à vérifier
+ * @returns true si c'est une image IGDB
+ */
+export function isIgdbImage(url?: string): boolean {
+  return url ? url.includes('images.igdb.com') : false;
+}
+
+/**
+ * Améliore la qualité d'une image IGDB en utilisant une taille plus grande
+ * @param url L'URL originale
+ * @param size La taille désirée (t_cover_big, t_1080p, etc.)
+ * @returns L'URL améliorée
+ */
+export function improveImageQuality(url: string, size: string = 't_cover_big'): string {
+  if (!isIgdbImage(url)) return url;
+  
+  // Remplace la taille dans l'URL IGDB
+  const patterns = [
+    /\/t_thumb\//,
+    /\/t_micro\//,
+    /\/t_cover_small\//,
+    /\/t_screenshot_med\//,
+    /\/t_cover_small_2x\//
+  ];
+  
+  for (const pattern of patterns) {
+    if (pattern.test(url)) {
+      return url.replace(pattern, `/${size}/`);
+    }
+  }
+  
+  // Si aucun pattern trouvé, ajoute la taille
+  if (url.includes('.jpg')) {
+    return url.replace('.jpg', `_${size}.jpg`);
+  }
+  
+  return url;
 } 

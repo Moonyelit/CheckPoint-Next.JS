@@ -22,6 +22,7 @@
  */
 import React, { useState, useEffect, useRef } from 'react';
 import './styles/LazyImage.scss';
+import { getImageUrl } from '@/lib/imageUtils';
 
 interface LazyImageProps {
   src: string;
@@ -47,6 +48,9 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const [isInView, setIsInView] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Transforme l'URL si c'est une image IGDB
+  const imageUrl = getImageUrl(src);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -110,7 +114,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
       {isInView && !hasError && (
         <img
           ref={imgRef}
-          src={src}
+          src={imageUrl}
           alt={alt}
           className={`lazy-image__img ${isLoading ? 'loading' : 'loaded'}`}
           onLoad={handleImageLoad}

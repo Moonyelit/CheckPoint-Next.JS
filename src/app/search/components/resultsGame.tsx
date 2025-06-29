@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import LazyImage from "@/components/common/LazyImage";
 import "../styles/resultsGame.scss";
 import Link from "next/link";
+import { getImageUrl } from "@/lib/imageUtils";
 
 interface ResultsGameProps {
   slug: string;
@@ -133,12 +134,15 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
   const defaultCover = "/images/Game/Default game.jpg";
   const [showAllPlatforms, setShowAllPlatforms] = useState(false);
 
+  // Transforme l'URL de l'image si nécessaire
+  const imageUrl = getImageUrl(coverUrl);
+
   return (
     <Link href={`/games/${slug}`} className="results-game-link">
       <article className="results-game" style={style}>
         <div className="results-game__cover">
           <LazyImage
-            src={coverUrl || defaultCover}
+            src={imageUrl || defaultCover}
             alt={title}
             width={120}
             height={160}

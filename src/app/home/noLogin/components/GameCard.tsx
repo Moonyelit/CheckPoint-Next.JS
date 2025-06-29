@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import "./GameCard.scss";
-import Image from 'next/image';
+import LazyImage from "@/components/common/LazyImage";
+import { getImageUrl } from "@/lib/imageUtils";
 
 export interface GameCardProps {
   title: string;
@@ -30,21 +31,34 @@ export default function GameCard({
   const [imageLoaded, setImageLoaded] = useState(false);
   const router = useRouter();
 
+  // Transforme l'URL de l'image si nécessaire
+  const processedImageUrl = getImageUrl(imageUrl);
+
   // Log pour déboguer les URLs d'images
   React.useEffect(() => {
-    console.log(`🎮 GameCard: ${title}`, { imageUrl, imageError, imageLoaded, slug, isActive });
-  }, [title, imageUrl, imageError, imageLoaded, slug, isActive]);
+    console.log(`🎮 GameCard: ${title}`, { 
+      originalUrl: imageUrl, 
+      processedUrl: processedImageUrl,
+      imageError, 
+      imageLoaded, 
+      slug, 
+      isActive 
+    });
+  }, [title, imageUrl, processedImageUrl, imageError, imageLoaded, slug, isActive]);
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+  const handleImageError = () => {
     console.error(`❌ Erreur de chargement d'image pour: ${title}`, {
-      imageUrl,
-      error: e
+      originalUrl: imageUrl,
+      processedUrl: processedImageUrl
     });
     setImageError(true);
   };
 
   const handleImageLoad = () => {
-    console.log(`✅ Image chargée avec succès pour: ${title}`, { imageUrl });
+    console.log(`✅ Image chargée avec succès pour: ${title}`, { 
+      originalUrl: imageUrl,
+      processedUrl: processedImageUrl 
+    });
     setImageLoaded(true);
     setImageError(false);
   };
@@ -75,16 +89,15 @@ export default function GameCard({
       }}
     >
       <div className="game-card-image">
-        {!imageError && imageUrl ? (
-          <Image
-            src={imageUrl}
+        {!imageError && processedImageUrl ? (
+          <LazyImage
+            src={processedImageUrl}
             alt={alt}
             width={300}
             height={600}
-            style={{ objectFit: 'cover' }}
+            className="game-card__image"
             onLoad={handleImageLoad}
             onError={handleImageError}
-            priority={true} // Charge en priorité pour les images du carousel
           />
         ) : (
           <div
@@ -105,7 +118,7 @@ export default function GameCard({
               <>
                 <div>❌ Image non disponible</div>
                 <div style={{ fontSize: '12px', marginTop: '10px' }}>
-                  URL: {imageUrl}
+                  URL: {processedImageUrl}
                 </div>
               </>
             ) : (
