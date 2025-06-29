@@ -55,20 +55,29 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
         const coverUrl = game.cover?.url ?? game.coverUrl;
         const score = game.total_rating ?? game.totalRating;
         
-        // Pour les jeux d'IGDB, on génère un slug
-        // Pour les jeux de notre base, on utilise le slug existant
+        // Génération d'un slug pour tous les jeux
         let slug = game.slug;
         if (!slug && title) {
-          // Fallback : génération d'un slug basique pour les jeux d'IGDB
+          // Génération d'un slug basique pour les jeux d'IGDB
           slug = title.toLowerCase()
             .replace(/[^a-z0-9]+/g, '-')
             .replace(/^-+|-+$/g, '');
         }
         
+        // Si toujours pas de slug, utiliser l'ID comme fallback
         if (!slug) {
-          console.warn(`Jeu sans slug : ${title}`);
-          return null;
+          slug = `game-${game.id}`;
+          console.warn(`Jeu sans titre ni slug, utilisation de l'ID : ${game.id}`);
         }
+
+        // Log pour debug
+        console.log(`Rendu jeu ${index + 1}:`, {
+          id: game.id,
+          title,
+          slug,
+          coverUrl: coverUrl ? 'Oui' : 'Non',
+          score
+        });
 
         return (
           <ResultsGame
