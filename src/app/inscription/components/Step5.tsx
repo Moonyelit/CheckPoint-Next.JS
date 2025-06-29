@@ -18,6 +18,9 @@ const Step5 = ({ onNext }: Step5Props) => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<string>('');
+  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
 
   useEffect(() => {
     const initializeStep = async () => {
@@ -142,143 +145,83 @@ const Step5 = ({ onNext }: Step5Props) => {
     }
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (file) {
+      setSelectedFile(file);
+      setUploadError('');
+    }
+  };
 
-    console.log('=== UPLOAD DEBUG ===');
-    console.log('Fichier sélectionné:', {
-      name: file.name,
-      size: file.size,
-      type: file.type
-    });
-
-    // Validation du fichier
-    if (!validateImageFile(file)) {
-      alert('Fichier invalide. Veuillez sélectionner une image JPG, PNG ou WEBP de moins de 5MB.');
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setUploadError('Veuillez sélectionner un fichier');
       return;
     }
 
     setIsUploading(true);
+    setUploadError('');
 
     try {
-      const formData = new FormData();
-      formData.append('avatar', file);
-      formData.append('userId', currentUser?.id || '');
-
       const token = getAuthToken();
-      if (!token) {
-        alert('Session expirée. Veuillez vous reconnecter.');
-        window.location.href = '/connexion';
+      const currentUser = getCurrentUser();
+
+      if (!token || !currentUser?.id) {
+        setUploadError('Erreur d\'authentification');
         return;
       }
-      
-      console.log('Upload - Token:', token ? 'Présent' : 'Absent');
-      console.log('Upload - User ID:', currentUser?.id);
-      console.log('Upload - API URL:', process.env.NEXT_PUBLIC_API_URL);
-      console.log('Upload - FormData entries:');
-      for (const [key, value] of formData.entries()) {
-        console.log(`  ${key}:`, value instanceof File ? `File(${value.name})` : value);
-      }
-      
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload-avatar`, {
+
+      const formData = new FormData();
+      formData.append('avatar', selectedFile);
+      formData.append('userId', currentUser.id);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/upload-avatar`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`
         },
-        body: formData,
+        body: formData
       });
-
-      console.log('Upload - Response status:', response.status);
-      console.log('Upload - Response headers:', Object.fromEntries(response.headers.entries()));
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Upload - Success result:', result);
-        
-        // Mettre à jour l'avatar immédiatement pour l'aperçu
-        if (result.avatarUrl) {
-          setSelectedAvatar(result.avatarUrl);
-          
-          // Récupérer les données d'authentification actuelles
-          const authData = getAuthData();
-          if (authData) {
-            // Mettre à jour uniquement l'avatar dans les données utilisateur
-            const updatedUser = {
-              ...authData.user,
-              profileImage: result.avatarUrl
-            };
-
-            // Sauvegarder les données mises à jour avec le même token
-            const isRememberMe = localStorage.getItem('rememberMe') === 'true';
-            saveAuthData({ token: authData.token, user: updatedUser }, isRememberMe);
-          }
-          
-          alert('Avatar uploadé avec succès ! Cliquez sur "Sauver et continuer" pour finaliser.');
-        } else {
-          // Fallback : utiliser une URL temporaire pour l'aperçu
-          const fileUrl = URL.createObjectURL(file);
-          setSelectedAvatar(fileUrl);
-          alert('Avatar uploadé avec succès ! Aperçu affiché. Cliquez sur "Sauver et continuer" pour finaliser.');
-        }
+        onAvatarUploaded(result.avatarUrl);
+        setUploadSuccess(true);
+        setTimeout(() => setUploadSuccess(false), 3000);
       } else {
-        console.error('Erreur upload - Status:', response.status);
-        let errorMessage = 'Erreur inconnue';
-        
-        try {
-          const error = await response.json();
-          console.error('Erreur upload - Details:', error);
-          errorMessage = error.error || error.message || `Erreur HTTP ${response.status}`;
-          
-          // En mode dev, afficher aussi le message de debug
-          if (error.debug) {
-            errorMessage += '\nDétails: ' + error.debug;
-          }
-        } catch (e) {
-          console.error('Erreur lors du parsing de la réponse:', e);
-          const responseText = await response.text();
-          console.error('Response text:', responseText);
-          errorMessage = `Erreur HTTP ${response.status} - ${response.statusText}`;
-        }
-        
-        alert('Erreur lors de l\'upload: ' + errorMessage);
+        const errorData = await response.json();
+        setUploadError(errorData.message || 'Erreur lors de l\'upload');
       }
     } catch (error) {
       console.error('Erreur upload:', error);
-      alert('Erreur de connexion lors de l\'upload.');
+      setUploadError('Erreur lors de l\'upload');
     } finally {
       setIsUploading(false);
-      // Reset input file
-      event.target.value = '';
     }
-  };
-
-  const validateImageFile = (file: File): boolean => {
-    // Types de fichiers autorisés
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      return false;
-    }
-
-    // Taille maximale: 5MB
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
-      return false;
-    }
-
-    // Vérifier le nom du fichier pour éviter les attaques
-    const fileName = file.name;
-    const dangerousPatterns = /<script|javascript:|data:|vbscript:|on\w+\s*=/i;
-    if (dangerousPatterns.test(fileName)) {
-      return false;
-    }
-
-    return true;
   };
 
   const handleSelectAvatar = () => {
     const fileInput = document.getElementById('avatar-file-input') as HTMLInputElement;
     fileInput?.click();
+  };
+
+  const onAvatarUploaded = (avatarUrl: string) => {
+    setSelectedAvatar(avatarUrl);
+    // Récupérer les données d'authentification actuelles
+    const authData = getAuthData();
+    if (authData) {
+      // Mettre à jour uniquement l'avatar dans les données utilisateur
+      const updatedUser = {
+        ...authData.user,
+        profileImage: avatarUrl
+      };
+
+      // Sauvegarder les données mises à jour avec le même token
+      const isRememberMe = localStorage.getItem('rememberMe') === 'true';
+      saveAuthData({ token: authData.token, user: updatedUser }, isRememberMe);
+    }
+    
+    alert('Avatar uploadé avec succès ! Cliquez sur "Sauver et continuer" pour finaliser.');
   };
 
   return (
@@ -330,7 +273,7 @@ const Step5 = ({ onNext }: Step5Props) => {
           id="avatar-file-input"
           type="file"
           accept="image/jpeg,image/jpg,image/png,image/webp"
-          onChange={handleFileUpload}
+          onChange={handleFileChange}
           style={{ display: 'none' }}
           aria-label="Sélectionner un fichier d'avatar"
         />

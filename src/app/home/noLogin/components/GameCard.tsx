@@ -28,52 +28,25 @@ export default function GameCard({
   index = 0
 }: GameCardProps) {
   const [imageError, setImageError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+
   const router = useRouter();
 
   // Transforme l'URL de l'image si nécessaire
   const processedImageUrl = getImageUrl(imageUrl);
 
-  // Log pour déboguer les URLs d'images
-  React.useEffect(() => {
-    console.log(`🎮 GameCard: ${title}`, { 
-      originalUrl: imageUrl, 
-      processedUrl: processedImageUrl,
-      imageError, 
-      imageLoaded, 
-      slug, 
-      isActive 
-    });
-  }, [title, imageUrl, processedImageUrl, imageError, imageLoaded, slug, isActive]);
-
   const handleImageError = () => {
-    console.error(`❌ Erreur de chargement d'image pour: ${title}`, {
-      originalUrl: imageUrl,
-      processedUrl: processedImageUrl
-    });
     setImageError(true);
-  };
-
-  const handleImageLoad = () => {
-    console.log(`✅ Image chargée avec succès pour: ${title}`, { 
-      originalUrl: imageUrl,
-      processedUrl: processedImageUrl 
-    });
-    setImageLoaded(true);
-    setImageError(false);
   };
 
   const handleCardClick = () => {
     if (isActive && slug) {
       // Si c'est la carte active, naviguer vers la page du jeu
-      console.log(`🎯 Navigation vers le jeu: ${title} (slug: ${slug})`);
       router.push(`/games/${slug}`);
     } else if (onCardClick && !isActive) {
       // Si ce n'est pas la carte active, la déplacer au centre
-      console.log(`🔄 Déplacement de la carte au centre: ${title} (index: ${index})`);
       onCardClick(index);
     } else if (!isActive) {
-      console.log(`⚠️ Pas de callback disponible pour déplacer la carte: ${title}`);
+      console.warn(`⚠️ Pas de callback disponible pour déplacer la carte: ${title}`);
     } else if (!slug) {
       console.warn(`⚠️ Pas de slug disponible pour le jeu: ${title}`);
     }
@@ -93,18 +66,13 @@ export default function GameCard({
           <LazyImage
             src={processedImageUrl}
             alt={alt}
-            width={300}
-            height={600}
             className="game-card__image"
-            onLoad={handleImageLoad}
             onError={handleImageError}
           />
         ) : (
           <div
             style={{
-              width: 300,
-              height: 600,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #748599 0%, #a8bbc5 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

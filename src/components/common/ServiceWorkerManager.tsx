@@ -17,16 +17,24 @@ export default function ServiceWorkerManager() {
 
   // Afficher les logs de statut
   useEffect(() => {
-    if (isLoading) {
-      console.log('🔄 Service Worker en cours de chargement...');
-    } else if (error) {
-      console.error('❌ Erreur Service Worker:', error);
-    } else if (isSupported && isInstalled) {
-      console.log('✅ Service Worker actif et fonctionnel');
-    } else if (!isSupported) {
-      console.warn('⚠️ Service Worker non supporté par ce navigateur');
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+      return;
     }
-  }, [isLoading, error, isSupported, isInstalled]);
+
+    const registerSW = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        
+        if (registration.active) {
+          // Service Worker actif et fonctionnel
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'enregistrement du Service Worker:', error);
+      }
+    };
+
+    registerSW();
+  }, []);
 
   // Notification de mise à jour
   if (isUpdated) {

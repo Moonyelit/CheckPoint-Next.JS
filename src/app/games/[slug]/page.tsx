@@ -30,8 +30,6 @@ async function getGameData(slug: string): Promise<Game> {
   }
 
   try {
-    console.log(`🔍 Recherche du jeu: ${slug}`);
-    
     // 3. Récupérer depuis la base de données
     const response = await api.get(`/api/games/${slug}`, {
       timeout: 5000, // Timeout réduit à 5 secondes
@@ -41,14 +39,10 @@ async function getGameData(slug: string): Promise<Game> {
     await GameCache.set(cacheKey, response.data);
     gameCache.set(slug, { data: response.data, timestamp: Date.now() });
     
-    const duration = Date.now() - startTime;
-    console.log(`✅ Jeu trouvé en DB: ${slug} (${duration}ms)`);
     return response.data;
   } catch (error) {
     // 4. Si le jeu n'est pas trouvé, essayer l'import depuis IGDB avec plusieurs variantes
     if (error instanceof AxiosError && error.response?.status === 404) {
-      console.log(`⚠️ Jeu non trouvé avec le slug "${slug}", tentative d'import depuis IGDB...`);
-      
       // Générer plusieurs variantes du titre pour améliorer les chances de correspondance
       const titleVariants = generateTitleVariants(slug);
       
@@ -59,12 +53,8 @@ async function getGameData(slug: string): Promise<Game> {
       const specificVariants = getSpecificVariants(slug);
       titleVariants.unshift(...specificVariants);
       
-      console.log(`🔍 Tentatives avec ${titleVariants.length} variantes:`, titleVariants);
-      
       for (const titleVariant of titleVariants) {
         try {
-          console.log(`🔍 Tentative avec le titre: "${titleVariant}"`);
-          
           const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(titleVariant)}`, {
             timeout: 8000, // Timeout réduit à 8 secondes
           });
@@ -77,20 +67,16 @@ async function getGameData(slug: string): Promise<Game> {
               await GameCache.set(cacheKey, importedGame);
               gameCache.set(slug, { data: importedGame, timestamp: Date.now() });
               
-              const duration = Date.now() - startTime;
-              console.log(`✅ Jeu importé depuis IGDB: ${slug} (${duration}ms)`);
               return importedGame;
             }
           }
         } catch (importError) {
-          console.log(`❌ Échec avec le titre "${titleVariant}":`, importError);
           continue; // Essayer la variante suivante
         }
       }
       
       // Dernière tentative : recherche directe par slug dans la base
       try {
-        console.log(`🔍 Dernière tentative : recherche directe par slug "${slug}"`);
         const directResponse = await api.get(`/api/games/search-local/${encodeURIComponent(slug)}`, {
           timeout: 5000,
         });
@@ -101,19 +87,15 @@ async function getGameData(slug: string): Promise<Game> {
             await GameCache.set(cacheKey, directGame);
             gameCache.set(slug, { data: directGame, timestamp: Date.now() });
             
-            const duration = Date.now() - startTime;
-            console.log(`✅ Jeu trouvé par recherche directe: ${slug} (${duration}ms)`);
             return directGame;
           }
         }
       } catch (directError) {
-        console.log(`❌ Échec de la recherche directe:`, directError);
+        // Ignorer l'erreur
       }
-      
-      console.error("❌ Aucune variante de titre n'a fonctionné pour l'import IGDB");
     }
     
-    console.error("❌ Failed to fetch game data:", error);
+    console.error("Failed to fetch game data:", error);
     notFound();
   }
 }

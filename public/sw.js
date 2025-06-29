@@ -36,8 +36,6 @@ const CACHE_STRATEGIES = {
 
 // Installation du Service Worker
 self.addEventListener('install', (event) => {
-  console.log('🔄 Installation du Service Worker');
-  
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
       return cache.addAll([
@@ -56,15 +54,12 @@ self.addEventListener('install', (event) => {
 
 // Activation du Service Worker
 self.addEventListener('activate', (event) => {
-  console.log('✅ Service Worker activé');
-  
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           // Supprimer les anciens caches
           if (cacheName !== STATIC_CACHE && cacheName !== API_CACHE) {
-            console.log('🗑️ Suppression de l\'ancien cache:', cacheName);
             return caches.delete(cacheName);
           }
         })

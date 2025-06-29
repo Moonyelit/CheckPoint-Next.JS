@@ -38,7 +38,6 @@ export const getAuthData = (): AuthData | null => {
     
     // Validation stricte avant parsing
     if (!token || !user || token === 'undefined' || user === 'undefined' || token === 'null' || user === 'null') {
-      console.log('getAuthData: Aucune donnée d\'authentification trouvée');
       return null;
     }
     
@@ -49,16 +48,6 @@ export const getAuthData = (): AuthData | null => {
         console.error('getAuthData: Données utilisateur invalides:', parsedUser);
         return null;
       }
-      
-      console.log('getAuthData: Données d\'authentification récupérées:', {
-        token: token ? 'Présent' : 'Absent',
-        user: {
-          id: parsedUser.id,
-          email: parsedUser.email,
-          pseudo: parsedUser.pseudo,
-          emailVerified: parsedUser.emailVerified
-        }
-      });
       
       return {
         token,
@@ -106,10 +95,6 @@ export const saveAuthData = (data: AuthData, rememberMe: boolean = false): void 
         // Sauvegarder les données utilisateur
         storage.setItem('user', JSON.stringify(userData));
         
-        console.log('Données d\'authentification sauvegardées avec succès:', {
-            email: userData.email,
-            emailVerified: userData.emailVerified
-        });
     } catch (error) {
         console.error('Erreur lors de la sauvegarde des données d\'authentification:', error);
         throw new Error('Impossible de sauvegarder les données d\'authentification');
@@ -208,53 +193,6 @@ export const isTokenValid = (): boolean => {
     console.error('Erreur lors de la validation du token:', error);
     return false;
   }
-};
-
-// Fonction de debug pour vérifier l'état d'authentification
-export const debugAuthState = (): void => {
-  if (typeof window === 'undefined') {
-    console.log('🔍 Debug Auth: Côté serveur, pas d\'accès au stockage');
-    return;
-  }
-
-  console.group('🔍 Debug État d\'Authentification');
-  
-  // localStorage
-  const localToken = localStorage.getItem('authToken');
-  const localUser = localStorage.getItem('user');
-  const rememberMe = localStorage.getItem('rememberMe');
-  
-  console.log('📁 localStorage:');
-  console.log('  - Token:', localToken ? '✅ Présent' : '❌ Absent');
-  console.log('  - User:', localUser ? '✅ Présent' : '❌ Absent');
-  console.log('  - RememberMe:', rememberMe === 'true' ? '✅ Activé' : '❌ Désactivé');
-  
-  // sessionStorage
-  const sessionToken = sessionStorage.getItem('authToken');
-  const sessionUser = sessionStorage.getItem('user');
-  
-  console.log('📄 sessionStorage:');
-  console.log('  - Token:', sessionToken ? '✅ Présent' : '❌ Absent');
-  console.log('  - User:', sessionUser ? '✅ Présent' : '❌ Absent');
-  
-  // États calculés
-  console.log('🎯 États calculés:');
-  console.log('  - isUserLoggedIn():', isUserLoggedIn() ? '✅ Connecté' : '❌ Déconnecté');
-  console.log('  - isEmailVerified():', isEmailVerified() ? '✅ Vérifié' : '❌ Non vérifié');
-  console.log('  - isRememberMeEnabled():', isRememberMeEnabled() ? '✅ Activé' : '❌ Désactivé');
-  console.log('  - getCurrentInscriptionStep():', getCurrentInscriptionStep());
-  
-  const currentUser = getCurrentUser();
-  if (currentUser) {
-    console.log('👤 Utilisateur actuel:');
-    console.log('  - Email:', currentUser.email);
-    console.log('  - Pseudo:', currentUser.pseudo);
-    console.log('  - ID:', currentUser.id);
-  } else {
-    console.log('👤 Aucun utilisateur connecté');
-  }
-  
-  console.groupEnd();
 };
 
 // Gestion sécurisée du localStorage avec try/catch
@@ -376,7 +314,6 @@ export const updateEmailVerificationStatus = (verified: boolean): void => {
     };
     
     storage.setItem('user', JSON.stringify(updatedUser));
-    console.log(`Statut emailVerified mis à jour: ${verified} pour ${user.email}`);
   } catch (error) {
     console.error('Erreur lors de la mise à jour du statut email:', error);
   }

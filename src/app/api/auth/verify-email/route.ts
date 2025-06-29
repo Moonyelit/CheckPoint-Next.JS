@@ -2,13 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const token = searchParams.get('token');
-    const email = searchParams.get('email');
+    const { email, token } = await request.json();
 
-    if (!token || !email) {
-      return NextResponse.redirect(new URL('/inscription?error=token-invalid', request.url));
+    if (!email || !token) {
+      return NextResponse.json(
+        { error: 'Email et token requis' },
+        { status: 400 }
+      );
     }
+
+    const result = await verifyEmailToken(email, token);
 
     // Ici vous devriez vérifier le token en base de données
     // Pour cet exemple, on simule une vérification réussie

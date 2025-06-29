@@ -180,7 +180,7 @@ export async function invalidateGameCache(slug: string): Promise<void> {
 export async function invalidateSearchCache(): Promise<void> {
   // Note: Cette fonction pourrait être améliorée pour invalider
   // toutes les clés de recherche avec un pattern
-  console.log('Cache de recherche invalidé')
+  searchCache.clear();
 }
 
 export default api

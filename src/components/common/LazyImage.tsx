@@ -49,50 +49,32 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const [imageSrc, setImageSrc] = useState<string>('');
   const imgRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Transforme l'URL si c'est une image IGDB de manière sécurisée
-  const processImageUrl = useCallback((url: string): string => {
-    if (!url) return '';
-    try {
-      return getImageUrl(url);
-    } catch (error) {
-      console.error('Erreur lors du traitement de l\'URL:', error);
-      return url; // Retourne l'URL originale en cas d'erreur
-    }
-  }, []);
+  const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {
-    if (src) {
-      const processedUrl = processImageUrl(src);
-      setImageSrc(processedUrl);
+    if (!src) {
+      setShowFallback(true);
+      return;
     }
-  }, [src, processImageUrl]);
 
-  useEffect(() => {
-    if (!containerRef.current) return;
+    const processedUrl = getImageUrl(src);
+    
+    if (!processedUrl) {
+      setShowFallback(true);
+      return;
+    }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsInView(true);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        rootMargin: '50px 0px',
-        threshold: 0.1
+    setImageSrc(processedUrl);
+    setShowFallback(false);
+    setHasError(false);
+  }, [src]);
+
+  const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setIsInView(true);
       }
-    );
-
-    observer.observe(containerRef.current);
-
-    return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
-      }
-    };
+    });
   }, []);
 
   const handleImageLoad = useCallback(() => {
@@ -104,17 +86,36 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const handleImageError = useCallback(() => {
     setIsLoading(false);
     setHasError(true);
+    setShowFallback(true);
     onError?.();
   }, [onError]);
 
+  // Intersection Observer pour le lazy loading
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new IntersectionObserver(handleIntersection, {
+      rootMargin: '50px 0px',
+      threshold: 0.1
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, [handleIntersection]);
+
   const containerStyle: React.CSSProperties = {
     width: width ? `${width}px` : '100%',
-    height: height ? `${height}px` : 'auto',
+    height: height ? `${height}px` : '100%',
     ...(width && height ? { aspectRatio: `${width}/${height}` } : {})
   };
 
   // Si pas d'URL, afficher directement le fallback
-  if (!imageSrc) {
+  if (showFallback) {
     return (
       <div
         ref={containerRef}

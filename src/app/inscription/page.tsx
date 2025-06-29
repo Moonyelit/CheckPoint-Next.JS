@@ -73,6 +73,8 @@ export default function Inscription() {
         console.log('Inscription réussie:', userData);
         setFormData({ ...formData, ...data });
         setCurrentStep(2);
+        // Rediriger vers la page de connexion avec un message de succès
+        router.push('/connexion?success=true');
       } else {
         const errorData = await response.json();
         console.error('Erreur de l\'API:', errorData);

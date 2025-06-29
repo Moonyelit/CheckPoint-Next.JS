@@ -7,32 +7,23 @@
  * @param url L'URL à nettoyer
  * @returns L'URL nettoyée
  */
-export function cleanImageUrl(url: string): string {
-  if (!url) return '';
-  
-  // Décoder l'URL
-  let cleanUrl = url;
-  try {
-    cleanUrl = decodeURIComponent(url);
-  } catch {
-    cleanUrl = url;
+export function cleanImageUrl(url: string | null | undefined): string {
+  if (!url) {
+    return '';
   }
+
+  // Supprimer les espaces et caractères invisibles
+  let cleanUrl = url.trim();
   
-  // Si l'URL contient déjà notre proxy, extraire l'URL originale
-  const proxyPatterns = [
-    /http:\/\/127\.0\.0\.1:8000\/api\/proxy\/image\?url=(.+)/,
-    /http:\/\/localhost:8000\/api\/proxy\/image\?url=(.+)/,
-    /https:\/\/127\.0\.0\.1:8000\/api\/proxy\/image\?url=(.+)/,
-    /https:\/\/localhost:8000\/api\/proxy\/image\?url=(.+)/
-  ];
-  
-  for (const pattern of proxyPatterns) {
-    const match = cleanUrl.match(pattern);
-    if (match) {
-      return decodeURIComponent(match[1]);
+  // Vérifier si c'est une URL proxy
+  if (cleanUrl.includes('/api/proxy-image')) {
+    // Extraire l'URL originale du paramètre
+    const urlParam = new URLSearchParams(cleanUrl.split('?')[1]).get('url');
+    if (urlParam) {
+      cleanUrl = decodeURIComponent(urlParam);
     }
   }
-  
+
   return cleanUrl;
 }
 
@@ -42,41 +33,33 @@ export function cleanImageUrl(url: string): string {
  * @param size - La taille désirée (défaut: t_cover_big)
  * @returns L'URL avec une meilleure qualité
  */
-export function improveIgdbImageQuality(url: string, size: string = 't_cover_big'): string {
-  if (!url || !url.includes('images.igdb.com')) {
-    return url;
+export function improveIgdbImageQuality(url: string | null | undefined, size: string = 't_cover_big'): string {
+  if (!url) {
+    return '';
   }
 
-  // Nettoyer l'URL d'abord
   const cleanUrl = cleanImageUrl(url);
-
-  // Patterns des tailles de basse qualité à remplacer
-  const lowQualityPatterns = [
-    /t_thumb/g,
-    /t_micro/g,
-    /t_cover_small/g,
-    /t_screenshot_med/g,
-    /t_cover_small_2x/g
-  ];
-
-  // Vérifie si l'image est déjà en haute qualité
-  const highQualityPatterns = ['t_cover_big', 't_1080p', 't_720p', 't_original'];
-  const hasHighQuality = highQualityPatterns.some(pattern => cleanUrl.includes(pattern));
   
-  if (hasHighQuality) {
-    return cleanUrl; // Déjà en haute qualité
+  // Si ce n'est pas une URL IGDB, retourner l'URL telle quelle
+  if (!cleanUrl.includes('images.igdb.com')) {
+    return cleanUrl;
   }
 
-  // Remplace les patterns de basse qualité
+  // Vérifier si l'URL est déjà en haute qualité
+  if (cleanUrl.includes('t_1080p') || cleanUrl.includes('t_original')) {
+    return cleanUrl;
+  }
+
+  // Améliorer la qualité de l'image IGDB
   let improvedUrl = cleanUrl;
-  lowQualityPatterns.forEach(pattern => {
-    improvedUrl = improvedUrl.replace(pattern, size);
-  });
-
-  // Si aucun pattern trouvé, ajoute la taille à la fin
-  if (improvedUrl === cleanUrl && cleanUrl.includes('.jpg')) {
-    improvedUrl = cleanUrl.replace('.jpg', `_${size}.jpg`);
-  }
+  
+  // Remplacer les tailles par défaut par des tailles plus grandes
+  improvedUrl = improvedUrl.replace(/t_thumb/g, 't_1080p');
+  improvedUrl = improvedUrl.replace(/t_cover_small/g, 't_1080p');
+  improvedUrl = improvedUrl.replace(/t_cover_big/g, 't_1080p');
+  improvedUrl = improvedUrl.replace(/t_screenshot_med/g, 't_1080p');
+  improvedUrl = improvedUrl.replace(/t_screenshot_huge/g, 't_1080p');
+  improvedUrl = improvedUrl.replace(/t_screenshot_big/g, 't_1080p');
 
   return improvedUrl;
 }
@@ -106,41 +89,26 @@ export function useOptimizedImageUrl(url: string, size?: string): string {
  * @param url L'URL originale de l'image
  * @returns L'URL proxy ou l'URL originale si ce n'est pas une image IGDB
  */
-export function getImageUrl(url?: string): string {
-  if (!url) return '';
-
-  try {
-    // Nettoyer l'URL d'abord pour éviter les récursions
-    const cleanUrl = cleanImageUrl(url);
-
-    // Vérifier si c'est déjà une URL proxy pour éviter la récursion
-    if (cleanUrl.includes('/api/proxy/image?url=') || 
-        cleanUrl.includes('127.0.0.1:8000/api/proxy/image') ||
-        cleanUrl.includes('localhost:8000/api/proxy/image')) {
-      return cleanUrl;
-    }
-
-    // Vérifier si c'est une URL locale (déjà sur notre serveur)
-    if (cleanUrl.startsWith('/') || 
-        cleanUrl.startsWith('http://localhost') || 
-        cleanUrl.startsWith('http://127.0.0.1') ||
-        cleanUrl.startsWith('https://localhost') ||
-        cleanUrl.startsWith('https://127.0.0.1')) {
-      return cleanUrl;
-    }
-
-    // Si c'est une image IGDB, utiliser le proxy
-    if (cleanUrl.includes('images.igdb.com')) {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const encodedUrl = encodeURIComponent(cleanUrl);
-      return `${apiUrl}/api/proxy/image?url=${encodedUrl}`;
-    }
-
-    return cleanUrl;
-  } catch (error) {
-    console.error('Erreur lors du traitement de l\'URL:', error, 'URL:', url);
-    return url || '';
+export function getImageUrl(url: string | null | undefined): string {
+  if (!url) {
+    return '';
   }
+
+  const cleanUrl = cleanImageUrl(url);
+  
+  // Si c'est une URL locale ou déjà une URL proxy, la retourner telle quelle
+  if (cleanUrl.startsWith('/') || cleanUrl.startsWith('data:') || cleanUrl.includes('/api/proxy-image')) {
+    return cleanUrl;
+  }
+
+  // Si c'est une URL IGDB, la transformer en URL proxy
+  if (cleanUrl.includes('images.igdb.com')) {
+    const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(cleanUrl)}`;
+    return proxyUrl;
+  }
+
+  // Pour les autres URLs, les retourner telles quelles
+  return cleanUrl;
 }
 
 /**

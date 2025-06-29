@@ -38,6 +38,8 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
   const [legalModalTab, setLegalModalTab] = useState<'terms' | 'privacy'>('terms');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [error, setError] = useState('');
 
   // Fonction de sanitisation
   const sanitizeInput = (input: string): string => {
@@ -124,12 +126,14 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
       safeLocalStorageSet('inscriptionStep', '2');
 
       // Envoyer l'email de vérification avec le pseudo
-      const verificationResult = await sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo);
-      if (verificationResult.success) {
-        console.log('Email de vérification envoyé avec succès');
+      const response = await sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo);
+      if (response.ok) {
+        setEmailSent(true);
+        setError('');
         onEmailSent?.();
       } else {
-        console.error('Erreur lors de l\'envoi de l\'email:', verificationResult.message);
+        const errorData = await response.json();
+        setError(errorData.message || 'Erreur lors de l\'envoi de l\'email');
       }
 
       onSubmit(sanitizedData);

@@ -18,7 +18,7 @@ export function useServiceWorker() {
   });
 
   const registerServiceWorker = useCallback(async () => {
-    if (!('serviceWorker' in navigator)) {
+    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
       setState(prev => ({ ...prev, isSupported: false, isLoading: false }));
       return;
     }
@@ -26,27 +26,24 @@ export function useServiceWorker() {
     try {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
 
-      const registration = await navigator.serviceWorker.register('/sw.js', {
-        scope: '/',
-      });
+      const registration = await navigator.serviceWorker.register('/sw.js');
 
-      // Vérifier si le SW est déjà installé
       if (registration.installing) {
-        console.log('🔄 Service Worker en cours d\'installation...');
+        // Service Worker en cours d'installation
       } else if (registration.waiting) {
-        console.log('⏳ Service Worker en attente...');
-        setState(prev => ({ ...prev, isUpdated: true }));
+        // Service Worker en attente
       } else if (registration.active) {
-        console.log('✅ Service Worker actif');
+        // Service Worker actif
         setState(prev => ({ ...prev, isInstalled: true }));
       }
 
-      // Écouter les mises à jour
+      // Écouter les mises à jour du Service Worker
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         if (newWorker) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // Nouveau Service Worker disponible
               setState(prev => ({ ...prev, isUpdated: true }));
             }
           });
@@ -68,7 +65,7 @@ export function useServiceWorker() {
       }));
 
     } catch (error) {
-      console.error('❌ Erreur lors de l\'enregistrement du Service Worker:', error);
+      console.error('Erreur lors de l\'enregistrement du Service Worker:', error);
       setState(prev => ({ 
         ...prev, 
         error: error instanceof Error ? error.message : 'Erreur inconnue',

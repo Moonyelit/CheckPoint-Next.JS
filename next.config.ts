@@ -27,8 +27,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['next/font', 'axios', 'react-hook-form'],
     // Préchargement des pages
     optimizeCss: true,
-    // Améliore le streaming SSR
-    // serverComponentsExternalPackages: ['@react-three/fiber', '@react-three/drei', 'ioredis'],
   },
   // Configuration pour réduire les erreurs d'hydratation
   onDemandEntries: {
@@ -43,33 +41,14 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Configuration webpack pour masquer les warnings d'hydratation d'extensions
   webpack: (config, { dev, isServer }) => {
-    if (dev && !isServer) {
-      // Masque les warnings spécifiques aux extensions en développement
-      config.infrastructureLogging = {
-        level: 'error',
-      };
-      
-      // Supprime les warnings console.error pour les problèmes d'hydratation d'extensions
-      const originalEntry = config.entry;
-      config.entry = async () => {
-        const entries = await originalEntry();
-        
-        if (entries['main.js'] && !entries['main.js'].includes('./src/lib/hydration-fix.js')) {
-          entries['main.js'].unshift('./src/lib/hydration-fix.js');
-        }
-        
-        return entries;
-      };
-    }
-
-    // Configuration SVG pour éviter les erreurs SVGO
+    // Configuration SVG
     config.module.rules.push({
       test: /\.svg$/,
       use: [
         {
           loader: '@svgr/webpack',
           options: {
-            svgo: false, // Désactiver SVGO complètement
+            svgo: false,
           },
         },
       ],
@@ -77,7 +56,6 @@ const nextConfig: NextConfig = {
 
     // Optimisations pour la production
     if (!dev) {
-      // Optimisation des chunks
       config.optimization = {
         ...config.optimization,
         splitChunks: {
@@ -99,9 +77,8 @@ const nextConfig: NextConfig = {
       };
     }
     
-    // Configuration webpack pour exclure ioredis du bundle client
+    // Configuration webpack pour exclure les modules serveur du bundle client
     if (!isServer) {
-      // Exclure ioredis du bundle côté client
       config.resolve.fallback = {
         ...config.resolve.fallback,
         dns: false,

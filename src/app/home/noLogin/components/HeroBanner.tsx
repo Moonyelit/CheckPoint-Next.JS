@@ -48,8 +48,9 @@ export default function HeroBanner() {
 
   // Gestionnaire de clic sur une carte
   const handleCardClick = (index: number) => {
-    console.log(`🎯 Clic sur la carte ${index}, déplacement au centre`);
-    goToIndex(index);
+    if (onCardClick) {
+      onCardClick(index);
+    }
   };
 
   // Récupération des 5 meilleurs jeux de l'année

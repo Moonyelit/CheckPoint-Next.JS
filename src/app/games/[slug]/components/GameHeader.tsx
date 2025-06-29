@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import LazyImage from "@/components/common/LazyImage";
+import { getImageUrl } from "@/lib/imageUtils";
 import "./styles/GameHeader.scss";
 
 interface GameHeaderProps {
@@ -28,90 +29,93 @@ export default function GameHeader({
     const [backgroundImageError, setBackgroundImageError] = useState(false);
     const [coverImageError, setCoverImageError] = useState(false);
 
+    // Debug: Log des props reçues
+    useEffect(() => {
+        if (!game) return;
+
+        // Déterminer l'image de fond
+        let backgroundUrl = '';
+        
+        if (game.backgroundUrl) {
+            backgroundUrl = getImageUrl(game.backgroundUrl);
+        } else if (game.firstScreenshotUrl) {
+            backgroundUrl = getImageUrl(game.firstScreenshotUrl);
+        } else if (game.coverUrl) {
+            backgroundUrl = getImageUrl(game.coverUrl);
+        }
+
+        // Déterminer l'image de couverture
+        let coverUrl = '';
+        if (game.coverUrl) {
+            coverUrl = getImageUrl(game.coverUrl);
+        }
+
+        setBackgroundImage(backgroundUrl);
+        setCoverImage(coverUrl);
+    }, [game]);
+
     // Fonction pour obtenir l'URL de l'image de fond avec fallback
     const getBackgroundImageUrl = () => {
-        if (backgroundImageError) return "/placeholder-background.jpg";
-        if (firstScreenshotUrl) return firstScreenshotUrl;
-        if (backgroundUrl) return backgroundUrl;
-        if (coverUrl) return coverUrl;
+        if (backgroundImageError) {
+            return "/placeholder-background.jpg";
+        }
+        if (firstScreenshotUrl) {
+            return firstScreenshotUrl;
+        }
+        if (backgroundUrl) {
+            return backgroundUrl;
+        }
+        if (coverUrl) {
+            return coverUrl;
+        }
         return "/placeholder-background.jpg";
     };
 
     // Fonction pour obtenir l'URL de la couverture avec fallback
     const getCoverImageUrl = () => {
-        if (coverImageError) return "/images/Game/Default game.jpg";
-        if (coverUrl) return coverUrl;
+        if (coverImageError) {
+            return "/images/Game/Default game.jpg";
+        }
+        if (coverUrl) {
+            return coverUrl;
+        }
         return "/images/Game/Default game.jpg";
     };
 
-    // Fonction pour améliorer la qualité des images IGDB
-    const improveImageQuality = (url: string, size: string = 't_cover_big') => {
-        if (!url || !url.includes('images.igdb.com')) {
-            return url;
-        }
-
-        // Patterns des tailles de basse qualité à remplacer
-        const lowQualityPatterns = [
-            /t_thumb/g,
-            /t_micro/g,
-            /t_cover_small/g,
-            /t_screenshot_med/g,
-            /t_cover_small_2x/g
-        ];
-
-        // Vérifie si l'image est déjà en haute qualité
-        const highQualityPatterns = ['t_cover_big', 't_1080p', 't_720p', 't_original'];
-        const hasHighQuality = highQualityPatterns.some(pattern => url.includes(pattern));
-        
-        if (hasHighQuality) {
-            return url; // Déjà en haute qualité
-        }
-
-        // Remplace les patterns de basse qualité
-        let improvedUrl = url;
-        lowQualityPatterns.forEach(pattern => {
-            improvedUrl = improvedUrl.replace(pattern, size);
-        });
-
-        // Si aucun pattern trouvé, ajoute la taille à la fin
-        if (improvedUrl === url && url.includes('.jpg')) {
-            improvedUrl = url.replace('.jpg', `_${size}.jpg`);
-        }
-
-        return improvedUrl;
-    };
-
-    const backgroundImageUrl = improveImageQuality(getBackgroundImageUrl(), 't_1080p');
-    const coverImageUrl = getCoverImageUrl();
+    // Traiter les URLs avec imageUtils
+    const backgroundImageUrl = getImageUrl(getBackgroundImageUrl());
+    const coverImageUrl = getImageUrl(getCoverImageUrl());
 
     return (
         <header className="game-header">
             <div className="game-header__background">
                 <div className="game-header__overlay"></div>
-                <Image
+                <LazyImage
                     src={backgroundImageUrl}
                     alt={`Image de fond pour ${name}`}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                    quality={85}
-                    priority
                     className="game-header__background-image"
-                    onError={() => setBackgroundImageError(true)}
+                    onLoad={() => console.log('✅ Image de fond chargée avec succès')}
+                    onError={() => {
+                        console.log('❌ Erreur lors du chargement de l\'image de fond');
+                        setBackgroundImageError(true);
+                    }}
                 />
                 <div className="game-header__overlay"></div>
             </div>
             
             <div className="game-header__content main-container">
                 <div className="game-header__cover">
-                    <Image
+                    <LazyImage
                         src={coverImageUrl}
                         alt={`Jaquette de ${name}`}
                         width={260}
                         height={345}
-                        quality={90}
-                        priority
                         className="game-header__cover-image"
-                        onError={() => setCoverImageError(true)}
+                        onLoad={() => console.log('✅ Couverture chargée avec succès')}
+                        onError={() => {
+                            console.log('❌ Erreur lors du chargement de la couverture');
+                            setCoverImageError(true);
+                        }}
                     />
                     <div className="game-header__cover-overlay">
                         <button className="game-header__play-btn" aria-label="Voir la bande-annonce">
