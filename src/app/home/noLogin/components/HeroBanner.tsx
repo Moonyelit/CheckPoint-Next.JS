@@ -48,9 +48,7 @@ export default function HeroBanner() {
 
   // Gestionnaire de clic sur une carte
   const handleCardClick = (index: number) => {
-    if (onCardClick) {
-      onCardClick(index);
-    }
+    goToIndex(index);
   };
 
   // Récupération des 5 meilleurs jeux de l'année
