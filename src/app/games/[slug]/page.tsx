@@ -55,23 +55,23 @@ async function getGameData(slug: string): Promise<Game> {
         // Une seule tentative d'import avec le titre le plus probable
         const titleVariant = slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         
-          const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(titleVariant)}`, {
+        const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(titleVariant)}`, {
           timeout: 5000, // Timeout réduit à 5 secondes
-          });
+        });
           
-          if (importResponse.data && importResponse.data.length > 0) {
+        if (importResponse.data && Array.isArray(importResponse.data) && importResponse.data.length > 0) {
           // Prendre le premier jeu trouvé (le plus pertinent)
           const importedGame = importResponse.data[0];
           
-              // Mettre en cache Redis (24h) et mémoire (10min)
-              await GameCache.set(cacheKey, importedGame);
-              gameCache.set(slug, { data: importedGame, timestamp: Date.now() });
+          // Mettre en cache Redis (24h) et mémoire (10min)
+          await GameCache.set(cacheKey, importedGame);
+          gameCache.set(slug, { data: importedGame, timestamp: Date.now() });
               
           console.log(`✅ Jeu importé: ${importedGame.title} (${Date.now() - startTime}ms)`);
-              return importedGame;
-            }
-        } catch (importError) {
-        console.log(`❌ Échec de l'import IGDB pour ${slug}`);
+          return importedGame;
+        }
+      } catch (importError) {
+        console.log(`❌ Échec de l'import IGDB pour ${slug}:`, importError);
       }
     }
     

@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import LazyImage from "@/components/common/LazyImage";
 import { getImageUrl } from "@/lib/imageUtils";
-import DebugPanel from "@/components/common/DebugPanel";
 import "./styles/GameHeader.scss";
 
 interface GameHeaderProps {
@@ -43,33 +42,21 @@ export default function GameHeader({
     const processedCoverUrl = coverImageUrl.startsWith('/') ? coverImageUrl : getImageUrl(coverImageUrl);
 
     // Debug: afficher les URLs pour diagnostiquer
-    console.log('🔍 Debug GameHeader:', {
-        name,
-        firstScreenshotUrl,
-        backgroundUrl,
-        coverUrl,
-        backgroundImageUrl,
-        coverImageUrl,
-        processedBackgroundUrl,
-        processedCoverUrl
-    });
-
-    const debugData = {
-        name,
-        firstScreenshotUrl,
-        backgroundUrl,
-        coverUrl,
-        backgroundImageUrl,
-        coverImageUrl,
-        processedBackgroundUrl,
-        processedCoverUrl
-    };
+    if (isClient) {
+        console.log('🔍 Debug GameHeader:', {
+            name,
+            firstScreenshotUrl,
+            backgroundUrl,
+            coverUrl,
+            backgroundImageUrl,
+            coverImageUrl,
+            processedBackgroundUrl,
+            processedCoverUrl
+        });
+    }
 
     return (
         <header className="game-header">
-            {/* Debug panel seulement côté client */}
-            {isClient && <DebugPanel title="GameHeader" data={debugData} />}
-
             <div className="game-header__background">
                 <div className="game-header__overlay"></div>
                 <LazyImage

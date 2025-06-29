@@ -12,6 +12,7 @@ $breakpoints: (
 $colors: (
   'white': rgb(255, 255, 255),
   'black': rgb(0, 0, 0),
+  'primary-color': #3a86ff,
   'gris-button': #E0E0E0,
   'gris-nav-bar': #ede3dd,
   'gris-nav-bar-fonce': #bfb5af,
@@ -89,4 +90,7 @@ $font-sizes: (
     background: linear-gradient(0deg, #748599 0%, #a8bbc5 100%);
     opacity: 0.85; // Tu peux ajuster l'opacité pour voir l'image en dessous
     z-index: 2;
-} 
+}
+
+// Variable SCSS pour compatibilité
+$primary-color: map-get($colors, 'primary-color'); 
