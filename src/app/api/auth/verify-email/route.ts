@@ -15,7 +15,6 @@ export async function GET(request: NextRequest) {
 
     // Ici vous devriez vérifier le token en base de données
     // Pour cet exemple, on simule une vérification réussie
-    console.log(`Vérification du token pour ${email}: ${token}`);
 
     // Ici vous devriez :
     // 1. Vérifier que le token existe et n'est pas expiré
