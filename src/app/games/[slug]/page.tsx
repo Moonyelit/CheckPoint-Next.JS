@@ -22,20 +22,17 @@ async function getGameData(slug: string): Promise<Game> {
   const cachedData = await GameCache.get<Game>(cacheKey);
   
   if (cachedData) {
-    console.log(`⚡ Cache hit pour ${slug} (${Date.now() - startTime}ms)`);
     return cachedData;
   }
 
   // 2. Vérifier le cache mémoire
   const memoryCached = gameCache.get(slug);
   if (memoryCached && Date.now() - memoryCached.timestamp < CACHE_DURATION) {
-    console.log(`⚡ Cache mémoire hit pour ${slug} (${Date.now() - startTime}ms)`);
     return memoryCached.data;
   }
 
   try {
     // 3. Récupérer depuis la base de données avec un seul appel
-    console.log(`🔍 Recherche du jeu: ${slug}`);
     const response = await api.get(`/api/custom/games/${slug}`, {
       timeout: 3000, // Timeout réduit à 3 secondes
     });
@@ -44,26 +41,19 @@ async function getGameData(slug: string): Promise<Game> {
     await GameCache.set(cacheKey, response.data);
     gameCache.set(slug, { data: response.data, timestamp: Date.now() });
     
-    console.log(`✅ Jeu trouvé: ${response.data.title} (${Date.now() - startTime}ms)`);
     return response.data;
   } catch (error) {
     // 4. Si le jeu n'est pas trouvé, essayer l'import depuis IGDB avec plusieurs variantes
     if (error instanceof AxiosError && error.response?.status === 404) {
-      console.log(`🔄 Jeu non trouvé, tentative d'import IGDB: ${slug}`);
-      
       // Générer plusieurs variantes du titre (incluant les chiffres romains)
       const titleVariants = generateTitleVariants(slug);
-      console.log(`🔍 Tentative avec les variantes:`, titleVariants);
       
       for (const titleVariant of titleVariants) {
         try {
-          console.log(`🔍 Test de la variante: "${titleVariant}"`);
           const importResponse = await api.get(`/api/games/search-or-import/${encodeURIComponent(titleVariant)}`, {
             timeout: 5000, // Timeout réduit à 5 secondes
           });
             
-          console.log(`📊 Réponse pour "${titleVariant}":`, importResponse.data);
-          
           if (importResponse.data && Array.isArray(importResponse.data) && importResponse.data.length > 0) {
             // Prendre le premier jeu trouvé (le plus pertinent)
             const importedGame = importResponse.data[0];
@@ -72,29 +62,17 @@ async function getGameData(slug: string): Promise<Game> {
             await GameCache.set(cacheKey, importedGame);
             gameCache.set(slug, { data: importedGame, timestamp: Date.now() });
                 
-            console.log(`✅ Jeu importé: ${importedGame.title} avec la variante "${titleVariant}" (${Date.now() - startTime}ms)`);
             return importedGame;
-          } else {
-            console.log(`⚠️ Aucun jeu trouvé pour la variante "${titleVariant}"`);
           }
         } catch (importError) {
-          console.log(`❌ Échec de l'import IGDB pour la variante "${titleVariant}":`, importError);
-          if (importError instanceof AxiosError) {
-            console.log(`📊 Status: ${importError.response?.status}, Data:`, importError.response?.data);
-          }
           // Continuer avec la variante suivante
         }
       }
-      
-      console.log(`❌ Aucune variante n'a fonctionné pour ${slug}`);
     }
     
-    console.error("Failed to fetch game data:", error);
     notFound();
   }
 }
-
-// Fonction pour obtenir des variantes spécifiques pour certains jeux
 
 // Fonction pour générer plusieurs variantes du titre à partir du slug
 function generateTitleVariants(slug: string): string[] {

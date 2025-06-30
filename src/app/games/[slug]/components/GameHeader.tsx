@@ -13,7 +13,7 @@ interface GameHeaderProps {
     backgroundUrl?: string;
     totalRating?: number;
     userRating?: number;
-    firstScreenshotUrl?: string;
+    firstScreenshotUrl?: string | null;
 }
 
 export default function GameHeader({ 
@@ -33,44 +33,31 @@ export default function GameHeader({
         setIsClient(true);
     }, []);
 
-    // Simplification de la logique de fallback pour le debug
-    const backgroundImageUrl = firstScreenshotUrl || backgroundUrl || coverUrl || "/images/Game/Default game.jpg";
-    const coverImageUrl = coverUrl || "/images/Game/Default game.jpg";
+    // Amélioration de la logique de fallback avec gestion explicite des valeurs null/undefined
+    const backgroundImageUrl = firstScreenshotUrl && firstScreenshotUrl !== 'null' && firstScreenshotUrl !== 'undefined' 
+        ? firstScreenshotUrl 
+        : (backgroundUrl && backgroundUrl !== 'null' && backgroundUrl !== 'undefined' 
+            ? backgroundUrl 
+            : (coverUrl && coverUrl !== 'null' && coverUrl !== 'undefined' 
+                ? coverUrl 
+                : "/images/Game/Default game.jpg"));
+    
+    const coverImageUrl = coverUrl && coverUrl !== 'null' && coverUrl !== 'undefined' 
+        ? coverUrl 
+        : "/images/Game/Default game.jpg";
 
     // Traiter les URLs avec imageUtils seulement si ce ne sont pas des images locales
     const processedBackgroundUrl = backgroundImageUrl.startsWith('/') ? backgroundImageUrl : getImageUrl(backgroundImageUrl);
     const processedCoverUrl = coverImageUrl.startsWith('/') ? coverImageUrl : getImageUrl(coverImageUrl);
 
-    // Debug: afficher les URLs pour diagnostiquer
-    if (isClient) {
-        console.log('🔍 Debug GameHeader:', {
-            name,
-            firstScreenshotUrl,
-            backgroundUrl,
-            coverUrl,
-            backgroundImageUrl,
-            coverImageUrl,
-            processedBackgroundUrl,
-            processedCoverUrl
-        });
-    }
-
     return (
         <header className="game-header">
             <div className="game-header__background">
-                <div className="game-header__overlay"></div>
                 <LazyImage
                     src={processedBackgroundUrl}
                     alt={`Image de fond pour ${name}`}
                     className="game-header__background-image"
-                    onLoad={() => {
-                        console.log('✅ Image de fond chargée avec succès:', processedBackgroundUrl);
-                    }}
-                    onError={() => {
-                        console.log('❌ Erreur lors du chargement de l\'image de fond:', processedBackgroundUrl);
-                    }}
                 />
-                <div className="game-header__overlay"></div>
             </div>
             
             <div className="game-header__content main-container">
@@ -81,12 +68,6 @@ export default function GameHeader({
                         width={260}
                         height={345}
                         className="game-header__cover-image"
-                        onLoad={() => {
-                            console.log('✅ Couverture chargée avec succès:', processedCoverUrl);
-                        }}
-                        onError={() => {
-                            console.log('❌ Erreur lors du chargement de la couverture:', processedCoverUrl);
-                        }}
                     />
                     <div className="game-header__cover-overlay">
                         <button className="game-header__play-btn" aria-label="Voir la bande-annonce">

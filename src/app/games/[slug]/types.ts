@@ -14,7 +14,7 @@ export interface Game {
   year?: number;
   studio?: string;
   backgroundUrl?: string;
-  firstScreenshotUrl?: string;
+  firstScreenshotUrl?: string | null;
   synopsis?: string;
   playerPerspective?: string;
   publisher?: string;
