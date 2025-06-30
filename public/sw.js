@@ -296,7 +296,6 @@ self.addEventListener('sync', (event) => {
 async function doBackgroundSync() {
   try {
     // Synchroniser les données en arrière-plan
-    console.log('🔄 Synchronisation en arrière-plan');
     
     // Ici vous pouvez ajouter la logique de synchronisation
     // Par exemple, synchroniser les données utilisateur
