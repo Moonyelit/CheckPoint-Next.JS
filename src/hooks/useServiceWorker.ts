@@ -52,7 +52,6 @@ export function useServiceWorker() {
 
       // Écouter les changements d'état
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        console.log('🔄 Nouveau Service Worker activé');
         setState(prev => ({ ...prev, isInstalled: true, isUpdated: false }));
         window.location.reload();
       });

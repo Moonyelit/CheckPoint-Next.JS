@@ -36,6 +36,13 @@ const cache = new Map<string, { data: CacheData; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export function useSearch() {
+  // Protection contre l'hydratation
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // ==========================================================================
   // ÉTAT DE L'URL - Synchronisation avec les paramètres de l'URL
   // ==========================================================================
@@ -64,6 +71,8 @@ export function useSearch() {
 
   // Synchronisation de clientCurrentPage avec la page de l'URL
   useEffect(() => {
+    if (!isClient) return; // Ne pas synchroniser côté serveur
+    
     if (query === 'top100_games' || query === 'top_year_games') {
       // Pour les listes spéciales, utiliser la pagination côté client
       setClientCurrentPage(1);
@@ -71,7 +80,7 @@ export function useSearch() {
       // Pour les recherches normales, synchroniser avec l'URL
       setClientCurrentPage(pageFromUrl);
     }
-  }, [query, pageFromUrl]);
+  }, [query, pageFromUrl, isClient]);
 
   // ==========================================================================
   // FONCTION DE CACHE - Gestion du cache des requêtes
@@ -92,7 +101,7 @@ export function useSearch() {
   // EFFET DE RÉCUPÉRATION DES DONNÉES - Appels API avec debouncing et cache
   // ==========================================================================
   useEffect(() => {
-    if (!query) return; // Pas de requête = pas d'appel API
+    if (!isClient || !query) return; // Pas de requête ou pas côté client = pas d'appel API
 
     // Nettoyer le timeout précédent
     if (debounceRef.current) {
@@ -152,15 +161,6 @@ export function useSearch() {
         } else {
           setGames(data.games ?? []);
           setPagination(data.pagination);
-          
-          // Debug: afficher les informations de pagination
-          console.log('🔍 Debug pagination:', {
-            gamesCount: data.games?.length || 0,
-            pagination: data.pagination,
-            totalPages: data.pagination?.totalPages,
-            totalCount: data.pagination?.totalCount,
-            calculatedPages: data.pagination?.totalCount ? Math.ceil(data.pagination.totalCount / data.pagination.limit) : 1
-          });
         }
       } catch (e) {
         console.error("Erreur lors de la récupération des données:", e);
@@ -176,7 +176,7 @@ export function useSearch() {
         clearTimeout(debounceRef.current);
       }
     };
-  }, [query, pageFromUrl]);
+  }, [query, pageFromUrl, isClient]);
   
   // ==========================================================================
   // PIPELINE DE TRAITEMENT DES DONNÉES - Filtrage, tri et pagination

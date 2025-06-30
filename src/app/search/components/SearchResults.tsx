@@ -55,11 +55,14 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
         .filter(game => {
           // Validation des données : filtrer les jeux invalides
           if (!game || typeof game !== 'object') return false;
-          if (!game.id || typeof game.id !== 'number') return false;
-          
+          // Accepte si id (local), ou igdbId (IGDB), ou slug (fallback)
+          if (
+            (!game.id || typeof game.id !== 'number') &&
+            (!game.igdbId || typeof game.igdbId !== 'number') &&
+            (!game.slug || typeof game.slug !== 'string' || game.slug.trim() === '')
+          ) return false;
           const title = game.name ?? game.title;
           if (!title || typeof title !== 'string' || title.trim() === '') return false;
-          
           return true;
         })
         .map((game, index) => {
