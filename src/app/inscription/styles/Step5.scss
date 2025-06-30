@@ -167,11 +167,35 @@
   &__button {
     letter-spacing: 0px;
 
-
     @include respond-to("medium") {
       width: 100%;
       max-width: 300px;
     }
+  }
+
+  /****************************************************
+  ****************** MESSAGES ******************
+  ****************************************************/
+  &__success-message {
+    background: var(--gradient-crystal);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    animation: slideIn 0.6s ease-out;
+    box-shadow: 0 4px 15px rgba(35, 171, 250, 0.3);
+  }
+
+  &__error-message {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    animation: slideIn 0.6s ease-out;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
   }
 
 

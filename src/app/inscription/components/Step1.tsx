@@ -127,13 +127,12 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
 
       // Envoyer l'email de vérification avec le pseudo
       const response = await sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo);
-      if (response.ok) {
+      if (response.success) {
         setEmailSent(true);
         setError('');
         onEmailSent?.();
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Erreur lors de l\'envoi de l\'email');
+        setError(response.message || 'Erreur lors de l\'envoi de l\'email');
       }
 
       onSubmit(sanitizedData);

@@ -145,16 +145,21 @@ const Step5 = ({ onNext }: Step5Props) => {
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setSelectedFile(file);
       setUploadError('');
+      
+      // Upload automatique du fichier sélectionné
+      await handleUpload(file);
     }
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
+  const handleUpload = async (file?: File) => {
+    const fileToUpload = file || selectedFile;
+    
+    if (!fileToUpload) {
       setUploadError('Veuillez sélectionner un fichier');
       return;
     }
@@ -172,10 +177,10 @@ const Step5 = ({ onNext }: Step5Props) => {
       }
 
       const formData = new FormData();
-      formData.append('avatar', selectedFile);
-      formData.append('userId', currentUser.id);
+      formData.append('avatar', fileToUpload);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/upload-avatar`, {
+      // Utiliser l'endpoint d'upload d'avatar
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload-avatar`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -190,7 +195,7 @@ const Step5 = ({ onNext }: Step5Props) => {
         setTimeout(() => setUploadSuccess(false), 3000);
       } else {
         const errorData = await response.json();
-        setUploadError(errorData.message || 'Erreur lors de l\'upload');
+        setUploadError(errorData.message || 'Erreur lors de l\'upload. Essayez de nouveau ou avec une autre image.');
       }
     } catch (error) {
       console.error('Erreur upload:', error);
@@ -253,6 +258,19 @@ const Step5 = ({ onNext }: Step5Props) => {
           />
         </div>
       </div>
+
+      {/* Messages de succès et d'erreur */}
+      {uploadSuccess && (
+        <div className="step5__success-message">
+          Avatar uploadé avec succès !
+        </div>
+      )}
+      
+      {uploadError && (
+        <div className="step5__error-message">
+          {uploadError}
+        </div>
+      )}
 
       <div className="step5__actions">
         <button 
