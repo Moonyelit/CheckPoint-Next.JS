@@ -11,6 +11,14 @@
 const CACHE_NAME = 'checkpoint-v1';
 const STATIC_CACHE = 'checkpoint-static-v1';
 const API_CACHE = 'checkpoint-api-v1';
+const IMAGE_CACHE = 'checkpoint-images-v1';
+
+// Limites de cache pour éviter l'accumulation
+const CACHE_LIMITS = {
+  IMAGES: 50, // Maximum 50 images en cache
+  STATIC: 100, // Maximum 100 ressources statiques
+  API: 30 // Maximum 30 réponses API
+};
 
 // Ressources à mettre en cache immédiatement
 const STATIC_RESOURCES = [
@@ -58,6 +66,11 @@ self.addEventListener('install', (event) => {
   
   // Prise de contrôle immédiate
   self.skipWaiting();
+  
+  // Nettoyage automatique toutes les 30 minutes
+  setInterval(() => {
+    cleanupAllCaches();
+  }, 30 * 60 * 1000);
 });
 
 // Activation du Service Worker
@@ -153,15 +166,22 @@ function isPageRequest(url) {
          url.pathname === '/inscription';
 }
 
-// Stratégie spéciale pour les images
+// Stratégie spéciale pour les images avec limite de cache
 async function imageStrategy(request) {
   try {
-    const cache = await caches.open(STATIC_CACHE);
+    const cache = await caches.open(IMAGE_CACHE);
     const cachedResponse = await cache.match(request);
     
     // Si l'image est en cache, la retourner immédiatement
     if (cachedResponse) {
       return cachedResponse;
+    }
+    
+    // Vérifier la limite de cache avant d'ajouter
+    const keys = await cache.keys();
+    if (keys.length >= CACHE_LIMITS.IMAGES) {
+      // Supprimer les images les plus anciennes
+      await evictOldestImages(cache);
     }
     
     // Essayer de récupérer depuis le réseau
@@ -189,6 +209,33 @@ async function imageStrategy(request) {
       status: 404,
       headers: { 'Content-Type': 'text/plain' }
     });
+  }
+}
+
+// Supprimer les images les plus anciennes du cache
+async function evictOldestImages(cache) {
+  try {
+    const keys = await cache.keys();
+    const requests = await Promise.all(
+      keys.map(async (key) => {
+        const response = await cache.match(key);
+        return {
+          key,
+          timestamp: response.headers.get('date') || Date.now()
+        };
+      })
+    );
+    
+    // Trier par date (plus ancien en premier)
+    requests.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    
+    // Supprimer les 10 plus anciennes images
+    const toDelete = requests.slice(0, 10);
+    await Promise.all(toDelete.map(req => cache.delete(req.key)));
+    
+    console.log(`Nettoyage cache images: ${toDelete.length} images supprimées`);
+  } catch (error) {
+    console.warn('Erreur lors du nettoyage du cache images:', error);
   }
 }
 
@@ -284,7 +331,39 @@ self.addEventListener('message', (event) => {
       })
     );
   }
+  
+  if (event.data && event.data.type === 'CACHE_CLEANUP') {
+    event.waitUntil(cleanupAllCaches());
+  }
 });
+
+// Nettoyage automatique de tous les caches
+async function cleanupAllCaches() {
+  try {
+    const cacheNames = await caches.keys();
+    
+    for (const cacheName of cacheNames) {
+      const cache = await caches.open(cacheName);
+      const keys = await cache.keys();
+      
+      if (cacheName === IMAGE_CACHE && keys.length > CACHE_LIMITS.IMAGES) {
+        await evictOldestImages(cache);
+      } else if (cacheName === STATIC_CACHE && keys.length > CACHE_LIMITS.STATIC) {
+        // Supprimer les ressources statiques les plus anciennes
+        const toDelete = keys.slice(0, keys.length - CACHE_LIMITS.STATIC);
+        await Promise.all(toDelete.map(key => cache.delete(key)));
+      } else if (cacheName === API_CACHE && keys.length > CACHE_LIMITS.API) {
+        // Supprimer les réponses API les plus anciennes
+        const toDelete = keys.slice(0, keys.length - CACHE_LIMITS.API);
+        await Promise.all(toDelete.map(key => cache.delete(key)));
+      }
+    }
+    
+    console.log('Nettoyage automatique des caches terminé');
+  } catch (error) {
+    console.warn('Erreur lors du nettoyage automatique:', error);
+  }
+}
 
 // Synchronisation en arrière-plan
 self.addEventListener('sync', (event) => {
