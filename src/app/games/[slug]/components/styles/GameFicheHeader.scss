@@ -1,0 +1,18 @@
+.game-fiche-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  margin-bottom: 24px;
+
+  &__title {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0;
+  }
+  &__subtitle {
+    font-size: 18px;
+    color: #748599;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+} 

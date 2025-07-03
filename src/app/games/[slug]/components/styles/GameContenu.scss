@@ -1,0 +1,54 @@
+.game-contenu-wrapper {
+  position: relative;
+}
+
+.game-main-content {
+  margin-left: 260px;
+  
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
+}
+
+.game-rating-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0;
+  
+  .rating-spacer {
+    flex: 1;
+  }
+  
+  .rating-display {
+    min-width: 120px;
+    margin-left: 16px;
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.camembert-igdb {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: var(--bleu-clair-crystal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 24px;
+  color: var(--bleu-crystal-fonce);
+  box-shadow: 0 4px 12px rgba(47, 215, 253, 0.3);
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+  
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    font-size: 18px;
+  }
+} 
