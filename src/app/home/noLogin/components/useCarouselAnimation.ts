@@ -26,6 +26,12 @@ export function useCarouselAnimation(total: number, config: CarouselConfig = {})
   useEffect(() => {
     if (!isAutoPlaying || total === 0) return;
 
+    // Nettoyer les timers existants avant d'en créer de nouveaux
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+
     intervalRef.current = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % total);
     }, autoPlayInterval);
@@ -33,6 +39,7 @@ export function useCarouselAnimation(total: number, config: CarouselConfig = {})
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     };
   }, [isAutoPlaying, total, autoPlayInterval]);
@@ -41,20 +48,29 @@ export function useCarouselAnimation(total: number, config: CarouselConfig = {})
   const handleUserInteraction = () => {
     setIsAutoPlaying(false);
     
+    // Nettoyer le timeout existant
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
     
     timeoutRef.current = setTimeout(() => {
       setIsAutoPlaying(true);
+      timeoutRef.current = null; // Réinitialiser la référence
     }, resumeDelay);
   };
 
   // Nettoyage des timers au démontage
   useEffect(() => {
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
     };
   }, []);
 

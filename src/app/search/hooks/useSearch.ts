@@ -32,8 +32,57 @@ interface CacheData {
   pagination?: PaginationInfo;
 }
 
-const cache = new Map<string, { data: CacheData; timestamp: number }>();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+// Cache avec limite de taille pour éviter les fuites mémoire
+class SearchCache {
+  private cache = new Map<string, { data: CacheData; timestamp: number }>();
+  private readonly maxSize = 50; // Limite à 50 entrées
+  private readonly cacheDuration = 5 * 60 * 1000; // 5 minutes
+
+  get(key: string): CacheData | null {
+    const cached = this.cache.get(key);
+    if (cached && Date.now() - cached.timestamp < this.cacheDuration) {
+      return cached.data;
+    }
+    if (cached) {
+      this.cache.delete(key); // Nettoyer les entrées expirées
+    }
+    return null;
+  }
+
+  set(key: string, data: CacheData): void {
+    // Nettoyer si on atteint la limite
+    if (this.cache.size >= this.maxSize) {
+      this.evictOldest();
+    }
+    this.cache.set(key, { data, timestamp: Date.now() });
+  }
+
+  private evictOldest(): void {
+    let oldestKey: string | null = null;
+    let oldestTime = Date.now();
+
+    for (const [key, entry] of this.cache.entries()) {
+      if (entry.timestamp < oldestTime) {
+        oldestTime = entry.timestamp;
+        oldestKey = key;
+      }
+    }
+
+    if (oldestKey) {
+      this.cache.delete(oldestKey);
+    }
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+
+  getSize(): number {
+    return this.cache.size;
+  }
+}
+
+const searchCache = new SearchCache();
 
 export function useSearch() {
   // Protection contre l'hydratation
@@ -86,15 +135,11 @@ export function useSearch() {
   // FONCTION DE CACHE - Gestion du cache des requêtes
   // ==========================================================================
   const getCachedData = (key: string) => {
-    const cached = cache.get(key);
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-      return cached.data;
-    }
-    return null;
+    return searchCache.get(key);
   };
 
   const setCachedData = (key: string, data: CacheData) => {
-    cache.set(key, { data, timestamp: Date.now() });
+    searchCache.set(key, data);
   };
 
   // ==========================================================================
