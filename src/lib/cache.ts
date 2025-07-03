@@ -27,15 +27,15 @@ class MemoryCache {
   private maxSize: number;
   private defaultTTL: number;
 
-  constructor(maxSize: number = 100, defaultTTL: number = 30 * 60 * 1000) { // 30min par défaut
+  constructor(maxSize: number = 50, defaultTTL: number = 15 * 60 * 1000) { // Réduit à 50 entrées et 15min
     this.maxSize = maxSize;
     this.defaultTTL = defaultTTL;
     
-    // Nettoyage automatique toutes les 5 minutes (seulement côté client)
+    // Nettoyage automatique toutes les 2 minutes (plus fréquent)
     if (typeof window !== 'undefined') {
       setInterval(() => {
         this.cleanup();
-      }, 5 * 60 * 1000);
+      }, 2 * 60 * 1000);
     }
   }
 
@@ -113,8 +113,8 @@ class MemoryCache {
   }
 }
 
-// Cache avec limite de 100 entrées et TTL de 30 minutes
-export const GameCache = new MemoryCache(100, 30 * 60 * 1000);
+// Cache avec limite de 50 entrées et TTL de 15 minutes (réduit pour économiser la mémoire)
+export const GameCache = new MemoryCache(50, 15 * 60 * 1000);
 
 // Fonction utilitaire pour générer les clés de cache (remplace l'ancienne méthode statique)
 export function generateCacheKey(type: string, identifier: string) {

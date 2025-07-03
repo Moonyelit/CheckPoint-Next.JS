@@ -100,12 +100,14 @@ const LazyImage: React.FC<LazyImageProps> = ({
       threshold: 0.1
     });
 
-    observer.observe(containerRef.current);
+    const currentContainer = containerRef.current;
+    observer.observe(currentContainer);
 
     return () => {
-      if (containerRef.current) {
-        observer.unobserve(containerRef.current);
+      if (currentContainer) {
+        observer.unobserve(currentContainer);
       }
+      observer.disconnect(); // S'assurer que l'observer est complètement nettoyé
     };
   }, [handleIntersection]);
 

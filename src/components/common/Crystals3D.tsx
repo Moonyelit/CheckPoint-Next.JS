@@ -71,6 +71,29 @@ function CrystalsModel() {
         material.needsUpdate = true
       }
     })
+
+    // Nettoyage pour éviter les fuites mémoire
+    return () => {
+      if (scene) {
+        scene.traverse((obj: THREE.Object3D) => {
+          if (obj instanceof THREE.Mesh) {
+            const mesh = obj
+            if (mesh.material) {
+              if (Array.isArray(mesh.material)) {
+                mesh.material.forEach(material => {
+                  if (material.dispose) material.dispose()
+                })
+              } else {
+                if (mesh.material.dispose) mesh.material.dispose()
+              }
+            }
+            if (mesh.geometry && mesh.geometry.dispose) {
+              mesh.geometry.dispose()
+            }
+          }
+        })
+      }
+    }
   }, [scene])
 
   // Rotation auto sur l'axe Y
