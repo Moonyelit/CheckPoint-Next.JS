@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { GameCache, CACHE_KEYS, CACHE_TTL } from './cache'
+import { GameCache, CACHE_KEYS } from './cache'
 
 // Instance axios pour les appels API génériques
 const apiInstance = axios.create({
@@ -9,7 +9,7 @@ const apiInstance = axios.create({
 
 // Types pour les résultats de recherche génériques
 export interface SearchResults {
-  games: any[]
+  games: unknown[]
   total: number
   page: number
   limit: number
