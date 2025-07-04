@@ -15,12 +15,6 @@ export default function GameFicheHeader({ title, year, studio, developer }: Game
         {title} {year && <span>({year})</span>}
       </h1>
       <div className="game-fiche-header__subtitle">{studio || developer}</div>
-      <nav className="tabs-nav">
-        <button className="tab-active">FICHE</button>
-        <button>MEDIA</button>
-        <button>CRITIQUES</button>
-        <button>CHALLENGES</button>
-      </nav>
     </div>
   );
 } 

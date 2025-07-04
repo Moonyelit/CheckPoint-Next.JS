@@ -1,21 +1,16 @@
 @use '../../../styles/_variables' as *;
 @use '../../../styles/mixins' as *;
 
-// Variables de couleur et de style pour la page de jeu
-$light-text-color: #ffffff;
-$card-background-color: #2b2d42;
-$primary-color-light: #83b2ff;
-$tag-background-color: #4a4e69;
-$medium-text-color: #adb5bd;
-$border-color: #4a4e69;
-$border-radius-small: 4px;
-$border-radius-medium: 8px;
-
 // Import des styles des composants
 @use './components/styles/GameHeader' as *;
+@use './components/styles/GameFicheHeader' as *;
 @use './components/styles/GameFichePanel' as *;
 @use './components/styles/TabsNav' as *;
 @use './components/styles/TabContent' as *;
 @use './components/styles/GameContenu' as *;
 @use './components/styles/SynopsisEtTaxonomie' as *;
 
+.game-fiche-container {
+    position: relative;
+    bottom : 30rem;
+}

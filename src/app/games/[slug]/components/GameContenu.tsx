@@ -17,14 +17,16 @@ export default function GameContenu({ game }: GameContenuProps) {
 
   return (
     <div className="game-contenu-wrapper">
+      <div className="game-header-content">
+        <GameFicheHeader
+          title={game.title}
+          year={game.year}
+          studio={game.studio || game.developer}
+        />
+      </div>
       <GameFichePanel>
         <ColonneGaucheJeu game={game} />
         <div className="game-main-content">
-          <GameFicheHeader
-            title={game.title}
-            year={game.year}
-            studio={game.studio || game.developer}
-          />
           <div className="game-rating-section">
             <div className="rating-spacer" />
             <div className="rating-display">
@@ -40,9 +42,5 @@ export default function GameContenu({ game }: GameContenuProps) {
 }
 
 function CamembertIGDB({ note }: { note?: number }) {
-  return (
-    <div className="camembert-igdb">
-      {note ? `${note}%` : "--"}
-    </div>
-  );
-} 
+  return <div className="camembert-igdb">{note ? `${note}%` : "--"}</div>;
+}
