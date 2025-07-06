@@ -15,7 +15,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className={classNames("footer", 'Paragraphe1')} role="contentinfo">
+    <footer className={classNames("footer")} role="contentinfo">
       <div className="footer-content">
         {/* Liens de navigation principaux */}
         <nav aria-label="Navigation du footer" className="footer-content-nav">
