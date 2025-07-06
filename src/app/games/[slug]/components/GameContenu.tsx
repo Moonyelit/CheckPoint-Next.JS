@@ -16,31 +16,26 @@ export default function GameContenu({ game }: GameContenuProps) {
   const [activeTab, setActiveTab] = useState<TabType>("fiche");
 
   return (
-    <div className="game-contenu-wrapper">
-      <div className="game-header-content">
+    <div className="game-contenu">
+      <div className="game-contenu__header">
         <GameFicheHeader
           title={game.title}
           year={game.year}
           studio={game.studio || game.developer}
+          coverUrl={game.coverUrl}
+          totalRating={game.totalRating}
         />
       </div>
       <GameFichePanel>
-        <ColonneGaucheJeu game={game} />
-        <div className="game-main-content">
-          <div className="game-rating-section">
-            <div className="rating-spacer" />
-            <div className="rating-display">
-              <CamembertIGDB note={game.totalRating || 90} />
-            </div>
-          </div>
-          <TabsNav activeTab={activeTab} setActiveTab={setActiveTab} />
+        <ColonneGaucheJeu />
+        <div className="game-contenu__main">
+          <TabsNav 
+            activeTab={activeTab} 
+            setActiveTab={setActiveTab} 
+          />
           <TabContent activeTab={activeTab} game={game} />
         </div>
       </GameFichePanel>
     </div>
   );
-}
-
-function CamembertIGDB({ note }: { note?: number }) {
-  return <div className="camembert-igdb">{note ? `${note}%` : "--"}</div>;
 }

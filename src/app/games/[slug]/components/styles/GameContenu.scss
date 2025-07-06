@@ -1,20 +1,15 @@
-.game-contenu-wrapper {
+.game-contenu {
   position: relative;
-}
 
-.game-header-content {
-  position: relative;
-  z-index: 10;
-  margin-bottom: 24px;
-  margin-left: 15rem;
-  padding: 0 20px;
-}
+  &__header {
+    position: relative;
+    z-index: 10;
+    margin-bottom: 24px;
+    padding: 0 20px;
+  }
 
-.game-main-content {
-  margin-left: 260px;
-  
-  @media (max-width: 768px) {
-    margin-left: 0;
+  &__main {
+    width: 100%;
   }
 }
 

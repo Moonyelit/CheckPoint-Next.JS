@@ -1,42 +1,73 @@
 .tabs-nav {
   display: flex;
-  gap: 24px;
-  margin: 16px 0;
-  border-bottom: 1px solid var(--gris-fonce-2);
-  padding-bottom: 8px;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 0; 
+  position: relative;
+  overflow: visible;
 
-  button {
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 37.5%;
+    transform: translateX(-50%);
+    width: 100vw; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: -1;
+  }
+
+  &__navigation {
+    display: flex;
+    gap: 24px;
+    margin-left: 2rem;
+  }
+
+  &__button {
+    font-family: "DM Sans", sans-serif;
+    color: var(--white);
+    font-weight: 900;
+    font-size: 1.25rem;
     background: none;
     border: none;
     padding: 8px 16px;
     cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--gris-fonce-2);
+    color: var(--white);
     transition: all 0.2s ease;
-    border-radius: 4px 4px 0 0;
     position: relative;
 
     &:hover {
-      color: var(--bleu-fonce);
-      background: rgba(116, 133, 153, 0.1);
+      background: var(--gris-fonce);
+      background: rgba(116, 133, 153, 0.2);
+      transform: translateY(-2px);
     }
 
-    &.tab-active {
-      font-weight: 700;
-      color: var(--bleu-fonce);
-      background: var(--gris-nav-bar);
-      border-bottom: 2px solid var(--bleu-fonce);
+    &--active {
+      background: var(--gris-fonce);
+      color: var(--white);
+      
+      &:hover {
+        background: var(--gris-fonce);
+        color: var(--white);
+        transform: none;
+      }
     }
   }
 
   @media (max-width: 768px) {
-    gap: 16px;
-    margin: 12px 0;
-    
-    button {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    &__navigation {
+      gap: 16px;
+      justify-content: center;
+    }
+
+    &__button {
       padding: 6px 12px;
       font-size: 12px;
     }
   }
-} 
+}

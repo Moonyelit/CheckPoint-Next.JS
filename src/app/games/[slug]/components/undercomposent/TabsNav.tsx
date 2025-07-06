@@ -17,16 +17,18 @@ export default function TabsNav({ activeTab, setActiveTab }: TabsNavProps) {
   ];
 
   return (
-    <nav className="tabs-nav">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          className={activeTab === tab.id ? "tab-active" : ""}
-          onClick={() => setActiveTab(tab.id)}
-        >
-          {tab.label}
-        </button>
-      ))}
-    </nav>
+    <div className="tabs-nav">
+      <nav className="tabs-nav__navigation">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            className={`tabs-nav__button ${activeTab === tab.id ? 'tabs-nav__button--active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+    </div>
   );
 } 

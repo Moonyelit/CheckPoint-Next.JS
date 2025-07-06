@@ -1,11 +1,14 @@
 .game-fiche-panel {
-  background: var(--gris-nav-bar);
+  background: var(--gris-fonce);
   position: relative;
   z-index: 3;
+  display: flex;
+  overflow: hidden;
   
   @media (max-width: 768px) {
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     margin-top: -40px;
     min-height: 400px;
+    flex-direction: column;
   }
 } 
