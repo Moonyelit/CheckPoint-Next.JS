@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/GameFicheHeader.scss";
+import { getImageUrl } from "@/lib/imageUtils";
 
 // Composant Donut SVG pour le rating
 const DonutProgress: React.FC<{ value: number; size?: number; strokeWidth?: number }> = ({ 
@@ -73,13 +74,19 @@ interface GameFicheHeaderProps {
 }
 
 export default function GameFicheHeader({ title, year, studio, developer, coverUrl, totalRating }: GameFicheHeaderProps) {
+  // Nettoyer l'URL de l'image
+  const cleanCoverUrl = getImageUrl(coverUrl);
+  
   return (
     <div className="game-fiche-header">
       <div className="game-fiche-header__cover-container">
         <img 
           className="game-fiche-header__cover" 
-          src={coverUrl || "/images/placeholder-cover.jpg"} 
+          src={cleanCoverUrl} 
           alt={title} 
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = "/images/placeholder-cover.jpg";
+          }}
         />
       </div>
       <div className="game-fiche-header__content">

@@ -3,7 +3,7 @@
  */
 
 /**
- * Nettoie une URL pour éviter les récursions de proxy
+ * Nettoie une URL pour éviter les récursions de proxy et les protocoles dupliqués
  * @param url L'URL à nettoyer
  * @returns L'URL nettoyée
  */
@@ -15,13 +15,30 @@ export function cleanImageUrl(url: string | null | undefined): string {
   // Supprimer les espaces et caractères invisibles
   let cleanUrl = url.trim();
   
-  // Vérifier si c'est une URL proxy
+  // Vérifier si c'est déjà une URL proxy malformée
   if (cleanUrl.includes('/api/proxy-image')) {
     // Extraire l'URL originale du paramètre
     const urlParam = new URLSearchParams(cleanUrl.split('?')[1]).get('url');
     if (urlParam) {
       cleanUrl = decodeURIComponent(urlParam);
     }
+  }
+  
+  // Nettoyer les protocoles dupliqués avec gestion des deux points incorrects
+  // Pattern 1: https://https:https:// -> https://
+  cleanUrl = cleanUrl.replace(/^https?:\/\/https:https:\/\//g, 'https://');
+  // Pattern 2: https://https:// -> https://
+  cleanUrl = cleanUrl.replace(/^https?:\/\/https?:\/\//g, 'https://');
+  // Pattern 3: https://http:// -> https://
+  cleanUrl = cleanUrl.replace(/^https?:\/\/http:\/\//g, 'https://');
+  // Pattern 4: http://https:// -> https://
+  cleanUrl = cleanUrl.replace(/^http:\/\/https:\/\//g, 'https://');
+  
+  // S'assurer que l'URL a le bon format final
+  if (cleanUrl.startsWith('//')) {
+    cleanUrl = 'https:' + cleanUrl;
+  } else if (!cleanUrl.match(/^https?:\/\//)) {
+    cleanUrl = 'https://' + cleanUrl;
   }
 
   return cleanUrl;
@@ -95,6 +112,11 @@ export function getImageUrl(url: string | null | undefined): string {
   }
 
   const cleanUrl = cleanImageUrl(url);
+  
+  // Si l'URL est vide après nettoyage, retourner une image par défaut
+  if (!cleanUrl) {
+    return '/images/placeholder-cover.jpg';
+  }
   
   // Si c'est une URL locale ou déjà une URL proxy, la retourner telle quelle
   if (cleanUrl.startsWith('/') || cleanUrl.startsWith('data:') || cleanUrl.includes('/api/proxy-image')) {
