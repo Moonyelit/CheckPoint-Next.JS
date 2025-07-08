@@ -26,6 +26,7 @@ export interface ApiGame {
   id: number;
   title?: string;
   name?: string;
+  slug?: string;
   coverUrl?: string;
   cover?: { url: string };
   platforms?: (string | { name: string })[];
@@ -36,6 +37,10 @@ export interface ApiGame {
   perspectives?: (string | { name: string })[];
   releaseDate?: string;
   first_release_date?: number;
+  summary?: string;
+  developer?: string;
+  igdbId?: string;
+  isPersisted?: boolean;
 }
 
 /**

@@ -66,7 +66,8 @@ export function sortGames(games: ApiGame[], sortState: SortState): ApiGame[] {
         break;
         
       case "releaseDate":
-        // Tri par date de sortie (gère timestamp Unix et format string)
+        // Tri par date de sortie - Priorité à first_release_date (timestamp) puis releaseDate (string)
+        // Utilise la date de sortie réelle, pas la date d'ajout en base
         valA = a.first_release_date
           ? a.first_release_date * 1000  // Conversion timestamp en millisecondes
           : a.releaseDate

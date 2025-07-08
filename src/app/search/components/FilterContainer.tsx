@@ -21,7 +21,7 @@ const FILTER_MAPPING = {
     'Aventure': 'Adventure',
     'Action-aventure': 'Action-adventure',
     'RPG': 'RPG',
-    'Action RPG': 'Action RPG',
+    'Action RPG': ['Action RPG', 'Role-playing (RPG)'],
     'Stratégie': 'Strategy',
     'Stratégie en temps réel': 'Real Time Strategy (RTS)',
     'Stratégie au tour par tour': 'Turn-based strategy',
@@ -75,7 +75,6 @@ const FILTER_MAPPING = {
     'Linux': 'Linux',
     'Android': 'Android',
     'iOS': 'iOS',
-    '64DD': '64DD',
     'Arcade': 'Arcade',
     'Google Stadia': 'Google Stadia',
     'Meta Quest 2': 'Meta Quest 2',
@@ -156,9 +155,17 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ onFiltersChange }) =>
 
   const handleFilterChange = (filterType: string, translatedValues: string[]) => {
     // Convertir les valeurs traduites en valeurs originales pour le filtrage
-    const originalValues = translatedValues.map(translatedValue => {
-      const mapping = FILTER_MAPPING[filterType as keyof typeof FILTER_MAPPING];
-      return mapping?.[translatedValue as keyof typeof mapping] || translatedValue;
+    const mapping = FILTER_MAPPING[filterType as keyof typeof FILTER_MAPPING];
+    let originalValues: string[] = [];
+    translatedValues.forEach(translatedValue => {
+      const mapped = mapping?.[translatedValue as keyof typeof mapping];
+      if (Array.isArray(mapped)) {
+        originalValues.push(...mapped);
+      } else if (mapped) {
+        originalValues.push(mapped);
+      } else {
+        originalValues.push(translatedValue);
+      }
     });
 
     const newSelectedFilters = {

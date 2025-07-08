@@ -163,10 +163,10 @@ export function useSearch() {
       let cacheKey = '';
 
       if (query === 'top100_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/top100_games`;
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/top100`;
         cacheKey = 'top100_games';
       } else if (query === 'top_year_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/top_year_games`;
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/year/top100`;
         cacheKey = 'top_year_games';
       } else {
         apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${pageFromUrl}&limit=20`;
@@ -177,8 +177,8 @@ export function useSearch() {
       const cachedData = getCachedData(cacheKey);
       if (cachedData) {
         if (query === 'top100_games' || query === 'top_year_games') {
-          // Nouveau format API Platform : data.games au lieu de data.member
-          const gamesData = cachedData.games ?? cachedData.member ?? cachedData;
+          // Nouveaux endpoints custom : données directement dans le tableau
+          const gamesData = cachedData.games ?? cachedData;
           setGames(Array.isArray(gamesData) ? gamesData : []);
           setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: Array.isArray(gamesData) ? gamesData.length : 0 });
         } else {
@@ -204,8 +204,8 @@ export function useSearch() {
         setCachedData(cacheKey, data);
 
         if (query === 'top100_games' || query === 'top_year_games') {
-          // Nouveau format API Platform : data.games au lieu de data.member
-          const gamesData = data.games ?? data.member ?? data;
+          // Nouveaux endpoints custom : données directement dans le tableau
+          const gamesData = data.games ?? data;
           setGames(Array.isArray(gamesData) ? gamesData : []);
           setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: gamesData.length });
         } else {
