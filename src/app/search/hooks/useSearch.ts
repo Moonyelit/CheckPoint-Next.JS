@@ -96,14 +96,8 @@ export function useSearch() {
   // ÉTAT DE L'URL - Synchronisation avec les paramètres de l'URL
   // ==========================================================================
   const searchParams = useSearchParams();
-  
-  // Test temporaire : utiliser window.location pour déboguer
-  const urlParams = new URLSearchParams(window.location.search);
-  const queryFromUrl = urlParams.get('query') || '';
-  const pageFromUrlParam = urlParams.get('page') || '1';
-  
-  const query = searchParams.get('query') || queryFromUrl || ''; // Requête de recherche depuis l'URL
-  const pageFromUrl = parseInt(searchParams.get('page') || pageFromUrlParam || '1'); // Page depuis l'URL
+  const query = searchParams.get('query') || ''; // Requête de recherche depuis l'URL
+  const pageFromUrl = parseInt(searchParams.get('page') || '1'); // Page depuis l'URL
   
   // ==========================================================================
   // ÉTAT DES DONNÉES API - Gestion des données récupérées depuis l'API
