@@ -7,6 +7,7 @@ import SortingDropdown from "./components/SortingDropdown";
 import { useSearch } from "./hooks/useSearch";
 import { useState } from "react";
 import "./search.scss";
+import React from "react";
 
 export default function SearchPage() {
   const {

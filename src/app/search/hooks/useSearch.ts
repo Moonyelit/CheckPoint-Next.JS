@@ -96,9 +96,15 @@ export function useSearch() {
   // ÉTAT DE L'URL - Synchronisation avec les paramètres de l'URL
   // ==========================================================================
   const searchParams = useSearchParams();
-  const query = searchParams.get('query') || ''; // Requête de recherche depuis l'URL
-  const pageFromUrl = parseInt(searchParams.get('page') || '1'); // Page depuis l'URL
-
+  
+  // Test temporaire : utiliser window.location pour déboguer
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryFromUrl = urlParams.get('query') || '';
+  const pageFromUrlParam = urlParams.get('page') || '1';
+  
+  const query = searchParams.get('query') || queryFromUrl || ''; // Requête de recherche depuis l'URL
+  const pageFromUrl = parseInt(searchParams.get('page') || pageFromUrlParam || '1'); // Page depuis l'URL
+  
   // ==========================================================================
   // ÉTAT DES DONNÉES API - Gestion des données récupérées depuis l'API
   // ==========================================================================
@@ -146,7 +152,9 @@ export function useSearch() {
   // EFFET DE RÉCUPÉRATION DES DONNÉES - Appels API avec debouncing et cache
   // ==========================================================================
   useEffect(() => {
-    if (!isClient || !query) return; // Pas de requête ou pas côté client = pas d'appel API
+    if (!isClient || !query) {
+      return; // Pas de requête ou pas côté client = pas d'appel API
+    }
 
     // Nettoyer le timeout précédent
     if (debounceRef.current) {
@@ -155,18 +163,16 @@ export function useSearch() {
 
     // Debouncing : attend 200ms avant de faire l'appel API
     debounceRef.current = setTimeout(async () => {
-      setLoading(true);
-      setError(null);
-
+      
       // Construction de l'URL selon le type de requête
       let apiUrl = '';
       let cacheKey = '';
 
       if (query === 'top100_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/top100?limit=100`;
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/top100_games`;
         cacheKey = 'top100_games';
       } else if (query === 'top_year_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/year/top100?limit=100`;
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/top_year_games`;
         cacheKey = 'top_year_games';
       } else {
         apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${pageFromUrl}&limit=20`;
@@ -177,7 +183,8 @@ export function useSearch() {
       const cachedData = getCachedData(cacheKey);
       if (cachedData) {
         if (query === 'top100_games' || query === 'top_year_games') {
-          const gamesData = cachedData.member ?? cachedData;
+          // Nouveau format API Platform : data.games au lieu de data.member
+          const gamesData = cachedData.games ?? cachedData.member ?? cachedData;
           setGames(Array.isArray(gamesData) ? gamesData : []);
           setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: Array.isArray(gamesData) ? gamesData.length : 0 });
         } else {
@@ -189,7 +196,10 @@ export function useSearch() {
       }
 
       try {
+        setLoading(true);
+        setError(null);
         const response = await fetch(apiUrl);
+        
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -200,15 +210,15 @@ export function useSearch() {
         setCachedData(cacheKey, data);
 
         if (query === 'top100_games' || query === 'top_year_games') {
-          const gamesData = data.member ?? data;
+          // Nouveau format API Platform : data.games au lieu de data.member
+          const gamesData = data.games ?? data.member ?? data;
           setGames(Array.isArray(gamesData) ? gamesData : []);
           setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: gamesData.length });
         } else {
           setGames(data.games ?? []);
           setPagination(data.pagination);
         }
-      } catch (e) {
-        console.error("Erreur lors de la récupération des données:", e);
+      } catch {
         setError('Erreur de chargement des données.');
       } finally {
         setLoading(false);
