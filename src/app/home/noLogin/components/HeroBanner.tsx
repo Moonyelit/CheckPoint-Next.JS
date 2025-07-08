@@ -55,12 +55,12 @@ export default function HeroBanner() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/year/top100?limit=5`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/top_year_games`);
         
         if (response.ok) {
           const data = await response.json();
-          if (data && data.length > 0) {
-            setCardsData(data);
+          if (data && data.games && data.games.length > 0) {
+            setCardsData(data.games);
             return;
           }
         }
