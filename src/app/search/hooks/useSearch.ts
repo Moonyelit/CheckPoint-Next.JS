@@ -30,6 +30,8 @@ interface CacheData {
   member?: ApiGame[];
   games?: ApiGame[];
   pagination?: PaginationInfo;
+  totalItems?: number;
+  totalPages?: number;
 }
 
 // Cache avec limite de taille pour éviter les fuites mémoire
@@ -163,27 +165,48 @@ export function useSearch() {
       let cacheKey = '';
 
       if (query === 'top100_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/top100`;
+        // Utiliser l'endpoint API Platform avec tri par note
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games?order[totalRating]=desc&order[totalRatingCount]=desc&itemsPerPage=100`;
         cacheKey = 'top100_games';
       } else if (query === 'top_year_games') {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/custom/games/year/top100`;
+        // Utiliser l'endpoint API Platform avec filtre sur la date
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+        const dateFilter = oneYearAgo.toISOString().split('T')[0];
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games?order[totalRating]=desc&order[totalRatingCount]=desc&releaseDate[gte]=${dateFilter}&itemsPerPage=100`;
         cacheKey = 'top_year_games';
       } else {
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search/${encodeURIComponent(query)}?page=${pageFromUrl}&limit=20`;
-        cacheKey = `search_${query}_${pageFromUrl}`;
+        // NOUVELLE LOGIQUE : Utiliser la recherche intelligente (local + IGDB + filtrage intelligent)
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search-intelligent/${encodeURIComponent(query.trim())}`;
+        cacheKey = `search_intelligent_${query}_${JSON.stringify(filters)}`;
       }
 
       // Vérifier le cache d'abord
       const cachedData = getCachedData(cacheKey);
       if (cachedData) {
         if (query === 'top100_games' || query === 'top_year_games') {
-          // Nouveaux endpoints custom : données directement dans le tableau
-          const gamesData = cachedData.games ?? cachedData;
+          // Données API Platform : utiliser member pour la collection
+          const gamesData = cachedData.member ?? cachedData.games ?? [];
           setGames(Array.isArray(gamesData) ? gamesData : []);
-          setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: Array.isArray(gamesData) ? gamesData.length : 0 });
+          setPagination({ 
+            currentPage: 1, 
+            limit: 20, 
+            offset: 0, 
+            totalCount: cachedData.totalItems ?? gamesData.length,
+            totalPages: cachedData.totalPages ?? Math.ceil((cachedData.totalItems ?? gamesData.length) / 20)
+          });
         } else {
+          // Données de recherche intelligente : format direct
           setGames(cachedData.games ?? []);
-          setPagination(cachedData.pagination ?? { currentPage: 1, limit: 20, offset: 0 });
+          const totalItems = cachedData.games?.length ?? 0;
+          const currentPage = pageFromUrl;
+          setPagination({ 
+            currentPage, 
+            limit: 20, 
+            offset: (currentPage - 1) * 20,
+            totalCount: totalItems,
+            totalPages: Math.ceil(totalItems / 20)
+          });
         }
         setLoading(false);
         return;
@@ -204,13 +227,77 @@ export function useSearch() {
         setCachedData(cacheKey, data);
 
         if (query === 'top100_games' || query === 'top_year_games') {
-          // Nouveaux endpoints custom : données directement dans le tableau
-          const gamesData = data.games ?? data;
+          // Données API Platform : utiliser member pour la collection
+          const gamesData = data.member ?? data.games ?? [];
           setGames(Array.isArray(gamesData) ? gamesData : []);
-          setPagination({ currentPage: 1, limit: 20, offset: 0, totalCount: gamesData.length });
+          
+          // Debug log pour voir combien de jeux sont récupérés
+          console.log(`[DEBUG] Jeux récupérés pour ${query}:`, {
+            totalFromAPI: gamesData.length,
+            isArray: Array.isArray(gamesData),
+            dataKeys: Object.keys(data)
+          });
+          
+          setPagination({ 
+            currentPage: 1, 
+            limit: 20, 
+            offset: 0, 
+            totalCount: data.totalItems ?? gamesData.length,
+            totalPages: data.totalPages ?? Math.ceil((data.totalItems ?? gamesData.length) / 20)
+          });
         } else {
-          setGames(data.games ?? []);
-          setPagination(data.pagination);
+          // NOUVELLE LOGIQUE : Données de recherche intelligente
+          const gamesData = Array.isArray(data) ? data : [];
+          setGames(gamesData);
+          const totalItems = gamesData.length;
+          const currentPage = pageFromUrl;
+          
+          console.log(`[DEBUG] Recherche intelligente pour '${query}':`, {
+            totalFromAPI: gamesData.length,
+            isArray: Array.isArray(gamesData),
+            dataKeys: Object.keys(data)
+          });
+          
+          setPagination({ 
+            currentPage, 
+            limit: 20, 
+            offset: (currentPage - 1) * 20,
+            totalCount: totalItems,
+            totalPages: Math.ceil(totalItems / 20)
+          });
+          
+          // Si aucun résultat avec la recherche intelligente, essayer API Platform comme fallback
+          if (gamesData.length === 0 && query.trim()) {
+            console.log(`[DEBUG] Aucun résultat avec recherche intelligente, tentative API Platform`);
+            
+            try {
+              const searchParams = new URLSearchParams();
+              searchParams.append('title', query.trim());
+              searchParams.append('page', pageFromUrl.toString());
+              searchParams.append('itemsPerPage', '20');
+              
+              const platformResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/games?${searchParams.toString()}`);
+              if (platformResponse.ok) {
+                const platformData = await platformResponse.json();
+                const platformGames = platformData.member ?? platformData.games ?? [];
+                
+                if (platformGames.length > 0) {
+                  console.log(`[DEBUG] API Platform trouvé ${platformGames.length} jeux vs 0 recherche intelligente`);
+                  setGames(platformGames);
+                  const totalItems = platformData.totalItems ?? 0;
+                  setPagination({ 
+                    currentPage, 
+                    limit: 20, 
+                    offset: (currentPage - 1) * 20,
+                    totalCount: totalItems,
+                    totalPages: platformData.totalPages ?? Math.ceil(totalItems / 20)
+                  });
+                }
+              }
+            } catch (error) {
+              console.log('[DEBUG] Erreur lors du fallback API Platform:', error);
+            }
+          }
         }
       } catch {
         setError('Erreur de chargement des données.');
@@ -225,7 +312,7 @@ export function useSearch() {
         clearTimeout(debounceRef.current);
       }
     };
-  }, [query, pageFromUrl, isClient]);
+  }, [query, pageFromUrl, filters, isClient]);
   
   // ==========================================================================
   // PIPELINE DE TRAITEMENT DES DONNÉES - Filtrage, tri et pagination
@@ -237,34 +324,40 @@ export function useSearch() {
   // Tri des jeux filtrés selon l'option et la direction
   const sortedGames = useMemo(() => sortGames(filteredGames, sort), [filteredGames, sort]);
   
+  // Pagination : découpage des jeux pour afficher seulement la page courante
+  const paginatedGames = useMemo(() => {
+    // Pagination côté client pour les listes spéciales ET la recherche rapide
+    if (
+      query === 'top100_games' ||
+      query === 'top_year_games' ||
+      // Pour la recherche rapide, on utilise toujours la pagination côté client
+      (query && query !== 'top100_games' && query !== 'top_year_games')
+    ) {
+      const offset = (clientCurrentPage - 1) * pagination.limit;
+      const result = sortedGames.slice(offset, offset + pagination.limit);
+      return result;
+    } else {
+      // Pour les recherches normales, les jeux sont déjà paginés côté serveur
+      return sortedGames;
+    }
+  }, [sortedGames, clientCurrentPage, pagination.limit, query, games]);
+
   // Calcul du nombre total de pages
-  // Pour les recherches normales, utiliser la pagination côté serveur
-  // Pour les top100/top_year, utiliser la pagination côté client
   const totalPages = useMemo(() => {
-    if (query === 'top100_games' || query === 'top_year_games') {
+    if (
+      query === 'top100_games' ||
+      query === 'top_year_games' ||
+      // Pour la recherche rapide, on calcule toujours côté client
+      (query && query !== 'top100_games' && query !== 'top_year_games')
+    ) {
       return Math.ceil(sortedGames.length / pagination.limit);
     } else {
-      // Utiliser la pagination côté serveur pour les recherches normales
-      // Priorité à totalPages si disponible (nouvelle API), sinon calculer avec totalCount
       if (pagination.totalPages !== undefined) {
         return pagination.totalPages;
       }
       return pagination.totalCount ? Math.ceil(pagination.totalCount / pagination.limit) : 1;
     }
-  }, [sortedGames, pagination, query]);
-
-  // Pagination : découpage des jeux pour afficher seulement la page courante
-  const paginatedGames = useMemo(() => {
-    if (query === 'top100_games' || query === 'top_year_games') {
-      // Pagination côté client pour les listes spéciales
-      const offset = (clientCurrentPage - 1) * pagination.limit;
-      return sortedGames.slice(offset, offset + pagination.limit);
-    } else {
-      // Pour les recherches normales, les jeux sont déjà paginés côté serveur
-      // Pas besoin de re-paginer, on utilise directement les jeux reçus
-      return sortedGames;
-    }
-  }, [sortedGames, clientCurrentPage, pagination.limit, query]);
+  }, [sortedGames, pagination, query, games]);
 
   // ==========================================================================
   // GESTIONNAIRES D'ÉVÉNEMENTS - Fonctions pour les interactions utilisateur
@@ -303,8 +396,13 @@ export function useSearch() {
    * @param newPage - Numéro de la nouvelle page
    */
   const handlePageChange = (newPage: number) => {
-    if (query === 'top100_games' || query === 'top_year_games') {
-      // Pagination côté client pour les listes spéciales
+    if (
+      query === 'top100_games' || 
+      query === 'top_year_games' ||
+      // Pour la recherche rapide, utiliser la pagination côté client
+      (query && query !== 'top100_games' && query !== 'top_year_games')
+    ) {
+      // Pagination côté client pour les listes spéciales et la recherche rapide
       setClientCurrentPage(newPage);
     } else {
       // Pour les recherches normales, mettre à jour l'URL pour déclencher une nouvelle requête API

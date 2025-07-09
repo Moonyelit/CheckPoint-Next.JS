@@ -32,23 +32,28 @@ function generateTitleVariants(slug: string): string[] {
 
 async function getGameData(slug: string): Promise<Game> {
   // 1. Essayer de récupérer le jeu directement
-  const game = await getGameBySlug(slug);
-  
+  let game = await getGameBySlug(slug);
   if (game) {
     return game;
   }
 
   // 2. Si le jeu n'est pas trouvé, essayer l'import depuis IGDB avec plusieurs variantes
   const titleVariants = generateTitleVariants(slug);
-  
   for (const titleVariant of titleVariants) {
     const importedGame = await searchAndImportGame(titleVariant);
-    
     if (importedGame) {
+      // Si le jeu importé n'a pas d'id (non persisté), on refait un fetch par slug pour garantir la persistance
+      if (!importedGame.id && importedGame.slug) {
+        const persistedGame = await getGameBySlug(importedGame.slug);
+        if (persistedGame) {
+          return persistedGame;
+        }
+      }
+      // Sinon, on retourne le jeu importé
       return importedGame;
     }
   }
-  
+
   // 3. Si aucun jeu n'est trouvé, retourner 404
   notFound();
 }

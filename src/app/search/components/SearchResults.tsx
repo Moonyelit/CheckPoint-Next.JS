@@ -49,6 +49,9 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
     );
   }
 
+  // Correction : garantir l'unicité des clés React
+  const usedKeys = new Set();
+
   return (
     <div className="search-results-container animate-in">
       {games
@@ -66,57 +69,63 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
           return true;
         })
         .map((game, index) => {
-        const title = game.name ?? game.title ?? "Titre inconnu";
-        const coverUrl = game.cover?.url ?? game.coverUrl;
-        const score = game.total_rating ?? game.totalRating;
-        
-        // Génération d'un slug pour tous les jeux
-        let slug = game.slug;
-        if (!slug && title) {
-          // Génération d'un slug basique pour les jeux d'IGDB
-          slug = title.toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-        }
-        
-        // Si toujours pas de slug, utiliser l'ID comme fallback
-        if (!slug) {
-          slug = `game-${game.id}`;
-          console.warn(`Jeu sans titre ni slug, utilisation de l'ID : ${game.id}`);
-        }
+          const title = game.name ?? game.title ?? "Titre inconnu";
+          const coverUrl = game.cover?.url ?? game.coverUrl;
+          const score = game.total_rating ?? game.totalRating;
+          
+          // Génération d'un slug pour tous les jeux
+          let slug = game.slug;
+          if (!slug && title) {
+            // Génération d'un slug basique pour les jeux d'IGDB
+            slug = title.toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '');
+          }
+          
+          // Si toujours pas de slug, utiliser l'ID comme fallback
+          if (!slug) {
+            slug = `game-${game.id}`;
+            console.warn(`Jeu sans titre ni slug, utilisation de l'ID : ${game.id}`);
+          }
 
-        // Log pour debug
-        console.log(`Rendu jeu ${index + 1}:`, {
-          id: game.id,
-          title,
-          slug,
-          coverUrl: coverUrl ? 'Oui' : 'Non',
-          score
-        });
+          // Génération d'une clé unique pour React
+          let uniqueKey =
+            (game.id && `db-${game.id}`) ||
+            (game.igdbId && `igdb-${game.igdbId}`) ||
+            (slug && `slug-${slug}-${index}`) ||
+            `fallback-${index}`;
 
-        // Génération d'une clé unique pour React
-        const uniqueKey =
-          (game.id && `db-${game.id}`) ||
-          (game.igdbId && `igdb-${game.igdbId}`) ||
-          (slug && `slug-${slug}-${index}`) ||
-          `fallback-${index}`;
+          // Correction : si la clé existe déjà, on ajoute l'index pour la rendre unique
+          if (usedKeys.has(uniqueKey)) {
+            uniqueKey = `${uniqueKey}-${index}`;
+          }
+          usedKeys.add(uniqueKey);
 
-        return (
-          <ResultsGame
-            key={uniqueKey}
-            slug={slug}
-            title={title}
-            coverUrl={coverUrl}
-            platforms={
-              game.platforms?.map((p) =>
-                typeof p === "string" ? p : p.name
-              ) ?? []
-            }
-            score={score}
-            style={{ animationDelay: `${index * 0.1}s` }}
-          />
-        );
-      })}
+          // Log pour debug
+          console.log(`Rendu jeu ${index + 1}:`, {
+            id: game.id,
+            title,
+            slug,
+            coverUrl: coverUrl ? 'Oui' : 'Non',
+            score
+          });
+
+          return (
+            <ResultsGame
+              key={uniqueKey}
+              slug={slug}
+              title={title}
+              coverUrl={coverUrl}
+              platforms={
+                game.platforms?.map((p) =>
+                  typeof p === "string" ? p : p.name
+                ) ?? []
+              }
+              score={score}
+              style={{ animationDelay: `${index * 0.1}s` }}
+            />
+          );
+        })}
     </div>
   );
 };
