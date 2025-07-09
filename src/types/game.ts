@@ -19,7 +19,25 @@ export interface Game {
   playerPerspective?: string;
   publisher?: string;
   igdbId?: string;
-  series?: string;
+  series?: string[];
+  alternativeTitles?: string[];
+  releaseDatesByPlatform?: { [platform: string]: string };
+  ageRating?: string;
+  trailerUrl?: string;
+  ratings?: {
+    graphisme?: number;
+    gameplay?: number;
+    musique?: number;
+    histoire?: number;
+    jouabilite?: number;
+  };
+  artworks?: string[];
+  videos?: {
+    name: string;
+    videoId: string;
+    url: string;
+  }[];
+  // Propriétés existantes pour compatibilité
   titles?: string;
   releaseDates?: { platform: string; date: string }[];
   ageRatings?: { pegi: string; esrb: string };

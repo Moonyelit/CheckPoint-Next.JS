@@ -148,9 +148,21 @@ export function useSearch() {
   // EFFET DE RÉCUPÉRATION DES DONNÉES - Appels API avec debouncing et cache
   // ==========================================================================
   useEffect(() => {
+    console.log('[DEBUG] useSearch - useEffect déclenché avec:', {
+      isClient,
+      query,
+      pageFromUrl
+    });
+    
     if (!isClient || !query) {
+      console.log('[DEBUG] useSearch - effet annulé car:', {
+        isClient: !isClient,
+        noQuery: !query
+      });
       return; // Pas de requête ou pas côté client = pas d'appel API
     }
+
+    console.log('[DEBUG] useSearch - début de l\'appel API pour query:', query);
 
     // Nettoyer le timeout précédent
     if (debounceRef.current) {
@@ -159,6 +171,7 @@ export function useSearch() {
 
     // Debouncing : attend 200ms avant de faire l'appel API
     debounceRef.current = setTimeout(async () => {
+      console.log('[DEBUG] useSearch - debouncing terminé, appel API pour:', query);
       
       // Construction de l'URL selon le type de requête
       let apiUrl = '';
@@ -181,6 +194,9 @@ export function useSearch() {
         // Les filtres ne sont pas envoyés à l'API, ils sont appliqués côté client
         cacheKey = `search_intelligent_${query}`;
       }
+
+      console.log('[DEBUG] useSearch - URL API construite:', apiUrl);
+      console.log('[DEBUG] useSearch - cache key:', cacheKey);
 
       // Vérifier le cache d'abord
       const cachedData = getCachedData(cacheKey);
@@ -216,13 +232,22 @@ export function useSearch() {
       try {
         setLoading(true);
         setError(null);
+        console.log('[DEBUG] useSearch - début fetch vers:', apiUrl);
         const response = await fetch(apiUrl);
         
+        console.log('[DEBUG] useSearch - réponse reçue, status:', response.status);
+        
         if (!response.ok) {
+          console.error('[DEBUG] useSearch - erreur HTTP:', response.status, response.statusText);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
+        console.log('[DEBUG] useSearch - parsing JSON...');
         const data = await response.json();
+        
+        console.log('[DEBUG] useSearch - données API reçues:', data);
+        console.log('[DEBUG] useSearch - type de data:', typeof data);
+        console.log('[DEBUG] useSearch - data est un array?', Array.isArray(data));
         
         // Mettre en cache les données
         setCachedData(cacheKey, data);
@@ -249,6 +274,7 @@ export function useSearch() {
         } else {
           // NOUVELLE LOGIQUE : Données de recherche intelligente
           const gamesData = Array.isArray(data) ? data : [];
+          console.log('[DEBUG] useSearch - gamesData avant setGames:', gamesData);
           setGames(gamesData);
           const totalItems = gamesData.length;
           const currentPage = pageFromUrl;
@@ -300,7 +326,8 @@ export function useSearch() {
             }
           }
         }
-      } catch {
+      } catch (error) {
+        console.error('[DEBUG] useSearch - erreur lors de l\'appel API:', error);
         setError('Erreur de chargement des données.');
       } finally {
         setLoading(false);
@@ -327,6 +354,11 @@ export function useSearch() {
   
   // Pagination : découpage des jeux pour afficher seulement la page courante
   const paginatedGames = useMemo(() => {
+    console.log('[DEBUG] useSearch - games reçus:', games);
+    console.log('[DEBUG] useSearch - query:', query);
+    console.log('[DEBUG] useSearch - clientCurrentPage:', clientCurrentPage);
+    console.log('[DEBUG] useSearch - pagination:', pagination);
+    
     // Pagination côté client pour les listes spéciales ET la recherche rapide
     if (
       query === 'top100_games' ||
@@ -336,9 +368,11 @@ export function useSearch() {
     ) {
       const offset = (clientCurrentPage - 1) * pagination.limit;
       const result = sortedGames.slice(offset, offset + pagination.limit);
+      console.log('[DEBUG] useSearch - paginatedGames (client):', result);
       return result;
     } else {
       // Pour les recherches normales, les jeux sont déjà paginés côté serveur
+      console.log('[DEBUG] useSearch - paginatedGames (server):', sortedGames);
       return sortedGames;
     }
   }, [sortedGames, clientCurrentPage, pagination.limit, query, games]);

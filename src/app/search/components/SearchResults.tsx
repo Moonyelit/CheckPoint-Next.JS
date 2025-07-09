@@ -23,6 +23,7 @@ interface SearchResultsProps {
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) => {
+  console.log('[DEBUG] SearchResults rendu, jeux reçus:', games);
   if (loading) {
     return <LoadingSkeleton type="search-results" count={6} />;
   }
@@ -52,22 +53,43 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
   // Correction : garantir l'unicité des clés React
   const usedKeys = new Set();
 
+  // Patch debug avancé : log structure détaillée et détection Promise/fonction/objet complexe
+  const isPlainSerializable = (obj) => {
+    if (typeof obj !== 'object' || obj === null) return true;
+    for (const key in obj) {
+      const val = obj[key];
+      if (typeof val === 'function') {
+        console.error(`[DEBUG] Champ fonction détecté dans le jeu (clé: ${key})`, obj);
+        return false;
+      }
+      if (val instanceof Promise) {
+        console.error(`[DEBUG] Champ Promise détecté dans le jeu (clé: ${key})`, obj);
+        return false;
+      }
+      if (typeof val === 'object' && val !== null && !Array.isArray(val)) {
+        // Autorise les objets cover {url: ...} mais pas d'objet complexe
+        if (key === 'cover' && val && typeof val.url === 'string') continue;
+        // Log l'objet complexe
+        console.error(`[DEBUG] Champ objet complexe détecté (clé: ${key})`, val, 'dans', obj);
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const filteredGames = games.filter((game, idx) => {
+    const ok = isPlainSerializable(game);
+    if (!ok) {
+      console.warn('[DEBUG] Jeu filtré car non sérialisable pour React:', game, 'à l\'index', idx);
+    }
+    // Log structure détaillée de chaque jeu
+    console.log('[DEBUG] Structure détaillée jeu', idx, JSON.stringify(game, null, 2));
+    return ok;
+  });
+
   return (
     <div className="search-results-container animate-in">
-      {games
-        .filter(game => {
-          // Validation des données : filtrer les jeux invalides
-          if (!game || typeof game !== 'object') return false;
-          // Accepte si id (local), ou igdbId (IGDB), ou slug (fallback)
-          if (
-            (!game.id || typeof game.id !== 'number') &&
-            (!game.igdbId || typeof game.igdbId !== 'number') &&
-            (!game.slug || typeof game.slug !== 'string' || game.slug.trim() === '')
-          ) return false;
-          const title = game.name ?? game.title;
-          if (!title || typeof title !== 'string' || title.trim() === '') return false;
-          return true;
-        })
+      {filteredGames
         .map((game, index) => {
           const title = game.name ?? game.title ?? "Titre inconnu";
           const coverUrl = game.cover?.url ?? game.coverUrl;
