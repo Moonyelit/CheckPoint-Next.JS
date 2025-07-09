@@ -178,7 +178,8 @@ export function useSearch() {
       } else {
         // NOUVELLE LOGIQUE : Utiliser la recherche intelligente (local + IGDB + filtrage intelligent)
         apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games/search-intelligent/${encodeURIComponent(query.trim())}`;
-        cacheKey = `search_intelligent_${query}_${JSON.stringify(filters)}`;
+        // Les filtres ne sont pas envoyés à l'API, ils sont appliqués côté client
+        cacheKey = `search_intelligent_${query}`;
       }
 
       // Vérifier le cache d'abord
@@ -312,7 +313,7 @@ export function useSearch() {
         clearTimeout(debounceRef.current);
       }
     };
-  }, [query, pageFromUrl, filters, isClient]);
+  }, [query, pageFromUrl, isClient]);
   
   // ==========================================================================
   // PIPELINE DE TRAITEMENT DES DONNÉES - Filtrage, tri et pagination

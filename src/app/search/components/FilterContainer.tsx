@@ -156,7 +156,7 @@ const FilterContainer: React.FC<FilterContainerProps> = ({ onFiltersChange }) =>
   const handleFilterChange = (filterType: string, translatedValues: string[]) => {
     // Convertir les valeurs traduites en valeurs originales pour le filtrage
       const mapping = FILTER_MAPPING[filterType as keyof typeof FILTER_MAPPING];
-    let originalValues: string[] = [];
+    const originalValues: string[] = [];
     translatedValues.forEach(translatedValue => {
       const mapped = mapping?.[translatedValue as keyof typeof mapping];
       if (Array.isArray(mapped)) {
