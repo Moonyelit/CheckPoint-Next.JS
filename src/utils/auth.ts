@@ -259,6 +259,14 @@ export const getInitialInscriptionStep = async (searchParams?: URLSearchParams):
       if (storedStep) {
         const step = parseInt(storedStep, 10);
         if (!isNaN(step) && step >= 1 && step <= 7) {
+          // Protection : vérifier que l'email est vérifié pour les étapes 5+
+          if (step >= 5) {
+            const isVerified = isEmailVerified();
+            if (!isVerified) {
+              console.warn('Tentative d\'accès à l\'étape', step, 'sans email vérifié. Redirection vers l\'étape 4.');
+              return 4; // Rediriger vers l'étape de vérification
+            }
+          }
           return step;
         }
       }
@@ -270,6 +278,14 @@ export const getInitialInscriptionStep = async (searchParams?: URLSearchParams):
     if (stepParam) {
       const step = parseInt(stepParam, 10);
       if (!isNaN(step) && step >= 1 && step <= 7) {
+        // Protection : vérifier que l'email est vérifié pour les étapes 5+
+        if (step >= 5) {
+          const isVerified = isEmailVerified();
+          if (!isVerified) {
+            console.warn('Tentative d\'accès à l\'étape', step, 'sans email vérifié. Redirection vers l\'étape 4.');
+            return 4; // Rediriger vers l'étape de vérification
+          }
+        }
         return step;
       }
     }

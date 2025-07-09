@@ -5,7 +5,7 @@ import { getCurrentUser, updateEmailVerificationStatus, isEmailVerified, safeLoc
 import '../styles/Step4.scss';
 
 const Step4 = () => {
-  const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [verificationStatus, setVerificationStatus] = useState<'loading' | 'success' | 'error' | 'unverified'>('loading');
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -46,6 +46,10 @@ const Step4 = () => {
               setVerificationStatus('success');
               updateEmailVerificationStatus(true);
               return;
+            } else {
+              // Email non vérifié
+              setVerificationStatus('unverified');
+              return;
             }
           }
         }
@@ -67,11 +71,23 @@ const Step4 = () => {
     // Vérifier immédiatement
     checkVerificationStatus();
 
-    // Vérifier toutes les 2 secondes
-    const interval = setInterval(checkVerificationStatus, 2000);
+    // Vérifier toutes les 2 secondes pendant 10 secondes maximum
+    let attempts = 0;
+    const maxAttempts = 5; // 5 tentatives = 10 secondes
+    const interval = setInterval(() => {
+      attempts++;
+      checkVerificationStatus();
+      
+      // Si après 5 tentatives (10 secondes) on est toujours en loading, 
+      // on considère que l'email n'est pas vérifié
+      if (attempts >= maxAttempts && verificationStatus === 'loading') {
+        setVerificationStatus('unverified');
+        clearInterval(interval);
+      }
+    }, 2000);
 
     return () => clearInterval(interval);
-  }, [searchParams]);
+  }, [searchParams, verificationStatus]);
 
   const handleContinue = () => {
     // Marquer qu'on passe à l'étape 5
@@ -79,6 +95,11 @@ const Step4 = () => {
     
     // Rediriger vers l'étape 5 en utilisant le router
     router.push('/inscription?step=5');
+  };
+
+  const handleResendEmail = () => {
+    // Rediriger vers l'étape 3 pour renvoyer l'email
+    router.push('/inscription?step=3');
   };
 
   const renderContent = () => {
@@ -109,6 +130,38 @@ const Step4 = () => {
             >
               Continuer
                 </button>
+          </div>
+        );
+
+      case 'unverified':
+        return (
+          <div className="step4__form-container">
+            <header className="step4__header">
+              <div className="step4__achievement-label">
+                Email non vérifié
+              </div>
+              <h1 className="step4__title_error">
+                Votre email n&apos;est pas encore vérifié
+              </h1>
+              <p className="step4__description">
+                Pour continuer votre inscription, vous devez d&apos;abord vérifier votre adresse email. 
+                Vérifiez votre boîte de réception et cliquez sur le lien de vérification.
+              </p>
+            </header>
+            <div className="step4__error-actions">
+              <button 
+                className="btn-custom-inverse"
+                onClick={handleResendEmail}
+              >
+                Renvoyer l&apos;email de vérification
+              </button>
+              <button 
+                className="step4__secondary-button" 
+                onClick={() => router.push('/connexion')}
+              >
+                Retour à la connexion
+              </button>
+            </div>
           </div>
         );
 

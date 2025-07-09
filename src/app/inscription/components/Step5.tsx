@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, saveAuthData, getAuthData } from '@/utils/auth';
+import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, saveAuthData, getAuthData, isEmailVerified } from '@/utils/auth';
 import '../styles/Step5.scss';
 
 // Extension de l'interface User pour inclure profileImage
@@ -25,6 +25,13 @@ const Step5 = ({ onNext }: Step5Props) => {
   useEffect(() => {
     const initializeStep = async () => {
       try {
+        // Vérifier que l'email est vérifié avant d'autoriser l'accès à l'étape 5
+        if (!isEmailVerified()) {
+          console.warn('Tentative d\'accès à l\'étape 5 sans email vérifié. Redirection vers l\'étape 4.');
+          window.location.href = '/inscription?step=4';
+          return;
+        }
+
         // Marquer qu'on est à l'étape 5
         safeLocalStorageSet('inscriptionStep', '5');
         
