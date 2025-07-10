@@ -43,7 +43,6 @@ export default function Home() {
             } else {
               setIsConnected(true);
               setIsLoading(false);
-              router.push('/');
             }
           }
         } catch (error) {

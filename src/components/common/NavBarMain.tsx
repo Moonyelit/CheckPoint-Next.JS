@@ -74,8 +74,7 @@ export default function Navbar() {
               <Link href="/profile">Mon Profil</Link>
             </li>
             <li>
-              <Link href="/games">Jeux</Link>
-            </li>
+            <Link href="/search?query=top100_games">Jeux</Link>            </li>
             <li>
               <Link href="/lists">Listes</Link>
             </li>
