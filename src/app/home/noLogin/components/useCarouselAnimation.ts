@@ -72,6 +72,8 @@ export function useCarouselAnimation(total: number, config: CarouselConfig = {})
 
   // Arrêter l'auto-play lors de l'interaction et reprendre après le délai
   const handleUserInteraction = useCallback(() => {
+    if (total === 0) return;
+    
     setIsAutoPlaying(false);
     stopAutoPlay();
     
@@ -86,7 +88,7 @@ export function useCarouselAnimation(total: number, config: CarouselConfig = {})
       setIsAutoPlaying(true);
       timeoutRef.current = null;
     }, resumeDelay);
-  }, [resumeDelay, stopAutoPlay]);
+  }, [resumeDelay, stopAutoPlay, total]);
 
   // Nettoyage des timers au démontage
   useEffect(() => {
@@ -101,19 +103,22 @@ export function useCarouselAnimation(total: number, config: CarouselConfig = {})
 
   // Actions du carrousel
   const goToNext = useCallback(() => {
+    if (total === 0) return;
     handleUserInteraction();
     setActiveIndex((i) => (i + 1) % total);
   }, [handleUserInteraction, total]);
 
   const goToPrev = useCallback(() => {
+    if (total === 0) return;
     handleUserInteraction();
     setActiveIndex((i) => (i - 1 + total) % total);
   }, [handleUserInteraction, total]);
 
   const goToIndex = useCallback((idx: number) => {
+    if (total === 0) return;
     handleUserInteraction();
     setActiveIndex(idx);
-  }, [handleUserInteraction]);
+  }, [handleUserInteraction, total]);
 
   // Calcul des classes CSS pour chaque carte
   const getCardClass = useCallback((idx: number): string => {

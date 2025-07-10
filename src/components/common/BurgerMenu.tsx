@@ -1,14 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import "./styles/BurgerMenu.scss";
+import { isUserLoggedIn, logout } from '@/utils/auth';
+import { useRouter } from 'next/navigation';
 
 //*******************************************************
 // Burger Menu pour les petits écrans
 //*******************************************************
 // Composant qui gère deux menus déroulants séparés :
 // 1. Menu de navigation (liens principaux)
-// 2. Menu d'authentification (connexion/inscription)
+// 2. Menu d'authentification (connexion/inscription ou profil/déconnexion)
 const BurgerMenu: React.FC = () => {
   //*******************************************************
   // ÉTATS DE GESTION DES MENUS
@@ -22,8 +24,42 @@ const BurgerMenu: React.FC = () => {
   const [authMenuOpen, setAuthMenuOpen] = useState(false); // Menu auth ouvert ou fermé
   const [authMenuClosing, setAuthMenuClosing] = useState(false); // Animation de fermeture en cours
 
+  // État d'authentification
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+
   // Durée des animations d'ouverture/fermeture (doit correspondre au CSS)
   const animationDuration = 400; // durée en ms (0.4s)
+
+  // Vérification de l'état d'authentification
+  useEffect(() => {
+    const checkAuth = () => {
+      const isLoggedIn = isUserLoggedIn();
+      setIsAuthenticated(isLoggedIn);
+    };
+
+    // Vérifier immédiatement
+    checkAuth();
+    
+    // Écouter les changements de stockage
+    window.addEventListener('storage', checkAuth);
+    
+    // Vérifier périodiquement
+    const interval = setInterval(checkAuth, 2000);
+
+    return () => {
+      window.removeEventListener('storage', checkAuth);
+      clearInterval(interval);
+    };
+  }, []);
+
+  // Fonction de déconnexion
+  const handleLogout = () => {
+    logout();
+    setIsAuthenticated(false);
+    router.push('/');
+    closeAuthMenu();
+  };
 
   //*******************************************************
   // FONCTIONS DE GESTION DU MENU NAVIGATION
@@ -126,7 +162,7 @@ const BurgerMenu: React.FC = () => {
               </Link>
             </li>
             <li onClick={toggleNavMenu}>
-              <Link href="/games">Jeux</Link>
+              <Link href="/search?query=top100_games">Jeux</Link>
             </li>
             <li onClick={toggleNavMenu}>
               <Link href="/lists">Listes</Link>
@@ -149,14 +185,29 @@ const BurgerMenu: React.FC = () => {
             <i className="bx bx-x" />
           </div>
           
-          {/* Liste des liens d'authentification */}
+          {/* Liste des liens d'authentification - adaptée selon l'état de connexion */}
           <ul className="menuBurger-authOverlay-authList" onClick={(e) => e.stopPropagation()}>
-            <li onClick={toggleAuthMenu}>
-              <Link href="/inscription">S&apos;inscrire</Link>
-            </li>
-            <li onClick={toggleAuthMenu}>
-              <Link href="/auth/connexion">Connexion</Link>
-            </li>
+            {isAuthenticated ? (
+              // Menu pour utilisateur connecté
+              <>
+                <li onClick={toggleAuthMenu}>
+                  <Link href="/profile">Mon Profil</Link>
+                </li>
+                <li onClick={handleLogout}>
+                  <button className="menuBurger-logout-btn">Se déconnecter</button>
+                </li>
+              </>
+            ) : (
+              // Menu pour utilisateur non connecté
+              <>
+                <li onClick={toggleAuthMenu}>
+                  <Link href="/inscription">S&apos;inscrire</Link>
+                </li>
+                <li onClick={toggleAuthMenu}>
+                  <Link href="/connexion">Connexion</Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       )}

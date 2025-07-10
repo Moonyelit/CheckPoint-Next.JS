@@ -324,6 +324,32 @@
             @include box-shadow(0, 10px, 25px, 0, rgba(35, 171, 250, 0.4));
           }
         }
+
+        // Style pour le bouton de déconnexion
+        .menuBurger-logout-btn {
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--white);
+          text-decoration: none;
+          padding: 15px 25px;
+          border-radius: 25px;
+          @include transition(all, 0.3s, ease);
+          display: block;
+          text-align: center;
+          background: var(--bleu-crystal-fonce);
+          border: 2px solid var(--bleu-crystal-normal);
+          width: 100%;
+          box-sizing: border-box;
+          cursor: pointer;
+          font-family: inherit;
+
+          &:hover {
+            background: var(--pink-clair);
+            color: var(--black);
+            transform: translateY(-3px);
+            @include box-shadow(0, 10px, 25px, 0, rgba(12, 97, 187, 0.4));
+          }
+        }
       }
     }
   }

@@ -27,6 +27,11 @@
     z-index: 2;
     height: 100%;
     @include flex(row, center);
+    
+    // Force l'affichage en ligne sur desktop pour éviter les problèmes d'hydratation
+    @media (min-width: 1024px) {
+      flex-direction: row !important;
+    }
   }
 
   /* Section gauche */
@@ -48,6 +53,11 @@
     @include flex(row, center, center);
     position: relative;
     margin: 10rem 5rem 0 0;
+    
+    // Force l'affichage sur desktop
+    @media (min-width: 1024px) {
+      display: flex !important;
+    }
   }
 
   /* Conteneur des cartes du carousel */
@@ -175,11 +185,22 @@
   .hero-banner {
     &__container {
       @include flex(column);
+      
+      // Force l'affichage en ligne sur desktop même en cas de problème d'hydratation
+      @media (min-width: 1024px) {
+        flex-direction: row !important;
+      }
     }
 
     &__right {
       @include flex(row, center, center);
       margin: 0.5rem 8rem 0 0;
+      
+      // Force l'affichage sur desktop
+      @media (min-width: 1024px) {
+        display: flex !important;
+        margin: 10rem 5rem 0 0 !important;
+      }
     }
 
     &__controls {
@@ -194,6 +215,11 @@
   .hero-banner {
     &__right {
       display: none;
+      
+      // Force l'affichage sur desktop
+      @media (min-width: 1024px) {
+        display: flex !important;
+      }
     }
   }
 }

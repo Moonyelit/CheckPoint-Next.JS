@@ -20,7 +20,13 @@ interface Game {
 export default function HeroBanner() {
   const [cardsData, setCardsData] = useState<Game[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isHydrated, setIsHydrated] = useState(false);
   const total = cardsData.length;
+
+  // Vérification de l'hydratation côté client
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   // Hook custom pour l'animation du carrousel - seulement si on a des données
   const carouselAnimation = useCarouselAnimation(total, {
@@ -95,6 +101,46 @@ export default function HeroBanner() {
     trackMouse: true,
   });
 
+  // Si pas encore hydraté, afficher un skeleton
+  if (!isHydrated) {
+    return (
+      <section className="hero-banner">
+        <div className="hero-banner__container main-container">
+          <div className="hero-banner__left">
+            <div className="hero-banner__content">
+              <h1 className="Title1-Karantina">Parce que chaque partie mérite d&apos;être sauvegardée</h1>
+              <p className="Paragraphe1">
+                La plateforme gamifiée pour suivre ta progression et gérer ta
+                collection de jeux vidéo
+              </p>
+              <Button label="S'inscrire" />
+            </div>
+          </div>
+          <div className="hero-banner__right">
+            <div className="hero-banner__cards">
+              <div className="hero-banner__cards-wrapper">
+                <div className="hero-banner__card hero-banner__card--active">
+                  <div style={{ 
+                    width: '100%', 
+                    height: '100%', 
+                    background: 'linear-gradient(135deg, #748599 0%, #a8bbc5 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    borderRadius: '1rem'
+                  }}>
+                    Chargement...
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   // Si pas de données, afficher un message ou un skeleton
   if (isLoading) {
     return (
@@ -135,6 +181,9 @@ export default function HeroBanner() {
     );
   }
 
+  // S'assurer que le carrousel ne se rend que quand tout est prêt
+  const isReady = isHydrated && !isLoading && cardsData.length > 0;
+
   return (
     <section className="hero-banner">
       <div className="hero-banner__container main-container">
@@ -151,7 +200,7 @@ export default function HeroBanner() {
         <div className="hero-banner__right">
           <div className="hero-banner__cards" {...handlers}>
             <div className="hero-banner__cards-wrapper">
-              {cardsData.length > 0 ? (
+              {isReady ? (
                 cardsData.map((game, idx) => (
                   <div
                     key={game.id}
@@ -187,7 +236,7 @@ export default function HeroBanner() {
                 </div>
               )}
             </div>
-            {cardsData.length > 1 && (
+            {isReady && cardsData.length > 1 && (
               <div className="hero-banner__controls">
                 <button onClick={goToPrev} className="hero-banner__button">&lt;</button>
                 <button onClick={goToNext} className="hero-banner__button">&gt;</button>
