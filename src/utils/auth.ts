@@ -121,6 +121,30 @@ export const logout = (): void => {
   sessionStorage.removeItem('user');
 };
 
+// Vérifier si l'utilisateur a validé son email (depuis le serveur)
+export const isEmailVerifiedFromServer = async (): Promise<boolean> => {
+  try {
+    const token = getAuthToken();
+    if (!token) return false;
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/me`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.ok) {
+      const userData = await response.json();
+      return Boolean(userData.emailVerified);
+    }
+    
+    return false;
+  } catch (error) {
+    console.error('Erreur lors de la vérification du statut email depuis le serveur:', error);
+    return false;
+  }
+};
+
 // Vérifier si l'utilisateur a validé son email
 export const isEmailVerified = (): boolean => {
     const user = getCurrentUser();
@@ -259,9 +283,9 @@ export const getInitialInscriptionStep = async (searchParams?: URLSearchParams):
       if (storedStep) {
         const step = parseInt(storedStep, 10);
         if (!isNaN(step) && step >= 1 && step <= 7) {
-          // Protection : vérifier que l'email est vérifié pour les étapes 5+
+          // Vérification d'email depuis le serveur pour les étapes 5+
           if (step >= 5) {
-            const isVerified = isEmailVerified();
+            const isVerified = await isEmailVerifiedFromServer();
             if (!isVerified) {
               console.warn('Tentative d\'accès à l\'étape', step, 'sans email vérifié. Redirection vers l\'étape 4.');
               return 4; // Rediriger vers l'étape de vérification
@@ -278,9 +302,9 @@ export const getInitialInscriptionStep = async (searchParams?: URLSearchParams):
     if (stepParam) {
       const step = parseInt(stepParam, 10);
       if (!isNaN(step) && step >= 1 && step <= 7) {
-        // Protection : vérifier que l'email est vérifié pour les étapes 5+
+        // Vérification d'email depuis le serveur pour les étapes 5+
         if (step >= 5) {
-          const isVerified = isEmailVerified();
+          const isVerified = await isEmailVerifiedFromServer();
           if (!isVerified) {
             console.warn('Tentative d\'accès à l\'étape', step, 'sans email vérifié. Redirection vers l\'étape 4.');
             return 4; // Rediriger vers l'étape de vérification

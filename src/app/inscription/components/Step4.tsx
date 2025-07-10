@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { getCurrentUser, updateEmailVerificationStatus, isEmailVerified, safeLocalStorageSet } from '@/utils/auth';
+import { getCurrentUser, updateEmailVerificationStatus, isEmailVerified, safeLocalStorageSet, isEmailVerifiedFromServer } from '@/utils/auth';
 import '../styles/Step4.scss';
 
 const Step4 = () => {
@@ -33,24 +33,16 @@ const Step4 = () => {
         // Si pas de paramètres URL, vérifier l'état actuel
         const currentUser = getCurrentUser();
         if (currentUser) {
-          // Vérifier avec l'API
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/me`, {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('authToken') || sessionStorage.getItem('authToken')}`
-            }
-          });
-
-          if (response.ok) {
-            const userData = await response.json();
-            if (userData.emailVerified) {
-              setVerificationStatus('success');
-              updateEmailVerificationStatus(true);
-              return;
-            } else {
-              // Email non vérifié
-              setVerificationStatus('unverified');
-              return;
-            }
+          // Vérifier avec la nouvelle fonction qui utilise le serveur
+          const isVerified = await isEmailVerifiedFromServer();
+          if (isVerified) {
+            setVerificationStatus('success');
+            updateEmailVerificationStatus(true);
+            return;
+          } else {
+            // Email non vérifié
+            setVerificationStatus('unverified');
+            return;
           }
         }
 
@@ -89,12 +81,29 @@ const Step4 = () => {
     return () => clearInterval(interval);
   }, [searchParams, verificationStatus]);
 
-  const handleContinue = () => {
-    // Marquer qu'on passe à l'étape 5
-    safeLocalStorageSet('inscriptionStep', '5');
-    
-    // Rediriger vers l'étape 5 en utilisant le router
-    router.push('/inscription?step=5');
+  const handleContinue = async () => {
+    try {
+      // Vérifier le statut d'email depuis le serveur
+      const isVerified = await isEmailVerifiedFromServer();
+      
+      if (isVerified) {
+        // Mettre à jour le statut local
+        updateEmailVerificationStatus(true);
+        
+        // Marquer qu'on passe à l'étape 5
+        safeLocalStorageSet('inscriptionStep', '5');
+        
+        // Rediriger vers l'étape 5 en utilisant le router
+        router.push('/inscription?step=5');
+      } else {
+        // Si l'email n'est pas vérifié, rester sur l'étape 4
+        console.warn('Email non vérifié, impossible de continuer vers l\'étape 5');
+        setVerificationStatus('unverified');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification:', error);
+      setVerificationStatus('error');
+    }
   };
 
   const handleResendEmail = () => {

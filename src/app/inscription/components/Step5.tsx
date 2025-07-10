@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, saveAuthData, getAuthData, isEmailVerified } from '@/utils/auth';
+import { getCurrentUser, safeLocalStorageSet, User, getAuthToken, saveAuthData, getAuthData, isEmailVerifiedFromServer } from '@/utils/auth';
 import '../styles/Step5.scss';
 
 // Extension de l'interface User pour inclure profileImage
@@ -26,7 +26,8 @@ const Step5 = ({ onNext }: Step5Props) => {
     const initializeStep = async () => {
       try {
         // Vérifier que l'email est vérifié avant d'autoriser l'accès à l'étape 5
-        if (!isEmailVerified()) {
+        const isVerified = await isEmailVerifiedFromServer();
+        if (!isVerified) {
           console.warn('Tentative d\'accès à l\'étape 5 sans email vérifié. Redirection vers l\'étape 4.');
           window.location.href = '/inscription?step=4';
           return;
@@ -88,49 +89,55 @@ const Step5 = ({ onNext }: Step5Props) => {
           return;
         }
 
-        // Créer un objet File à partir de l'URL de l'avatar
-        const response = await fetch(selectedAvatar);
-        const blob = await response.blob();
-        const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+        // Vérifier si l'avatar a changé par rapport à l'original
+        const originalAvatar = currentUser.profileImage || '/images/avatars/DefaultAvatar.JPG';
+        const hasAvatarChanged = selectedAvatar !== originalAvatar;
 
-        // Créer FormData pour l'upload
-        const formData = new FormData();
-        formData.append('avatar', file);
+        if (hasAvatarChanged) {
+          // Créer un objet File à partir de l'URL de l'avatar
+          const response = await fetch(selectedAvatar);
+          const blob = await response.blob();
+          const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
 
-        // Utiliser l'endpoint d'upload d'avatar
-        const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload-avatar`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-          body: formData,
-        });
+          // Créer FormData pour l'upload
+          const formData = new FormData();
+          formData.append('avatar', file);
 
-        if (!uploadResponse.ok) {
-          const errorData = await uploadResponse.json();
-          console.error('Erreur lors de la sauvegarde de l\'avatar:', uploadResponse.status);
-          console.error('Erreur details:', JSON.stringify(errorData));
-          throw new Error(`Erreur lors de la sauvegarde de l'avatar: ${uploadResponse.status}`);
+          // Utiliser l'endpoint d'upload d'avatar
+          const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/upload-avatar`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          if (!uploadResponse.ok) {
+            const errorData = await uploadResponse.json();
+            console.error('Erreur lors de la sauvegarde de l\'avatar:', uploadResponse.status);
+            console.error('Erreur details:', JSON.stringify(errorData));
+            throw new Error(`Erreur lors de la sauvegarde de l'avatar: ${uploadResponse.status}`);
+          }
+
+          const result = await uploadResponse.json();
+          
+          // Mettre à jour les données utilisateur avec la nouvelle URL d'avatar
+          const authData = getAuthData();
+          if (!authData) {
+            console.error('Données d\'authentification non trouvées');
+            return;
+          }
+
+          // Mettre à jour uniquement l'avatar dans les données utilisateur
+          const updatedUser = {
+            ...authData.user,
+            profileImage: result.avatarUrl
+          };
+
+          // Sauvegarder les données mises à jour avec le même token
+          const isRememberMe = localStorage.getItem('rememberMe') === 'true';
+          saveAuthData({ token: authData.token, user: updatedUser }, isRememberMe);
         }
-
-        const result = await uploadResponse.json();
-        
-        // Mettre à jour les données utilisateur avec la nouvelle URL d'avatar
-        const authData = getAuthData();
-        if (!authData) {
-          console.error('Données d\'authentification non trouvées');
-          return;
-        }
-
-        // Mettre à jour uniquement l'avatar dans les données utilisateur
-        const updatedUser = {
-          ...authData.user,
-          profileImage: result.avatarUrl
-        };
-
-        // Sauvegarder les données mises à jour avec le même token
-        const isRememberMe = localStorage.getItem('rememberMe') === 'true';
-        saveAuthData({ token: authData.token, user: updatedUser }, isRememberMe);
         
         // Continuer vers l'étape suivante
         if (onNext) {
