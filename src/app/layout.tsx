@@ -8,7 +8,6 @@ import ResourcePreloader from '@/components/common/ResourcePreloader';
 import PagePreloader from '@/components/common/PagePreloader';
 import ServiceWorkerManager from "@/components/common/ServiceWorkerManager";
 import "@/styles/globals.scss";
-import MemoryMonitor from '@/components/common/MemoryMonitor';
 import CleanupProvider from '@/components/common/CleanupProvider';
 
 export const metadata: Metadata = {
@@ -118,7 +117,6 @@ export default function RootLayout({
         <ServiceWorkerManager />
         
         {/* Debugger de cache temporairement désactivé */}
-        <MemoryMonitor />
         <CleanupProvider />
       </body>
     </html>
