@@ -4,11 +4,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 7rem 1rem 0 0.5rem;
+  margin: 7rem 1.8rem 0 1.2rem;
   z-index: 10000;
 
   .button {
-    width: 80%;
+    width: 100%;
     font-size: 0.9rem;
     letter-spacing: 0.4px;
     z-index: 10001 !important;
@@ -22,28 +22,63 @@
     display: flex;
     justify-content: center;
     gap: 8px;
-    z-index: 10001;
+    z-index: 100;
     position: relative;
   }
 
   .quick-actions {
     display: flex;
-    gap: 8px;
+    gap: 0.25rem;
     justify-content: center;
     width: 100%;
-    margin-top: 16px;
-    z-index: 10001;
+    margin-top: 1rem;
+    z-index: 100;
     position: relative;
 
     span {
-      background: #dbeafe;
+      background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), var(--gris-fonce);
       border-radius: 8px;
-      padding: 4px 12px;
-      font-weight: 600;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      font-size: 1rem;
-      color: #444;
+      text-align: center;
+      gap: 0.5rem;
+      position: relative;
+      width: 80px;
+      height: 80px;
+      justify-content: center;
+      padding: 0.75rem 0.5rem;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+
+      &:hover {
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), var(--gris-fonce);
+        transform: scale(1.05);
+      }
+
+      p {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--white);
+      }
+
+      svg {
+        position: relative;
+        width: 16px;
+        height: 22px;
+        
+        // Pour "J'y joue" - SVG plus large
+        &[width="26"] {
+          width: 24px;
+          height: 22px;
+        }
+        
+        // Pour "Je veux" - SVG de taille moyenne
+        &[width="20"] {
+          width: 20px;
+          height: 22px;
+        }
+      }
     }
   }
 } 
