@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 0 0; 
+  margin-left: 18rem;
   position: relative;
   overflow: visible;
 
@@ -14,7 +14,7 @@
     transform: translateX(-50%);
     width: 100vw; 
     height: 100%;
-    background: rgba(0, 0, 0, 0.2);
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), var(--gris-fonce);
     z-index: -1;
   }
 

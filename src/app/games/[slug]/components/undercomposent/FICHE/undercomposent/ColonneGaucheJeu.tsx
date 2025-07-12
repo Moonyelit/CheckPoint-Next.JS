@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/ColonneGaucheJeu.scss";
+import "./styles/ColonneGaucheJeu.scss";
 import "@/components/common/styles/Button.scss";
 import Image from "next/image";
 

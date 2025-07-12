@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import { Game } from "@/types/game";
-import GameFichePanel from "./common/GameFichePanel";
-import GameFicheHeader from "./common/GameFicheHeader";
-import TabsNav, { TabType } from "./undercomposent/FICHE/undercomposent/TabsNav";
-import TabContent from "./common/TabContent";
+import GameFichePanel from "../../../common/GameFichePanel";
+import GameFicheHeader from "../../../common/GameFicheHeader";
+import TabsNav, { TabType } from "./TabsNav";
+import TabContent from "../../../common/TabContent";
 
 interface GameContenuProps {
   game: Game;

@@ -1,7 +1,7 @@
 import { getGameBySlug, searchAndImportGame } from "@/lib/simpleGameApi";
 import "./game.scss";
 import GameHeader from "./components/GameHeader";
-import GameContenu from "./components/GameContenu";
+import GameContenu from "./components/undercomposent/FICHE/undercomposent/GameContenu";
 import { notFound } from "next/navigation";
 import { Game } from "@/types/game";
 

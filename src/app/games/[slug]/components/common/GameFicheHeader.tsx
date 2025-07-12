@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/GameFicheHeader.scss";
+import "./GameFicheHeader.scss";
 import { getImageUrl } from "@/lib/imageUtils";
 
 // Composant Donut SVG pour le rating
@@ -95,9 +95,11 @@ export default function GameFicheHeader({ title, year, studio, developer, coverU
         </h1>
         <div className="game-fiche-header__subtitle">{studio || developer}</div>
       </div>
-      <div className="game-fiche-header__rating">
-        <DonutProgress value={totalRating || 90} size={100} strokeWidth={15} />
-      </div>
+      {totalRating && totalRating > 0 && (
+        <div className="game-fiche-header__rating">
+          <DonutProgress value={totalRating} size={100} strokeWidth={15} />
+        </div>
+      )}
     </div>
   );
 } 

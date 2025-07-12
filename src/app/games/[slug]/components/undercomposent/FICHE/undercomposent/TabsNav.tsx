@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/TabsNav.scss";
+import "./styles/TabsNav.scss";
 
 export type TabType = "fiche" | "media" | "critiques" | "challenges";
 

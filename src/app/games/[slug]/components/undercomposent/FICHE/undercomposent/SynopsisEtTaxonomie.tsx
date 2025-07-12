@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Game } from "@/types/game";
+import "./styles/SynopsisEtTaxonomie.scss";
 
 // Fonction pour formater les noms des plateformes
 const formatPlatformName = (platform: string): string => {
@@ -39,26 +40,31 @@ const formatPlatformName = (platform: string): string => {
   return platform;
 };
 
-// Fonction pour traduire le texte avec MyMemory (gratuit)
+// Fonction pour traduire le texte avec MyMemory (gratuit) + cache local
 const translateText = async (text: string): Promise<string> => {
   try {
     // Nettoyer le texte (supprimer les doublons)
     const cleanText = text.replace(/(.+?)(?=\1)/g, '').trim();
-    
     if (!cleanText) return text;
-    
+
+    // Vérifier le cache local
+    const cacheKey = `translation_${btoa(cleanText)}`;
+    const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
+    if (cached) return cached;
+
     // Utiliser MyMemory (service gratuit et fiable)
     const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(cleanText)}&langpair=en|fr`);
-    
+
+    if (response.status === 429) {
+      throw new Error('429');
+    }
     if (!response.ok) {
       throw new Error(`Erreur HTTP: ${response.status}`);
     }
-    
+
     const data = await response.json();
-    
     if (data && data.responseData && data.responseData.translatedText) {
       let translatedText = data.responseData.translatedText;
-      
       // Améliorations post-traduction
       translatedText = translatedText
         .replace(/\b2025\b/g, "2025")
@@ -70,12 +76,17 @@ const translateText = async (text: string): Promise<string> => {
         .replace(/\bgame\b/gi, "jeu")
         .replace(/\bcooperative\b/gi, "coopératif")
         .replace(/\bmultiplayer\b/gi, "multijoueur");
-      
+      // Stocker dans le cache local
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(cacheKey, translatedText);
+      }
       return translatedText;
     }
-    
     return cleanText;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === '429') {
+      return "Trop de requêtes de traduction. Veuillez réessayer plus tard.";
+    }
     console.error('Erreur de traduction:', error);
     return text;
   }
@@ -84,6 +95,7 @@ const translateText = async (text: string): Promise<string> => {
 export default function SynopsisEtTaxonomie({ game }: { game?: Game }) {
   const [translatedSynopsis, setTranslatedSynopsis] = useState<string>("");
   const [isTranslating, setIsTranslating] = useState<boolean>(false);
+  const [showOriginal, setShowOriginal] = useState<boolean>(false);
 
   useEffect(() => {
     const translateSynopsis = async () => {
@@ -93,6 +105,13 @@ export default function SynopsisEtTaxonomie({ game }: { game?: Game }) {
         const translated = await translateText(originalText);
         setTranslatedSynopsis(translated);
         setIsTranslating(false);
+        // Si la traduction a échoué à cause du quota, planifier l'affichage du texte original
+        if (translated === "Trop de requêtes de traduction. Veuillez réessayer plus tard.") {
+          setShowOriginal(false);
+          setTimeout(() => setShowOriginal(true), 3000);
+        } else {
+          setShowOriginal(false);
+        }
       }
     };
 
@@ -108,7 +127,11 @@ export default function SynopsisEtTaxonomie({ game }: { game?: Game }) {
     <section className="synopsis-taxonomie">
       <h2 className="synopsis-taxonomie__title">STORY</h2>
       <p className="synopsis-taxonomie__text">
-        {isTranslating ? "Traduction en cours..." : (translatedSynopsis || game.summary || "Aucune histoire disponible.")}
+        {isTranslating
+          ? "Traduction en cours..."
+          : showOriginal && game.summary && translatedSynopsis === "Trop de requêtes de traduction. Veuillez réessayer plus tard."
+            ? game.summary
+            : (translatedSynopsis || game.summary || "Aucune histoire disponible.")}
       </p>
       
       <h3 className="synopsis-taxonomie__title">PLATEFORMES</h3>

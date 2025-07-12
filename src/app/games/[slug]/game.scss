@@ -3,12 +3,12 @@
 
 // Import des styles des composants
 @use './components/styles/GameHeader' as *;
-@use './components/styles/GameFicheHeader' as *;
-@use './components/styles/GameFichePanel' as *;
-@use './components/styles/TabsNav' as *;
-@use './components/styles/TabContent' as *;
+@use './components/common/GameFicheHeader' as *;
+@use './components/common/GameFichePanel' as *;
+@use './components/common/TabContent' as *;
+@use './components/undercomposent/FICHE/undercomposent/styles/TabsNav' as *;
 @use './components/styles/GameContenu' as *;
-@use './components/styles/SynopsisEtTaxonomie' as *;
+@use './components/undercomposent/FICHE/undercomposent/styles/SynopsisEtTaxonomie' as *;
 
 .game-fiche-container {
     position: relative;

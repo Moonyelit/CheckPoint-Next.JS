@@ -9,7 +9,7 @@ import {
   Legend,
 } from 'chart.js';
 import Image from 'next/image';
-import '../styles/RadarChart.scss';
+import './styles/RadarChart.scss';
 
 ChartJS.register(
   RadialLinearScale,
@@ -42,6 +42,9 @@ interface RadarChartProps {
 export default function RadarChart({ ratings, style, className }: RadarChartProps) {
   // Utilise les notes détaillées calculées par l'API si disponibles, sinon utilise les notes manuelles
   const detailedRatings = ratings.detailedRatings || ratings;
+  
+  // Vérifier s'il y a des données valides
+  const hasValidData = Object.values(detailedRatings).some(value => value && value > 0);
   
   const data = {
     labels: ['Jouabilité', 'Gameplay', 'OST', 'Histoire', 'Graphisme'],
@@ -137,6 +140,13 @@ export default function RadarChart({ ratings, style, className }: RadarChartProp
           />
         </div>
       </div>
+      {!hasValidData && (
+        <div className="radar-chart__no-data">
+          <div className="radar-chart__no-data-content">
+            <span>Aucune donnée IGDB</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 

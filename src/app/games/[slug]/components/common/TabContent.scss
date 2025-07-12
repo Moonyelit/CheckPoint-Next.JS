@@ -1,6 +1,5 @@
 .tab-content-wrapper {
   flex: 1;
-  padding: 24px 0;
 }
 
 /**********************************************************
@@ -14,9 +13,18 @@
       flex-direction: row;
       align-items: flex-start;
       gap: 2rem;
+      background: var(--gris-fonce);
+      padding: 1rem;
+
+    }
+
+    .fiche-content__synopsis {
+      flex: 1;
     }
 
     .fiche-content__radar {
+      flex-shrink: 0;
+      
       .radar-chart {
         width: 20rem;
         height: 20rem;

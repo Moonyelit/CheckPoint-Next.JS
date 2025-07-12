@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/GameFichePanel.scss";
+import "./GameFichePanel.scss";
 
 interface GameFichePanelProps {
   children: React.ReactNode;
@@ -7,8 +7,10 @@ interface GameFichePanelProps {
 
 export default function GameFichePanel({ children }: GameFichePanelProps) {
   return (
-    <section className="game-fiche-panel">
-      {children}
-    </section>
+    <div className="game-fiche-panel-wrapper">
+      <section className="game-fiche-panel">
+        {children}
+      </section>
+    </div>
   );
 } 
