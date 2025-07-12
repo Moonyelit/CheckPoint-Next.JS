@@ -32,3 +32,27 @@
     font-weight: 500;
   }
 } 
+
+.genres-list {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+
+.genre-badge {
+  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), var(--gris-fonce);
+  border-radius: 8px;
+  padding: 6px 18px;
+  font-weight: bold;
+  font-size: 0.875rem;
+  font-family: var(--font-title);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.7);
+  letter-spacing: 0.01em;
+  transition: all 0.5s ease-in-out;
+  &:hover {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), var(--gris-fonce);
+    color: var(--white);
+    transform: scale(1.05);
+  }
+} 

@@ -113,6 +113,15 @@ export default function SynopsisEtTaxonomie({ game }: { game?: Game }) {
       
       <h3 className="synopsis-taxonomie__title">PLATEFORMES</h3>
       <p className="synopsis-taxonomie__text">{formattedPlatforms.join(", ") || "-"}</p>
+      {game.genres && game.genres.length > 0 && (
+        <div className="genres-list">
+          {game.genres.map((genre, idx) => (
+            <span key={idx} className="genre-badge">
+              {genre}
+            </span>
+          ))}
+        </div>
+      )}
     </section>
   );
 } 

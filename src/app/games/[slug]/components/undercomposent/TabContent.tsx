@@ -2,6 +2,7 @@ import React from "react";
 import { Game } from "@/types/game";
 import { TabType } from "./TabsNav";
 import SynopsisEtTaxonomie from "./SynopsisEtTaxonomie";
+import RadarChart from "./RadarChart";
 
 interface TabContentProps {
   activeTab: TabType;
@@ -11,108 +12,68 @@ interface TabContentProps {
 export default function TabContent({ activeTab, game }: TabContentProps) {
   const renderContent = () => {
     switch (activeTab) {
+      /**********************************************************
+      ************************* ONGLET FICHE *******************
+      **********************************************************/
       case "fiche":
         return (
-          <div className="tab-content fiche-content">
-            <SynopsisEtTaxonomie game={game} />
-            <div className="game-details">
-              <h3>Détails du jeu</h3>
-              <div className="details-grid">
-                <div className="detail-item">
-                  <span className="label">Développeur:</span>
-                  <span className="value">{game.developer || "Non spécifié"}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Éditeur:</span>
-                  <span className="value">{game.publisher || "Non spécifié"}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Genre:</span>
-                  <span className="value">{game.genres?.join(", ") || "Non spécifié"}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="label">Plateformes:</span>
-                  <span className="value">{game.platforms?.join(", ") || "Non spécifié"}</span>
-                </div>
-                {game.series && game.series.length > 0 && (
-                  <div className="detail-item">
-                    <span className="label">Série:</span>
-                    <span className="value">{game.series.join(", ")}</span>
-                  </div>
-                )}
-                {game.ageRating && (
-                  <div className="detail-item">
-                    <span className="label">Classification:</span>
-                    <span className="value">{game.ageRating}</span>
-                  </div>
-                )}
-                {game.alternativeTitles && game.alternativeTitles.length > 0 && (
-                  <div className="detail-item">
-                    <span className="label">Titres alternatifs:</span>
-                    <span className="value">{game.alternativeTitles.join(", ")}</span>
-                  </div>
-                )}
-                {game.releaseDatesByPlatform && Object.keys(game.releaseDatesByPlatform).length > 0 && (
-                  <div className="detail-item">
-                    <span className="label">Dates de sortie par plateforme:</span>
-                    <div className="value">
-                      {Object.entries(game.releaseDatesByPlatform).map(([platform, date]) => (
-                        <div key={platform} className="platform-date">
-                          <strong>{platform}:</strong> {new Date(date).toLocaleDateString('fr-FR')}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+          <div className="tab-content tab-content--fiche">
+            <div className="fiche-content__layout">
+              <div className="fiche-content__synopsis">
+                <SynopsisEtTaxonomie game={game} />
               </div>
+              <RadarChart ratings={game.ratings || {}} className="fiche-content__radar" />
             </div>
           </div>
         );
 
+      /**********************************************************
+      ************************* ONGLET MEDIA *******************
+      **********************************************************/
       case "media":
         return (
-          <div className="tab-content media-content">
+          <div className="tab-content tab-content--media">
             <h3>Médias</h3>
-            <div className="media-grid">
+            <div className="media-content__grid">
               {game.coverUrl && (
-                <div className="media-item">
-                  <h4>Couverture</h4>
+                <div className="media-content__item">
+                  <h4 className="media-content__item-title">Couverture</h4>
                   <img 
                     src={game.coverUrl} 
                     alt="Couverture du jeu"
-                    className="screenshot"
+                    className="media-content__item-image"
                   />
                 </div>
               )}
               {game.firstScreenshotUrl && (
-                <div className="media-item">
-                  <h4>Premier Screenshot</h4>
+                <div className="media-content__item">
+                  <h4 className="media-content__item-title">Premier Screenshot</h4>
                   <img 
                     src={game.firstScreenshotUrl} 
                     alt="Screenshot du jeu"
-                    className="screenshot"
+                    className="media-content__item-image"
                   />
                 </div>
               )}
               {game.artworks && game.artworks.length > 0 && (
-                <div className="media-item">
-                  <h4>Artworks ({game.artworks.length})</h4>
-                  <div className="artworks-grid">
+                <div className="media-content__item">
+                  <h4 className="media-content__item-title">Artworks ({game.artworks.length})</h4>
+                  <div className="media-content__artworks">
                     {game.artworks.map((artwork, index) => (
                       <img 
                         key={index}
                         src={artwork} 
                         alt={`Artwork ${index + 1}`}
-                        className="artwork"
+                        className="media-content__item-image"
                       />
                     ))}
                   </div>
                 </div>
               )}
               {game.trailerUrl && (
-                <div className="media-item">
-                  <h4>Trailer</h4>
-                  <div className="video-container">
+                <div className="media-content__item">
+                  <h4 className="media-content__item-title">Trailer</h4>
+                  <div className="media-content__video">
                     <iframe
                       src={game.trailerUrl.replace('watch?v=', 'embed/')}
                       title="Trailer du jeu"
@@ -124,13 +85,13 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
                 </div>
               )}
               {game.videos && game.videos.length > 0 && (
-                <div className="media-item">
-                  <h4>Vidéos ({game.videos.length})</h4>
-                  <div className="videos-grid">
+                <div className="media-content__item">
+                  <h4 className="media-content__item-title">Vidéos ({game.videos.length})</h4>
+                  <div className="media-content__videos-grid">
                     {game.videos.map((video, index) => (
-                      <div key={index} className="video-item">
-                        <h5>{video.name}</h5>
-                        <div className="video-container">
+                      <div key={index} className="media-content__video-item">
+                        <h5 className="media-content__video-item-title">{video.name}</h5>
+                        <div className="media-content__video">
                           <iframe
                             src={video.url.replace('watch?v=', 'embed/')}
                             title={video.name}
@@ -151,63 +112,66 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
           </div>
         );
 
+      /**********************************************************
+      ************************* ONGLET CRITIQUES *******************
+      **********************************************************/
       case "critiques":
         return (
-          <div className="tab-content critiques-content">
+          <div className="tab-content tab-content--critiques">
             <h3>Critiques</h3>
-            <div className="rating-section">
-              <div className="rating-item">
-                <span className="rating-label">Note globale:</span>
-                <div className="rating-value">
+            <div className="critiques-content__section">
+              <div className="critiques-content__item">
+                <span className="critiques-content__item-label">Note globale:</span>
+                <div className="critiques-content__item-value">
                   {game.totalRating ? `${game.totalRating}%` : "Non évalué"}
                 </div>
               </div>
               {game.ratings && (
-                <div className="detailed-ratings">
-                  <h4>Notes détaillées</h4>
-                  <div className="ratings-grid">
+                <div className="critiques-content__detailed">
+                  <h4 className="critiques-content__detailed-title">Notes détaillées</h4>
+                  <div className="critiques-content__detailed-grid">
                     {game.ratings.graphisme && (
-                      <div className="rating-detail">
-                        <span className="rating-label">Graphisme:</span>
-                        <div className="rating-bar">
-                          <div className="rating-fill" style={{width: `${game.ratings.graphisme}%`}}></div>
-                          <span className="rating-value">{game.ratings.graphisme}%</span>
+                      <div className="critiques-content__detail">
+                        <span className="critiques-content__detail-label">Graphisme:</span>
+                        <div className="critiques-content__detail-bar">
+                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.graphisme}%`}}></div>
+                          <span className="critiques-content__detail-value">{game.ratings.graphisme}%</span>
                         </div>
                       </div>
                     )}
                     {game.ratings.gameplay && (
-                      <div className="rating-detail">
-                        <span className="rating-label">Gameplay:</span>
-                        <div className="rating-bar">
-                          <div className="rating-fill" style={{width: `${game.ratings.gameplay}%`}}></div>
-                          <span className="rating-value">{game.ratings.gameplay}%</span>
+                      <div className="critiques-content__detail">
+                        <span className="critiques-content__detail-label">Gameplay:</span>
+                        <div className="critiques-content__detail-bar">
+                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.gameplay}%`}}></div>
+                          <span className="critiques-content__detail-value">{game.ratings.gameplay}%</span>
                         </div>
                       </div>
                     )}
                     {game.ratings.musique && (
-                      <div className="rating-detail">
-                        <span className="rating-label">Musique:</span>
-                        <div className="rating-bar">
-                          <div className="rating-fill" style={{width: `${game.ratings.musique}%`}}></div>
-                          <span className="rating-value">{game.ratings.musique}%</span>
+                      <div className="critiques-content__detail">
+                        <span className="critiques-content__detail-label">Musique:</span>
+                        <div className="critiques-content__detail-bar">
+                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.musique}%`}}></div>
+                          <span className="critiques-content__detail-value">{game.ratings.musique}%</span>
                         </div>
                       </div>
                     )}
                     {game.ratings.histoire && (
-                      <div className="rating-detail">
-                        <span className="rating-label">Histoire:</span>
-                        <div className="rating-bar">
-                          <div className="rating-fill" style={{width: `${game.ratings.histoire}%`}}></div>
-                          <span className="rating-value">{game.ratings.histoire}%</span>
+                      <div className="critiques-content__detail">
+                        <span className="critiques-content__detail-label">Histoire:</span>
+                        <div className="critiques-content__detail-bar">
+                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.histoire}%`}}></div>
+                          <span className="critiques-content__detail-value">{game.ratings.histoire}%</span>
                         </div>
                       </div>
                     )}
                     {game.ratings.jouabilite && (
-                      <div className="rating-detail">
-                        <span className="rating-label">Jouabilité:</span>
-                        <div className="rating-bar">
-                          <div className="rating-fill" style={{width: `${game.ratings.jouabilite}%`}}></div>
-                          <span className="rating-value">{game.ratings.jouabilite}%</span>
+                      <div className="critiques-content__detail">
+                        <span className="critiques-content__detail-label">Jouabilité:</span>
+                        <div className="critiques-content__detail-bar">
+                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.jouabilite}%`}}></div>
+                          <span className="critiques-content__detail-value">{game.ratings.jouabilite}%</span>
                         </div>
                       </div>
                     )}
@@ -219,11 +183,16 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
           </div>
         );
 
+      /**********************************************************
+      ************************* ONGLET CHALLENGES *******************
+      **********************************************************/
       case "challenges":
         return (
-          <div className="tab-content challenges-content">
+          <div className="tab-content tab-content--challenges">
             <h3>Challenges</h3>
-            <p>Les challenges et achievements seront affichés ici.</p>
+            <div className="challenges-content__list">
+              <p>Les challenges et achievements seront affichés ici.</p>
+            </div>
           </div>
         );
 
