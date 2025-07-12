@@ -27,23 +27,33 @@ interface RadarChartProps {
     musique?: number;
     histoire?: number;
     graphisme?: number;
+    detailedRatings?: {
+      jouabilite?: number;
+      gameplay?: number;
+      musique?: number;
+      histoire?: number;
+      graphisme?: number;
+    };
   };
   style?: React.CSSProperties;
   className?: string;
 }
 
 export default function RadarChart({ ratings, style, className }: RadarChartProps) {
+  // Utilise les notes détaillées calculées par l'API si disponibles, sinon utilise les notes manuelles
+  const detailedRatings = ratings.detailedRatings || ratings;
+  
   const data = {
     labels: ['Jouabilité', 'Gameplay', 'OST', 'Histoire', 'Graphisme'],
     datasets: [
       {
         label: 'Notes',
         data: [
-          ratings.jouabilite ?? 0,
-          ratings.gameplay ?? 0,
-          ratings.musique ?? 0,
-          ratings.histoire ?? 0,
-          ratings.graphisme ?? 0,
+          detailedRatings.jouabilite ?? 0,
+          detailedRatings.gameplay ?? 0,
+          detailedRatings.musique ?? 0,
+          detailedRatings.histoire ?? 0,
+          detailedRatings.graphisme ?? 0,
         ],
         backgroundColor: 'rgba(0, 166, 237, 0.5)',
         borderColor: 'rgba(0, 166, 237, 1)',

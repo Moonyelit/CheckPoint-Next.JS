@@ -69,6 +69,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ games, loading, error }) 
       if (typeof val === 'object' && val !== null && !Array.isArray(val)) {
         // Autorise les objets cover {url: ...} mais pas d'objet complexe
         if (key === 'cover' && val && typeof val.url === 'string') continue;
+        // Autorise les objets detailedRatings si toutes les valeurs sont scalaires
+        if (key === 'detailedRatings' && val && Object.values(val).every(v => typeof v === 'number' || typeof v === 'string' || v === null)) continue;
+        // Autorise tout objet dont toutes les valeurs sont scalaires
+        if (Object.values(val).every(v => typeof v === 'number' || typeof v === 'string' || v === null)) continue;
         // Log l'objet complexe
         console.error(`[DEBUG] Champ objet complexe détecté (clé: ${key})`, val, 'dans', obj);
         return false;

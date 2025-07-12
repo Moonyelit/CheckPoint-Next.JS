@@ -31,6 +31,13 @@ export interface Game {
     histoire?: number;
     jouabilite?: number;
   };
+  detailedRatings?: {
+    jouabilite?: number;
+    gameplay?: number;
+    musique?: number;
+    histoire?: number;
+    graphisme?: number;
+  };
   artworks?: string[];
   videos?: {
     name: string;

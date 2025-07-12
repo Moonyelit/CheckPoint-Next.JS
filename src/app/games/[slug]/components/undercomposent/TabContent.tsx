@@ -22,7 +22,7 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
               <div className="fiche-content__synopsis">
                 <SynopsisEtTaxonomie game={game} />
               </div>
-              <RadarChart ratings={game.ratings || {}} className="fiche-content__radar" />
+              <RadarChart ratings={game.detailedRatings || game.ratings || {}} className="fiche-content__radar" />
             </div>
           </div>
         );
@@ -130,48 +130,49 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
                 <div className="critiques-content__detailed">
                   <h4 className="critiques-content__detailed-title">Notes détaillées</h4>
                   <div className="critiques-content__detailed-grid">
-                    {game.ratings.graphisme && (
+                    {/* Utilise les notes détaillées calculées par l'API si disponibles */}
+                    {(game.detailedRatings || game.ratings)?.graphisme && (
                       <div className="critiques-content__detail">
                         <span className="critiques-content__detail-label">Graphisme:</span>
                         <div className="critiques-content__detail-bar">
-                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.graphisme}%`}}></div>
-                          <span className="critiques-content__detail-value">{game.ratings.graphisme}%</span>
+                          <div className="critiques-content__detail-fill" style={{width: `${(game.detailedRatings || game.ratings)?.graphisme}%`}}></div>
+                          <span className="critiques-content__detail-value">{(game.detailedRatings || game.ratings)?.graphisme}%</span>
                         </div>
                       </div>
                     )}
-                    {game.ratings.gameplay && (
+                    {(game.detailedRatings || game.ratings)?.gameplay && (
                       <div className="critiques-content__detail">
                         <span className="critiques-content__detail-label">Gameplay:</span>
                         <div className="critiques-content__detail-bar">
-                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.gameplay}%`}}></div>
-                          <span className="critiques-content__detail-value">{game.ratings.gameplay}%</span>
+                          <div className="critiques-content__detail-fill" style={{width: `${(game.detailedRatings || game.ratings)?.gameplay}%`}}></div>
+                          <span className="critiques-content__detail-value">{(game.detailedRatings || game.ratings)?.gameplay}%</span>
                         </div>
                       </div>
                     )}
-                    {game.ratings.musique && (
+                    {(game.detailedRatings || game.ratings)?.musique && (
                       <div className="critiques-content__detail">
                         <span className="critiques-content__detail-label">Musique:</span>
                         <div className="critiques-content__detail-bar">
-                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.musique}%`}}></div>
-                          <span className="critiques-content__detail-value">{game.ratings.musique}%</span>
+                          <div className="critiques-content__detail-fill" style={{width: `${(game.detailedRatings || game.ratings)?.musique}%`}}></div>
+                          <span className="critiques-content__detail-value">{(game.detailedRatings || game.ratings)?.musique}%</span>
                         </div>
                       </div>
                     )}
-                    {game.ratings.histoire && (
+                    {(game.detailedRatings || game.ratings)?.histoire && (
                       <div className="critiques-content__detail">
                         <span className="critiques-content__detail-label">Histoire:</span>
                         <div className="critiques-content__detail-bar">
-                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.histoire}%`}}></div>
-                          <span className="critiques-content__detail-value">{game.ratings.histoire}%</span>
+                          <div className="critiques-content__detail-fill" style={{width: `${(game.detailedRatings || game.ratings)?.histoire}%`}}></div>
+                          <span className="critiques-content__detail-value">{(game.detailedRatings || game.ratings)?.histoire}%</span>
                         </div>
                       </div>
                     )}
-                    {game.ratings.jouabilite && (
+                    {(game.detailedRatings || game.ratings)?.jouabilite && (
                       <div className="critiques-content__detail">
                         <span className="critiques-content__detail-label">Jouabilité:</span>
                         <div className="critiques-content__detail-bar">
-                          <div className="critiques-content__detail-fill" style={{width: `${game.ratings.jouabilite}%`}}></div>
-                          <span className="critiques-content__detail-value">{game.ratings.jouabilite}%</span>
+                          <div className="critiques-content__detail-fill" style={{width: `${(game.detailedRatings || game.ratings)?.jouabilite}%`}}></div>
+                          <span className="critiques-content__detail-value">{(game.detailedRatings || game.ratings)?.jouabilite}%</span>
                         </div>
                       </div>
                     )}
