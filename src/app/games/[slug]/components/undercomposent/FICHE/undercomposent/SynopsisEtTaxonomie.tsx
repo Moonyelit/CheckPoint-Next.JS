@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Game } from "@/types/game";
 import "./styles/SynopsisEtTaxonomie.scss";
 
+// Ajout de la fonction utilitaire en haut du fichier (après les imports)
+function btoaUtf8(str: string): string {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
 // Fonction pour formater les noms des plateformes
 const formatPlatformName = (platform: string): string => {
   const platformMap: { [key: string]: string } = {
@@ -43,12 +48,13 @@ const formatPlatformName = (platform: string): string => {
 // Fonction pour traduire le texte avec MyMemory (gratuit) + cache local
 const translateText = async (text: string): Promise<string> => {
   try {
+    const maxLength = 500;
     // Nettoyer le texte (supprimer les doublons)
-    const cleanText = text.replace(/(.+?)(?=\1)/g, '').trim();
+    const cleanText = text.replace(/(.+?)(?=\1)/g, '').trim().slice(0, maxLength);
     if (!cleanText) return text;
 
     // Vérifier le cache local
-    const cacheKey = `translation_${btoa(cleanText)}`;
+    const cacheKey = `translation_${btoaUtf8(cleanText)}`;
     const cached = typeof window !== 'undefined' ? localStorage.getItem(cacheKey) : null;
     if (cached) return cached;
 
@@ -123,15 +129,21 @@ export default function SynopsisEtTaxonomie({ game }: { game?: Game }) {
   // Formater les plateformes
   const formattedPlatforms = game.platforms?.map(formatPlatformName) || [];
   
+  // Déterminer le texte du synopsis à afficher
+  const synopsisText = isTranslating
+    ? "Chargement en cours..."
+    : showOriginal && game.summary && translatedSynopsis === "Trop de requêtes de traduction. Veuillez réessayer plus tard."
+      ? game.summary
+      : (translatedSynopsis || game.summary || "Aucune histoire disponible.");
+  
+  // Détecter si le synopsis est court (moins de 50 caractères ou contient "Chargement")
+  const isShortSynopsis = synopsisText.length < 50 || synopsisText.includes("Chargement") || synopsisText.includes("Traduction");
+  
   return (
-    <section className="synopsis-taxonomie">
-      <h2 className="synopsis-taxonomie__title">STORY</h2>
+    <section className={`synopsis-taxonomie ${isShortSynopsis ? 'synopsis-taxonomie--short' : ''}`}>
+      <h2 className="synopsis-taxonomie__title">SYNOPSIS</h2>
       <p className="synopsis-taxonomie__text">
-        {isTranslating
-          ? "Traduction en cours..."
-          : showOriginal && game.summary && translatedSynopsis === "Trop de requêtes de traduction. Veuillez réessayer plus tard."
-            ? game.summary
-            : (translatedSynopsis || game.summary || "Aucune histoire disponible.")}
+        {synopsisText}
       </p>
       
       <h3 className="synopsis-taxonomie__title">PLATEFORMES</h3>

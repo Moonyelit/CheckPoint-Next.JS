@@ -1,0 +1,39 @@
+/* ===== BLOCK: fiche-section1 ===== */
+.fiche-section1 {
+  /* ===== ELEMENT: layout ===== */
+  &__layout {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2rem;
+    background: var(--gris-fonce);
+    padding: 1rem;
+    margin-bottom: 2.5rem;
+    min-height: 15rem; 
+    transition: min-height 0.3s ease;
+
+    /* ===== MODIFIER: layout--short ===== */
+    &--short {
+      min-height: 8rem; 
+      align-items: center;
+    }
+  }
+
+  /* ===== ELEMENT: synopsis ===== */
+  &__synopsis {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* ===== ELEMENT: radar ===== */
+  &__radar {
+    flex-shrink: 0;
+    
+    .radar-chart {
+      width: 20rem;
+      height: 20rem;
+    }
+  }
+} 

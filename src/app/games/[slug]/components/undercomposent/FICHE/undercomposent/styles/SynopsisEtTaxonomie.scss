@@ -2,6 +2,14 @@
   margin-bottom: 16px;
   color: var(--black) !important;
 
+  // Classe pour les synopsis courts
+  &--short {
+    .synopsis-taxonomie__text {
+      min-height: auto;
+      padding: 0.5rem 0;
+    }
+  }
+
   
   h2.synopsis-taxonomie__title,
   h3.synopsis-taxonomie__title {
@@ -30,6 +38,9 @@
     margin-bottom: 16px;
     font-family: var(--font-text);
     font-weight: 500;
+    min-height: 3rem; // Hauteur minimale pour les synopsis normaux
+    display: flex;
+    align-items: center;
   }
 } 
 

@@ -1,9 +1,8 @@
 import React from "react";
 import { Game } from "@/types/game";
 import { TabType } from "../undercomposent/FICHE/undercomposent/TabsNav";
-import SynopsisEtTaxonomie from "../undercomposent/FICHE/undercomposent/SynopsisEtTaxonomie";
-import RadarChart from "../undercomposent/FICHE/undercomposent/RadarChart";
-import ColonneGaucheJeu from "../undercomposent/FICHE/undercomposent/ColonneGaucheJeu";
+import FicheSection1 from "../undercomposent/FICHE/FicheSection1";
+import FicheSection2 from "../undercomposent/FICHE/FicheSection2";
 import "./TabContent.scss";
 
 interface TabContentProps {
@@ -20,15 +19,9 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
       case "fiche":
         return (
           <div className="tab-content tab-content--fiche">
-            <div className="fiche-content__layout">
-              <ColonneGaucheJeu />
-              <div className="fiche-content__synopsis">
-                <SynopsisEtTaxonomie game={game} />
-              </div>
-              <RadarChart ratings={game.detailedRatings || game.ratings || {}} className="fiche-content__radar" />
-            </div>
+            <FicheSection1 game={game} />
 
-            <p>HELLO</p>
+            <FicheSection2 game={game} />
           </div>
         );
 
