@@ -3,6 +3,8 @@ import { Game } from "@/types/game";
 import { TabType } from "../undercomposent/FICHE/undercomposent/TabsNav";
 import FicheSection1 from "../undercomposent/FICHE/FicheSection1";
 import FicheSection2 from "../undercomposent/FICHE/FicheSection2";
+import FicheSection3 from "../undercomposent/FICHE/FicheSection3";
+import FicheSection4 from "../undercomposent/FICHE/FicheSection4";
 import "./TabContent.scss";
 
 interface TabContentProps {
@@ -20,8 +22,9 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
         return (
           <div className="tab-content tab-content--fiche">
             <FicheSection1 game={game} />
-
             <FicheSection2 game={game} />
+            <FicheSection3 game={game} />
+            <FicheSection4 game={game} />
           </div>
         );
 

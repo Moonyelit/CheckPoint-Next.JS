@@ -8,7 +8,9 @@
 
 .tab-content {
   &--fiche {
-    // Suppression des styles déplacés dans FicheSection1.scss
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
   }
 
   /**********************************************************

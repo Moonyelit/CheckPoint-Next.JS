@@ -32,7 +32,7 @@ function generateTitleVariants(slug: string): string[] {
 
 async function getGameData(slug: string): Promise<Game> {
   // 1. Essayer de récupérer le jeu directement
-  let game = await getGameBySlug(slug);
+  const game = await getGameBySlug(slug);
   if (game) {
     return game;
   }
