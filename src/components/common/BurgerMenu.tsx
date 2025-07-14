@@ -165,7 +165,7 @@ const BurgerMenu: React.FC = () => {
               <Link href="/search?query=top100_games">Jeux</Link>
             </li>
             <li onClick={toggleNavMenu}>
-              <Link href="/lists">Listes</Link>
+              <Link href="/listes">Listes</Link>
             </li>
             <li onClick={toggleNavMenu}>
               <Link href="/challenges">Challenges</Link>

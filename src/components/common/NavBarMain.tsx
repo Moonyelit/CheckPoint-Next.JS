@@ -76,7 +76,7 @@ export default function Navbar() {
             <li>
             <Link href="/search?query=top100_games">Jeux</Link>            </li>
             <li>
-              <Link href="/lists">Listes</Link>
+              <Link href="/listes">Listes</Link>
             </li>
             <li>
               <Link href="/challenges">Challenges</Link>
@@ -100,7 +100,7 @@ export default function Navbar() {
                 <Link href="/search?query=top100_games">Jeux</Link>
               </li>
               <li>
-                <Link href="/lists">Listes</Link>
+                <Link href="/listes">Listes</Link>
               </li>
               <li>
                 <Link href="/challenges">Challenges</Link>
