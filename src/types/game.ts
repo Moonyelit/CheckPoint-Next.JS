@@ -25,7 +25,6 @@ export interface Game {
   ageRating?: string;
   trailerUrl?: string;
   screenshots?: {
-    id: number;
     image: string;
   }[];
   ratings?: {

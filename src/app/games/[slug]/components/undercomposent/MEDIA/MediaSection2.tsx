@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Game } from "@/types/game";
 import MediaOverlay from "./MediaOverlay";
+import LazyImage from "@/components/common/LazyImage";
 import "./MediaSection2.scss";
 
 interface MediaSection2Props {
@@ -19,14 +20,17 @@ export default function MediaSection2({ game }: MediaSection2Props) {
         <h4 className="media-content__item-title">SCREENSHOTS ({game.screenshots.length})</h4>
         <div className="media-content__screenshots">
           {game.screenshots.map((screenshot, index) => (
-            <img 
-              key={screenshot.id || index}
-              src={screenshot.image} 
-              alt={`Screenshot ${index + 1}`}
-              className="media-content__item-image"
+            <div
+              key={index}
               onClick={() => setOpenIndex(index)}
               style={{ cursor: "pointer" }}
-            />
+            >
+              <LazyImage
+                src={screenshot.image}
+                alt={`Screenshot ${index + 1}`}
+                className="media-content__item-image"
+              />
+            </div>
           ))}
         </div>
         {openIndex !== null && (
