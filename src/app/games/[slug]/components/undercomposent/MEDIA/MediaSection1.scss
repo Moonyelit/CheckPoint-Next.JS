@@ -1,0 +1,24 @@
+.media-section1 {
+  background: var(--gris-fonce);
+  margin-bottom: 2rem;
+  border-radius: 0 0 0.3rem 0.3rem;
+
+  .media-content__item {
+    padding: 3.5rem 3rem;
+
+    &-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+      color: var(--black);
+    }
+
+    &-image {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+}

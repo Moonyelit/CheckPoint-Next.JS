@@ -7,7 +7,7 @@
   &__layout {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: anchor-center;
     gap: 2rem;
     background: var(--gris-fonce);
     padding: 1rem;

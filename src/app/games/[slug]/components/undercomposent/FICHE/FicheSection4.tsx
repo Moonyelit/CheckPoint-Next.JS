@@ -152,8 +152,8 @@ const FicheSection4: React.FC<FicheSection4Props> = ({ game }) => {
         <div className="fiche-section4__header">DATES DE SORTIES</div>
         <div className="fiche-section4__list">
           {platforms.length > 0 ? (
-            platforms.map((platform) => (
-              <div className="fiche-section4__row" key={platform.name}>
+            platforms.map((platform, index) => (
+              <div className="fiche-section4__row" key={`${platform.name}-${index}`}>
                 <span className="fiche-section4__platform">{platform.name}</span>
                 <span className="fiche-section4__date">
                   {formatDate(platform.date)}

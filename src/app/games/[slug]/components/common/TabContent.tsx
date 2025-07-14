@@ -5,6 +5,11 @@ import FicheSection1 from "../undercomposent/FICHE/FicheSection1";
 import FicheSection2 from "../undercomposent/FICHE/FicheSection2";
 import FicheSection3 from "../undercomposent/FICHE/FicheSection3";
 import FicheSection4 from "../undercomposent/FICHE/FicheSection4";
+import MediaSection1 from "../undercomposent/MEDIA/MediaSection1";
+import MediaSection2 from "../undercomposent/MEDIA/MediaSection2";
+import MediaSection3 from "../undercomposent/MEDIA/MediaSection3";
+import MediaSection4 from "../undercomposent/MEDIA/MediaSection4";
+import MediaSection5 from "../undercomposent/MEDIA/MediaSection5";
 import "./TabContent.scss";
 
 interface TabContentProps {
@@ -34,78 +39,12 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
       case "media":
         return (
           <div className="tab-content tab-content--media">
-            <h3>Médias</h3>
             <div className="media-content__grid">
-              {game.coverUrl && (
-                <div className="media-content__item">
-                  <h4 className="media-content__item-title">Couverture</h4>
-                  <img 
-                    src={game.coverUrl} 
-                    alt="Couverture du jeu"
-                    className="media-content__item-image"
-                  />
-                </div>
-              )}
-              {game.firstScreenshotUrl && (
-                <div className="media-content__item">
-                  <h4 className="media-content__item-title">Premier Screenshot</h4>
-                  <img 
-                    src={game.firstScreenshotUrl} 
-                    alt="Screenshot du jeu"
-                    className="media-content__item-image"
-                  />
-                </div>
-              )}
-              {game.artworks && game.artworks.length > 0 && (
-                <div className="media-content__item">
-                  <h4 className="media-content__item-title">Artworks ({game.artworks.length})</h4>
-                  <div className="media-content__artworks">
-                    {game.artworks.map((artwork, index) => (
-                      <img 
-                        key={index}
-                        src={artwork} 
-                        alt={`Artwork ${index + 1}`}
-                        className="media-content__item-image"
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {game.trailerUrl && (
-                <div className="media-content__item">
-                  <h4 className="media-content__item-title">Trailer</h4>
-                  <div className="media-content__video">
-                    <iframe
-                      src={game.trailerUrl.replace('watch?v=', 'embed/')}
-                      title="Trailer du jeu"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                </div>
-              )}
-              {game.videos && game.videos.length > 0 && (
-                <div className="media-content__item">
-                  <h4 className="media-content__item-title">Vidéos ({game.videos.length})</h4>
-                  <div className="media-content__videos-grid">
-                    {game.videos.map((video, index) => (
-                      <div key={index} className="media-content__video-item">
-                        <h5 className="media-content__video-item-title">{video.name}</h5>
-                        <div className="media-content__video">
-                          <iframe
-                            src={video.url.replace('watch?v=', 'embed/')}
-                            title={video.name}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          ></iframe>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <MediaSection1 game={game} />
+              <MediaSection2 game={game} />
+              <MediaSection3 game={game} />
+              <MediaSection4 game={game} />
+              <MediaSection5 game={game} />
               {!game.coverUrl && !game.firstScreenshotUrl && !game.artworks?.length && !game.trailerUrl && !game.videos?.length && (
                 <p>Aucun média disponible pour ce jeu.</p>
               )}

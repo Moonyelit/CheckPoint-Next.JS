@@ -24,6 +24,10 @@ export interface Game {
   releaseDatesByPlatform?: { [platform: string]: string };
   ageRating?: string;
   trailerUrl?: string;
+  screenshots?: {
+    id: number;
+    image: string;
+  }[];
   ratings?: {
     graphisme?: number;
     gameplay?: number;
@@ -38,7 +42,12 @@ export interface Game {
     histoire?: number;
     graphisme?: number;
   };
-  artworks?: string[];
+  artworks?: {
+    id: number;
+    url: string;
+    title?: string;
+    type?: string;
+  }[];
   videos?: {
     name: string;
     videoId: string;
