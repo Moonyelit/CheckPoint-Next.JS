@@ -11,6 +11,12 @@
 @use './components/undercomposent/FICHE/undercomposent/styles/SynopsisEtTaxonomie' as *;
 
 .game-fiche-container {
-    position: relative;
-    margin-block: -38rem 3rem;
+    position: relative !important;
+    margin-block: -38rem 3rem !important;
+}
+
+// Règle de secours pour s'assurer que les styles s'appliquent
+.game-page .game-fiche-container {
+    position: relative !important;
+    margin-block: -38rem 3rem !important;
 }

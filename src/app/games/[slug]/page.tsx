@@ -2,6 +2,7 @@ import { getGameBySlug, searchAndImportGame } from "@/lib/simpleGameApi";
 import "./game.scss";
 import GameHeader from "./components/GameHeader";
 import GameContenu from "./components/undercomposent/FICHE/undercomposent/GameContenu";
+import StyleEnforcer from "./components/StyleEnforcer";
 import { notFound } from "next/navigation";
 import { Game } from "@/types/game";
 
@@ -64,6 +65,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
 
   return (
     <div className="game-page">
+      <StyleEnforcer />
       <GameHeader
         name={game.title}
         coverUrl={game.coverUrl || "/images/placeholder-cover.jpg"}
