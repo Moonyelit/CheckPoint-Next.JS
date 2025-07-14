@@ -1,3 +1,6 @@
+@use "../../../../../../styles/mixins" as *;
+@use "../../../../../../styles/_variables" as *;
+
 /* ===== BLOCK: fiche-section1 ===== */
 .fiche-section1 {
   /* ===== ELEMENT: layout ===== */
@@ -8,12 +11,20 @@
     gap: 2rem;
     background: var(--gris-fonce);
     padding: 1rem;
-    min-height: 15rem; 
+    min-height: 15rem;
     transition: min-height 0.3s ease;
+
+    @include respond-to("medium") {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+    }
 
     /* ===== MODIFIER: layout--short ===== */
     &--short {
-      min-height: 8rem; 
+      min-height: 8rem;
       align-items: center;
     }
   }
@@ -24,15 +35,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+    @include respond-to("medium") {
+      padding-inline: clamp(9rem, 14.7252rem + -24.4275vw, 3rem);
+    }
   }
 
   /* ===== ELEMENT: radar ===== */
   &__radar {
     flex-shrink: 0;
-    
+
     .radar-chart {
       width: 20rem;
       height: 20rem;
     }
   }
-} 
+}

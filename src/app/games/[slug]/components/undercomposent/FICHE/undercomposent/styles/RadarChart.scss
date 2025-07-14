@@ -1,13 +1,28 @@
 .radar-chart {
-  width: 17rem;
-  height: 17rem;
+  width: clamp(12rem, 12rem + (100vw - 769px) * 0.0074, 17rem);
+  height: clamp(12rem, 12rem + (100vw - 769px) * 0.0074, 17rem);
   position: relative;
   margin-block: 0.5rem;
-  margin-right: 2.5rem;
+  margin-right: clamp(1rem, 1rem + (100vw - 769px) * 0.0022, 2.5rem);
+
+  @include respond-to("medium") {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding-inline: 10rem;
+  }
 
   &__canvas {
     width: 100%;
     height: 100%;
+
+    @include respond-to("medium") {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
   }
 
   &__icons {
@@ -17,20 +32,29 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+
+    @include respond-to("medium") {
+      width: 12rem;
+      left:clamp(10.5rem, 7.6374rem + 8.2137vw, 13.5rem);
+    }
+
+    @include respond-to("small") {
+      left:clamp(10.5rem, 7.6374rem + 7.2137vw, 13.5rem);
+    }
   }
 
   &__icon {
     position: absolute;
 
     &--jouabilite {
-      top: -8px;
+      top: clamp(-6px, -6px + (100vw - 769px) * -0.003, -8px);
       left: 50%;
       transform: translateX(-50%);
     }
 
     &--gameplay {
       top: 38%;
-      right: -8px;
+      right: clamp(-6px, -6px + (100vw - 769px) * -0.003, -8px);
       transform: translateY(-50%);
     }
 
@@ -46,7 +70,7 @@
 
     &--graphisme {
       top: 38%;
-      left: -8px;
+      left: clamp(-6px, -6px + (100vw - 769px) * -0.003, -8px);
       transform: translateY(-50%);
     }
   }

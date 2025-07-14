@@ -9,11 +9,11 @@ interface TabsNavProps {
 }
 
 export default function TabsNav({ activeTab, setActiveTab }: TabsNavProps) {
-  const tabs: { id: TabType; label: string }[] = [
-    { id: "fiche", label: "FICHE" },
-    { id: "media", label: "MEDIA" },
-    { id: "critiques", label: "CRITIQUES" },
-    { id: "challenges", label: "CHALLENGES" }
+  const tabs: { id: TabType; label: string; icon: string }[] = [
+    { id: "fiche", label: "FICHE", icon: "/images/Icons/svg/fiche-icon.svg" },
+    { id: "media", label: "MEDIA", icon: "/images/Icons/svg/graphisme-icon.svg" },
+    { id: "critiques", label: "CRITIQUES", icon: "/images/Icons/svg/critiques-icon.svg" },
+    { id: "challenges", label: "CHALLENGES", icon: "/images/Icons/svg/challenge-icon.svg" }
   ];
 
   return (
@@ -24,8 +24,14 @@ export default function TabsNav({ activeTab, setActiveTab }: TabsNavProps) {
             key={tab.id}
             className={`tabs-nav__button ${activeTab === tab.id ? 'tabs-nav__button--active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
+            title={tab.label}
           >
-            {tab.label}
+            <span className="tabs-nav__button-text">{tab.label}</span>
+            <img 
+              src={tab.icon} 
+              alt={tab.label}
+              className="tabs-nav__button-icon"
+            />
           </button>
         ))}
       </nav>

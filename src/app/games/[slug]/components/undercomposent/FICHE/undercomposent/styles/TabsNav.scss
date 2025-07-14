@@ -1,10 +1,18 @@
+@use "../../../../../../../../styles/mixins" as *;
+@use "../../../../../../../../styles/_variables" as *;
+
+
 .tabs-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-left: 18rem;
+  margin-left: clamp(12rem, 5.1237rem + 14.307vw, 18rem);
   position: relative;
   overflow: visible;
+
+  @include respond-to("medium") {
+    margin-left: 0;
+  }
 
   &::before {
     content: "";
@@ -16,19 +24,28 @@
     height: 100%;
     background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), var(--gris-fonce);
     z-index: -1;
+
+    @include respond-to("medium") {
+      width: 86vw;
+      transform: translateX(-38%);
+    }
   }
 
   &__navigation {
     display: flex;
     gap: 24px;
     margin-left: 2rem;
+
+    @include respond-to("small") {
+      margin-left: 1rem;
+    }
   }
 
   &__button {
     font-family: "DM Sans", sans-serif;
     color: var(--white);
     font-weight: 900;
-    font-size: 1.25rem;
+    font-size: clamp(0.8rem, 0.2843rem + 1.073vw, 1.25rem);
     background: none;
     border: none;
     padding: 8px 16px;
@@ -36,6 +53,11 @@
     color: var(--white);
     transition: all 0.2s ease;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
 
     &:hover {
       background: var(--gris-fonce);
@@ -53,21 +75,38 @@
         transform: none;
       }
     }
-  }
 
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-
-    &__navigation {
-      gap: 16px;
-      justify-content: center;
+    &-text {
+      display: block;
     }
 
-    &__button {
-      padding: 6px 12px;
-      font-size: 12px;
+    &-icon {
+      display: none;
+      width: 24px;
+      height: 24px;
+      filter: brightness(0) invert(1); // Rend l'icône blanche
+    }
+
+    // Styles pour les écrans en dessous de 558px
+    @media (max-width: 558px) {
+      padding: 12px;
+      min-width: 48px;
+      min-height: 48px;
+
+      &-text {
+        display: none;
+      }
+
+      &-icon {
+        display: block;
+        width: 28px;
+        height: 28px;
+      }
+
+      &:hover {
+        padding-bottom: 12px;
+      }
     }
   }
+
 }

@@ -3,39 +3,44 @@ import "./GameFicheHeader.scss";
 import { getImageUrl } from "@/lib/imageUtils";
 
 // Composant Donut SVG pour le rating
-const DonutProgress: React.FC<{ value: number; size?: number; strokeWidth?: number }> = ({ 
+const DonutProgress: React.FC<{ value: number; size?: number; strokeWidth?: number; responsive?: boolean }> = ({ 
   value, 
   size = 100, 
-  strokeWidth = 15 
+  strokeWidth = 15,
+  responsive = false
 }) => {
-  const radius = (size - strokeWidth) / 2;
+  // Ajuster la taille pour le format responsive
+  const finalSize = responsive ? 60 : size;
+  const finalStrokeWidth = responsive ? 8 : strokeWidth;
+  
+  const radius = (finalSize - finalStrokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const progress = Math.max(0, Math.min(100, value));
   const offset = circumference - (progress / 100) * circumference;
 
   return (
     <svg
-      width={size}
-      height={size}
+      width={finalSize}
+      height={finalSize}
       className="donut-progress"
       style={{ display: "block", margin: "auto", transform: "rotate(-135deg)" }}
     >
       <circle
         className="donut-bg"
-        cx={size / 2}
-        cy={size / 2}
+        cx={finalSize / 2}
+        cy={finalSize / 2}
         r={radius}
         stroke="transparent"
-        strokeWidth={strokeWidth}
+        strokeWidth={finalStrokeWidth}
         fill="none"
       />
       <circle
         className="donut-bar"
-        cx={size / 2}
-        cy={size / 2}
+        cx={finalSize / 2}
+        cy={finalSize / 2}
         r={radius}
         stroke="url(#game-fiche-header-donut-gradient)"
-        strokeWidth={strokeWidth}
+        strokeWidth={finalStrokeWidth}
         fill="none"
         strokeDasharray={circumference}
         strokeDashoffset={offset}
@@ -53,7 +58,7 @@ const DonutProgress: React.FC<{ value: number; size?: number; strokeWidth?: numb
         y="50%"
         textAnchor="middle"
         dy=".3em"
-        fontSize={size * 0.18}
+        fontSize={finalSize * 0.18}
         fontWeight="bold"
         fill="#1976d2"
         style={{ transform: "rotate(135deg)", transformOrigin: "center" }}
@@ -77,6 +82,20 @@ export default function GameFicheHeader({ title, year, studio, developer, coverU
   // Nettoyer l'URL de l'image
   const cleanCoverUrl = getImageUrl(coverUrl);
   
+  // Détecter si on est en mode responsive (peut être amélioré avec un hook)
+  const [isResponsive, setIsResponsive] = React.useState(false);
+  
+  React.useEffect(() => {
+    const checkResponsive = () => {
+      setIsResponsive(window.innerWidth <= 768);
+    };
+    
+    checkResponsive();
+    window.addEventListener('resize', checkResponsive);
+    
+    return () => window.removeEventListener('resize', checkResponsive);
+  }, []);
+  
   return (
     <div className="game-fiche-header">
       <div className="game-fiche-header__cover-container">
@@ -97,7 +116,7 @@ export default function GameFicheHeader({ title, year, studio, developer, coverU
       </div>
       {totalRating && totalRating > 0 && (
         <div className="game-fiche-header__rating">
-          <DonutProgress value={totalRating} size={100} strokeWidth={15} />
+          <DonutProgress value={totalRating} size={100} strokeWidth={15} responsive={isResponsive} />
         </div>
       )}
     </div>

@@ -10,10 +10,9 @@
     }
   }
 
-  
   h2.synopsis-taxonomie__title,
   h3.synopsis-taxonomie__title {
-    font-size: 1.25rem;
+    font-size: clamp(0.8rem, 0.2843rem + 1.073vw, 1.25rem);    
     font-weight: 900;
     margin: 0;
     margin-bottom: 0.5rem;
@@ -33,7 +32,7 @@
   
   &__text {
     color: var(--black) !important;
-    font-size: 0.875rem;
+    font-size: clamp(0.675rem, 0.4458rem + 0.4769vw, 0.875rem);   
     line-height: 1.6;
     margin-bottom: 16px;
     font-family: var(--font-text);
@@ -56,8 +55,7 @@
   border-radius: 8px;
   padding: 6px 18px;
   font-weight: bold;
-  font-size: 0.875rem;
-  font-family: var(--font-title);
+  font-size: clamp(0.675rem, 0.4458rem + 0.4769vw, 0.875rem);  font-family: var(--font-title);
   box-shadow: 0 1px 2px rgba(0,0,0,0.7);
   letter-spacing: 0.01em;
   transition: all 0.5s ease-in-out;

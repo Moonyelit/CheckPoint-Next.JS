@@ -1,3 +1,6 @@
+@use "../../../../../styles/mixins" as *;
+@use "../../../../../styles/_variables" as *;
+
 .game-fiche-header {
   display: flex;
   align-items: flex-end;
@@ -6,16 +9,26 @@
   color: var(--white);
   position: relative;
 
+  @include respond-to("medium") {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
   &__cover-container {
     position: relative;
     top: 7rem;
+
+    @include respond-to("medium") {
+      top: 0;
+    }
   }
 
   &__cover {
-    width: 15rem;
-    height: 19.8rem;
+    width: clamp(9rem, 2.1237rem + 14.307vw, 15rem);
+    height: clamp(11.8rem, 8.1326rem + 7.6304vw, 18rem);
     border-radius: 0.3rem;
-
 
     img {
       width: 100%;
@@ -32,19 +45,22 @@
   }
 
   &__title {
-    font-size: 32px;
     font-weight: 800;
     margin: 0;
     color: var(--white);
     font-family: "Karantina", cursive;
-    font-size: 4.7rem;
+    font-size: clamp(2.7rem, 0.4079rem + 4.769vw, 4.7rem);
     font-weight: 700;
     line-height: normal;
     letter-spacing: 0.2rem;
+
+    @include respond-to("medium") {
+      font-size: clamp(2.7rem, 0.4079rem + 4.769vw, 4.7rem);
+    }
   }
 
   &__subtitle {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 0.427rem + 1.1923vw, 1.5rem);
     color: rgba(255, 255, 255, 0.9);
     font-weight: 600;
     line-height: normal;
@@ -55,10 +71,20 @@
     right: -4rem;
     top: 35%;
     transform: translateY(100%);
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), var(--gris-fonce);
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+      var(--gris-fonce);
     padding: 1rem;
     border-radius: 10rem;
     z-index: 100;
+
+    @include respond-to("medium") {
+      position: relative;
+      right: auto;
+      bottom: 0rem;
+      transform: none;
+      margin-top: 1rem;
+      padding: 0.5rem;
+    }
   }
 
   .donut-progress {
@@ -67,6 +93,13 @@
     z-index: 20;
     transform: scale(1.1);
     margin: -6px;
+
+    @include respond-to("medium") {      
+      width: 60px;
+      height: 60px;
+      transform: scale(1.2);
+      margin: -8px;
+    }
   }
 
   .donut-bg {
@@ -75,60 +108,5 @@
 
   .donut-bar {
     transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 1rem;
-
-    &__cover {
-      width: 150px;
-      height: 210px;
-    }
-
-    &__title {
-      font-size: 2.5rem;
-    }
-
-    &__subtitle {
-      font-size: 1.2rem;
-    }
-
-    &__rating {
-      position: relative;
-      right: auto;
-      top: auto;
-      transform: none;
-      margin-top: 1rem;
-    }
-
-    .donut-progress {
-      width: 60px;
-      height: 60px;
-      transform: scale(1.2);
-      margin: -8px;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .donut-progress {
-      width: 70px;
-      height: 70px;
-      transform: scale(1);
-      margin: -3px;
-      z-index: 20;
-    }
-  }
-
-  @media (max-width: 375px) {
-    .donut-progress {
-      width: 60px;
-      height: 60px;
-      transform: scale(0.95);
-      margin: 0;
-      z-index: 20;
-    }
   }
 }

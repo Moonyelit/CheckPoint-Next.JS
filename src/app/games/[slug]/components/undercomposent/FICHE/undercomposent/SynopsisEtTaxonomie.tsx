@@ -89,8 +89,8 @@ const translateText = async (text: string): Promise<string> => {
       return translatedText;
     }
     return cleanText;
-  } catch (error: any) {
-    if (error.message === '429') {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === '429') {
       return "Trop de requêtes de traduction. Veuillez réessayer plus tard.";
     }
     console.error('Erreur de traduction:', error);
