@@ -12,11 +12,42 @@
   border-radius: 5px;
   gap: 1.5rem;
   position: relative;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: var(--bleu-crystal-normal);
+    background: linear-gradient(135deg, var(--gris-fonce) 0%, lighten(#8f8883, 3%) 100%);
+
+    .results-game__title {
+      color: var(--bleu-crystal-fonce);
+      transform: translateX(3px);
+    }
+
+    .results-game__cover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .results-game__platform {
+      background: var(--bleu-crystal-normal);
+      color: var(--white);
+      transform: translateY(-1px);
+    }
+
+    .donut-progress {
+      transform: scale(1.05);
+    }
+  }
 
   &__cover {
     object-fit: cover;
     border-radius: 5px;
     flex-shrink:0;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   &__info {
@@ -32,6 +63,7 @@
     font-family: "DM Sans", sans-serif;
     font-weight: 900;
     color: var(--black);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   &__platforms {
@@ -49,6 +81,7 @@
     font-weight: 700;
     letter-spacing: -0.1px;
     font-family: "DM Sans", sans-serif;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   &__score {
@@ -62,6 +95,7 @@
     width: 100px;
     height: 100px;
     max-width: 100%;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   &__platform-more {
