@@ -168,6 +168,7 @@ const FicheSection4: React.FC<FicheSection4Props> = ({ game }) => {
           )}
         </div>
       </div>
+      
       {/* Bloc Classification par âge */}
       <div className="fiche-section4__bloc">
         <div className="fiche-section4__header">CLASSIFICATION PAR ÂGE</div>
