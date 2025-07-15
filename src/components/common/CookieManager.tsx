@@ -1,12 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCookieConsent } from '@/hooks/useCookieConsent';
 import './styles/CookieManager.scss';
 
 export default function CookieManager() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasEverConsented, setHasEverConsented] = useState(false);
   const { consentData, hasConsented, hasDeclined, resetConsent } = useCookieConsent();
+
+  // Marquer qu'un consentement a été donné au moins une fois
+  useEffect(() => {
+    if (consentData.status) {
+      setHasEverConsented(true);
+    }
+  }, [consentData.status]);
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -18,11 +26,23 @@ export default function CookieManager() {
 
   const handleReset = () => {
     resetConsent();
-    handleClose();
+    handleClose(); // Fermer le modal
+    
+    // Forcer la réapparition de CookieConsent après un court délai
+    setTimeout(() => {
+      // Forcer un re-render pour que CookieConsent détecte le changement
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'cookieConsent',
+        newValue: null
+      }));
+    }, 100);
   };
 
-  if (!consentData.status) {
-    return null; // Pas encore de consentement donné
+  // Afficher le bouton si un consentement a été donné OU si on est en train de modifier
+  const shouldShowButton = hasEverConsented || isOpen;
+
+  if (!shouldShowButton) {
+    return null;
   }
 
   return (
