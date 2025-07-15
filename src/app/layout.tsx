@@ -7,6 +7,8 @@ import ConditionalLayout from '@/components/layout/ConditionalLayout';
 import ResourcePreloader from '@/components/common/ResourcePreloader';
 import PagePreloader from '@/components/common/PagePreloader';
 import ServiceWorkerManager from "@/components/common/ServiceWorkerManager";
+import CookieConsent from "@/components/common/CookieConsent";
+import CookieManager from "@/components/common/CookieManager";
 import "@/styles/globals.scss";
 import CleanupProvider from '@/components/common/CleanupProvider';
 
@@ -118,6 +120,12 @@ export default function RootLayout({
         
         {/* Debugger de cache temporairement désactivé */}
         <CleanupProvider />
+        
+        {/* Popup de consentement des cookies */}
+        <CookieConsent />
+        
+        {/* Gestionnaire de cookies (bouton flottant) */}
+        <CookieManager />
       </body>
     </html>
   );

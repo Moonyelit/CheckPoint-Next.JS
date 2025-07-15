@@ -1,0 +1,284 @@
+@use '@/styles/mixins' as *;
+
+.cookie-manager {
+  &__trigger {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--bleu-crystal-normal);
+    border: 2px solid var(--bleu-crystal-fonce);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    @include transition(all, 0.3s, ease);
+    z-index: 9998;
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      background: var(--bleu-crystal-fonce);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+  }
+
+  &__modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+      var(--gris-fonce);
+    border: 2px solid var(--bleu-crystal-normal);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+    color: var(--white);
+
+    @include respond-to("medium") {
+      padding: 1.5rem;
+      width: 95%;
+      max-height: 85vh;
+    }
+  }
+
+  &__header {
+    @include flex(row, space-between, center);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    h3 {
+      margin: 0;
+      color: var(--bleu-crystal-normal);
+      font-size: 1.5rem;
+      font-family: "Karantina", cursive;
+      font-weight: 700;
+
+      @include respond-to("medium") {
+        font-size: 1.3rem;
+      }
+    }
+  }
+
+  &__close {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    font-size: 1.5rem;
+    color: var(--white);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    @include transition(all, 0.2s, ease);
+    width: 40px;
+    height: 40px;
+    @include flex(row, center, center);
+
+    &:hover {
+      background: var(--bleu-crystal-normal);
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__content {
+    color: var(--white);
+  }
+
+  &__status {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid var(--bleu-crystal-normal);
+
+    h4 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      font-family: var(--font-base);
+      font-weight: 700;
+      color: var(--white);
+    }
+  }
+
+  &__status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+
+    &--accepted {
+      background: rgba(160, 229, 142, 0.2);
+      color: var(--green);
+      border: 1px solid var(--green);
+    }
+
+    &--declined {
+      background: rgba(235, 39, 39, 0.2);
+      color: var(--red-normal);
+      border: 1px solid var(--red-normal);
+    }
+
+    &--unknown {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+      border: 1px solid #ffd700;
+    }
+  }
+
+  &__date {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  &__info {
+    margin-bottom: 1.5rem;
+
+    h4 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      font-family: var(--font-base);
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 1.5rem;
+
+      li {
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        font-family: var(--font-base);
+
+        &::marker {
+          color: var(--bleu-crystal-normal);
+        }
+      }
+    }
+  }
+
+  &__actions {
+    @include flex(row, center, center);
+    gap: 1rem;
+
+    @include respond-to("small") {
+      flex-direction: column;
+      width: 100%;
+    }
+  }
+
+  &__btn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--bleu-crystal-normal);
+    background: transparent;
+    color: var(--white);
+    font-family: var(--font-base);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    @include transition(all, 0.3s, ease);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 120px;
+
+    @include respond-to("medium") {
+      width: 100%;
+      max-width: 300px;
+    }
+
+    &:hover {
+      background: var(--bleu-crystal-normal);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &--secondary {
+      background: var(--bleu-crystal-normal);
+      color: var(--white);
+
+      &:hover {
+        background: var(--bleu-crystal-fonce);
+      }
+    }
+  }
+}
+
+// Animation d'entrée
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+// Responsive design
+@include respond-to("small") {
+  .cookie-manager {
+    &__trigger {
+      width: 45px;
+      height: 45px;
+      font-size: 18px;
+      bottom: 15px;
+      left: 15px;
+    }
+
+    &__modal {
+      padding: 1.5rem;
+      width: 98%;
+      max-height: 98vh;
+      border-radius: 12px;
+    }
+
+    &__header {
+      h3 {
+        font-size: 1.2rem;
+      }
+    }
+
+    &__btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      min-width: 100px;
+    }
+  }
+} 

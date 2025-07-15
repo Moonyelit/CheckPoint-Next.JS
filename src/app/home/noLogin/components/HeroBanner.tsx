@@ -69,22 +69,57 @@ export default function HeroBanner() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
+        console.log('Début de fetchGames');
+        console.log('URL API:', `${process.env.NEXT_PUBLIC_API_URL}/api/top_year_games`);
+        console.log('isHydrated:', isHydrated);
+        
+        // Attendre que le composant soit hydraté
+        if (!isHydrated) {
+          console.log('Composant pas encore hydraté, attente...');
+          return;
+        }
+        
+        // Petit délai pour s'assurer que tout est prêt
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         setIsLoading(true);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/top_year_games`);
+        
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/top_year_games`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          // Ajouter des options pour éviter les problèmes CORS
+          mode: 'cors',
+          credentials: 'omit',
+        });
+        
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
         
         if (response.ok) {
           const data = await response.json();
+          console.log('Data reçue:', data);
           if (data && data.games && data.games.length > 0) {
             setCardsData(data.games);
           } else {
+            console.log('Aucun jeu trouvé dans la réponse');
             setCardsData([]);
           }
         } else {
+          console.error('Erreur HTTP:', response.status, response.statusText);
+          console.error('Problème de CORS ou d\'API. Vérifiez que le serveur Symfony est en cours d\'exécution.');
           setCardsData([]);
         }
         
       } catch (err) {
         console.error('Erreur lors de la récupération des jeux :', err);
+        console.error('Type d\'erreur:', typeof err);
+        console.error('Message d\'erreur:', err instanceof Error ? err.message : 'Erreur inconnue');
+        console.error('Cela peut être dû à :');
+        console.error('1. Le serveur Symfony n\'est pas en cours d\'exécution');
+        console.error('2. Un problème de CORS');
+        console.error('3. Un problème de réseau');
         setCardsData([]);
       } finally {
         setIsLoading(false);
@@ -92,7 +127,7 @@ export default function HeroBanner() {
     };
     
     fetchGames();
-  }, []);
+  }, [isHydrated]);
 
   // Gestion des gestes de swipe pour le carrousel
   const handlers = useSwipeable({

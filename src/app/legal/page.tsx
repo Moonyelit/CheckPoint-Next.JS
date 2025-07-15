@@ -236,11 +236,11 @@ export default function LegalPage() {
               <div className="legal__article">
                 <h3>9. Cookies</h3>
                 <p>
-                  Nous utilisons uniquement des cookies techniques nécessaires au fonctionnement de l&apos;application :
+                  Nous utilisons uniquement des cookies nécessaires au fonctionnement de l&apos;application :
                 </p>
                 <ul>
                   <li><strong>Cookies de session :</strong> pour maintenir votre connexion</li>
-                  <li><strong>Cookies techniques :</strong> pour le bon fonctionnement de React/Symfony</li>
+                  <li><strong>Cookies d&apos;authentification :</strong> pour sécuriser votre accès</li>
                 </ul>
                 <p>
                   Aucun cookie publicitaire ou de tracking n&apos;est utilisé. Les cookies sont automatiquement 
