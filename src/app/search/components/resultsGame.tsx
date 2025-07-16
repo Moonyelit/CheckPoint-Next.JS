@@ -10,7 +10,15 @@ interface ResultsGameProps {
   coverUrl?: string;
   platforms?: string[];
   score?: number;
+  totalRatingCount?: number; // Nombre de votes
   style?: React.CSSProperties;
+  // Critères appliqués
+  criteria?: {
+    minVotes: number;
+    minRating: number;
+    limit: number;
+  };
+  totalCount?: number; // Nombre total de jeux correspondant aux critères
 }
 
 // Hook pour la taille responsive
@@ -95,6 +103,72 @@ const DonutProgress: React.FC<{ value: number; size?: number; strokeWidth?: numb
   );
 };
 
+// Composant pour afficher les critères appliqués
+const CriteriaInfo: React.FC<{ criteria?: { minVotes: number; minRating: number; limit: number }; totalCount?: number }> = ({ criteria, totalCount }) => {
+  if (!criteria) return null;
+
+  return (
+    <div className="criteria-info" style={{
+      fontSize: '0.8rem',
+      color: '#666',
+      marginTop: '0.5rem',
+      padding: '0.5rem',
+      backgroundColor: '#f5f5f5',
+      borderRadius: '4px',
+      border: '1px solid #ddd'
+    }}>
+      <div><strong>Critères appliqués :</strong></div>
+      <div>• Note minimum : {criteria.minRating}/100</div>
+      <div>• Votes minimum : {criteria.minVotes}</div>
+      <div>• Limite : {criteria.limit} jeux</div>
+      {totalCount && (
+        <div style={{ marginTop: '0.25rem', fontWeight: 'bold' }}>
+          {totalCount} jeux correspondent à ces critères
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Composant pour afficher les informations de votes
+const VotesInfo: React.FC<{ totalRatingCount?: number; score?: number; criteria?: { minVotes: number; minRating: number } }> = ({ totalRatingCount, score, criteria }) => {
+  if (!totalRatingCount || !criteria) return null;
+
+  const hasEnoughVotes = totalRatingCount >= criteria.minVotes;
+  const hasEnoughRating = score && score >= criteria.minRating;
+
+  return (
+    <div className="votes-info" style={{
+      fontSize: '0.75rem',
+      marginTop: '0.25rem',
+      padding: '0.25rem',
+      borderRadius: '3px',
+      backgroundColor: hasEnoughVotes ? '#e8f5e8' : '#fff3cd',
+      border: `1px solid ${hasEnoughVotes ? '#4caf50' : '#ffc107'}`,
+      color: hasEnoughVotes ? '#2e7d32' : '#856404'
+    }}>
+      <div>
+        <strong>Votes :</strong> {totalRatingCount.toLocaleString()}
+        {!hasEnoughVotes && (
+          <span style={{ color: '#d32f2f', marginLeft: '0.5rem' }}>
+            ⚠️ Minimum requis : {criteria.minVotes}
+          </span>
+        )}
+      </div>
+      {score && (
+        <div>
+          <strong>Note :</strong> {score}/100
+          {!hasEnoughRating && (
+            <span style={{ color: '#d32f2f', marginLeft: '0.5rem' }}>
+              ⚠️ Minimum requis : {criteria.minRating}/100
+            </span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Fonction pour formater les noms des plateformes
 const formatPlatform = (platform: string): string => {
   const platformMap: { [key: string]: string } = {
@@ -128,6 +202,9 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
   coverUrl,
   platforms,
   score,
+  totalRatingCount,
+  criteria,
+  totalCount,
   style
 }) => {
   const { donut, stroke } = useDonutSize();
@@ -192,6 +269,14 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
         
         <div className="results-game__info">
           <div className="results-game__title">{title}</div>
+          
+          {/* Affichage des informations de votes */}
+          <VotesInfo 
+            totalRatingCount={totalRatingCount} 
+            score={score} 
+            criteria={criteria} 
+          />
+          
           {platforms && platforms.length > 0 && (
             <div className="results-game__platforms">
               {(showAllPlatforms ? platforms : platforms.slice(0, 3))
@@ -214,6 +299,9 @@ const ResultsGame: React.FC<ResultsGameProps> = ({
               )}
             </div>
           )}
+          
+          {/* Affichage des critères appliqués */}
+          <CriteriaInfo criteria={criteria} totalCount={totalCount} />
         </div>
         
         {typeof score === 'number' && (

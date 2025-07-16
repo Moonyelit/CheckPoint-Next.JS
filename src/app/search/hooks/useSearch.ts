@@ -92,6 +92,8 @@ export function useSearch() {
 
   useEffect(() => {
     setIsClient(true);
+    // Vider le cache au démarrage pour forcer le rechargement des données
+    searchCache.clear();
   }, []);
 
   // ==========================================================================
@@ -178,8 +180,8 @@ export function useSearch() {
       let cacheKey = '';
 
       if (query === 'top100_games') {
-        // Utiliser l'endpoint API Platform avec tri par note
-        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/games?order[totalRating]=desc&order[totalRatingCount]=desc&itemsPerPage=100`;
+        // Utiliser l'endpoint Top100Games avec critères stricts
+        apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/api/top100_games`;
         cacheKey = 'top100_games';
       } else if (query === 'top_year_games') {
         // Utiliser l'endpoint API Platform avec filtre sur la date
@@ -201,7 +203,18 @@ export function useSearch() {
       // Vérifier le cache d'abord
       const cachedData = getCachedData(cacheKey);
       if (cachedData) {
-        if (query === 'top100_games' || query === 'top_year_games') {
+        if (query === 'top100_games') {
+          // Données Top100Games : utiliser games pour la collection
+          const gamesData = cachedData.games ?? [];
+          setGames(Array.isArray(gamesData) ? gamesData : []);
+          setPagination({ 
+            currentPage: 1, 
+            limit: 20, 
+            offset: 0, 
+            totalCount: gamesData.length,
+            totalPages: Math.ceil(gamesData.length / 20)
+          });
+        } else if (query === 'top_year_games') {
           // Données API Platform : utiliser member pour la collection
           const gamesData = cachedData.member ?? cachedData.games ?? [];
           setGames(Array.isArray(gamesData) ? gamesData : []);
@@ -252,7 +265,26 @@ export function useSearch() {
         // Mettre en cache les données
         setCachedData(cacheKey, data);
 
-        if (query === 'top100_games' || query === 'top_year_games') {
+        if (query === 'top100_games') {
+          // Données Top100Games : utiliser games pour la collection
+          const gamesData = data.games ?? [];
+          setGames(Array.isArray(gamesData) ? gamesData : []);
+          
+          // Debug log pour voir combien de jeux sont récupérés
+          console.log(`[DEBUG] Jeux récupérés pour ${query}:`, {
+            totalFromAPI: gamesData.length,
+            isArray: Array.isArray(gamesData),
+            dataKeys: Object.keys(data)
+          });
+          
+          setPagination({ 
+            currentPage: 1, 
+            limit: 20, 
+            offset: 0, 
+            totalCount: gamesData.length,
+            totalPages: Math.ceil(gamesData.length / 20)
+          });
+        } else if (query === 'top_year_games') {
           // Données API Platform : utiliser member pour la collection
           const gamesData = data.member ?? data.games ?? [];
           setGames(Array.isArray(gamesData) ? gamesData : []);
