@@ -35,6 +35,33 @@ export default function OptimizedImage({
   // Traitement de l'URL
   const processedSrc = src.startsWith('/') ? src : getImageUrl(src);
 
+  // Si pas d'URL valide, afficher directement le fallback
+  if (!processedSrc) {
+    return (
+      <div className={`optimized-image error ${className}`} style={{
+        width: width ? `${width}px` : '100%',
+        height: height ? `${height}px` : 'auto',
+        position: 'relative',
+        overflow: 'hidden',
+        backgroundColor: '#f0f0f0',
+      }}>
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#e0e0e0',
+          color: '#666',
+          fontSize: '12px',
+          textAlign: 'center'
+        }}>
+          Image non disponible
+        </div>
+      </div>
+    );
+  }
+
   // Intersection Observer pour le lazy loading
   const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
     entries.forEach((entry) => {

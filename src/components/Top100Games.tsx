@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { fetchTop100Games, Top100GamesResponse, Top100GamesCriteria } from '@/services/top100GamesService';
 import ResultsGame from '@/app/search/components/resultsGame';

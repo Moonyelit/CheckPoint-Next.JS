@@ -21,14 +21,26 @@ export default function CookieConsent({ onAccept, onDecline }: CookieConsentProp
   const [isVisible, setIsVisible] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const { needsConsent, acceptCookies, declineCookies, resetConsent } = useCookieConsent();
 
   useEffect(() => {
-    // Afficher la popup seulement si le consentement n'a pas encore été donné
-    if (needsConsent) {
+    // Attendre un peu pour s'assurer que le localStorage est bien initialisé
+    const timer = setTimeout(() => {
+      setHasInitialized(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    // Afficher la popup seulement si le consentement n'a pas encore été donné ET que l'initialisation est terminée
+    if (needsConsent && hasInitialized) {
       setIsVisible(true);
+    } else if (!needsConsent) {
+      setIsVisible(false);
     }
-  }, [needsConsent]);
+  }, [needsConsent, hasInitialized]);
 
   // Fonction de debug pour réinitialiser le consentement en développement
   useEffect(() => {
@@ -61,7 +73,8 @@ export default function CookieConsent({ onAccept, onDecline }: CookieConsentProp
     setIsLegalModalOpen(true);
   };
 
-  if (!isVisible) {
+  // Ne pas afficher tant que l'initialisation n'est pas terminée
+  if (!hasInitialized || !isVisible) {
     return null;
   }
 

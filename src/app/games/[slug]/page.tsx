@@ -32,21 +32,33 @@ function generateTitleVariants(slug: string): string[] {
 }
 
 async function getGameData(slug: string): Promise<Game> {
+  console.log(`🔍 Recherche du jeu avec le slug: ${slug}`)
+  
   // 1. Essayer de récupérer le jeu directement
   const game = await getGameBySlug(slug);
   if (game) {
+    console.log(`✅ Jeu trouvé directement: ${game.title}`)
     return game;
   }
 
+  console.log(`❌ Jeu non trouvé directement, tentative d'import depuis IGDB`)
+
   // 2. Si le jeu n'est pas trouvé, essayer l'import depuis IGDB avec plusieurs variantes
   const titleVariants = generateTitleVariants(slug);
+  console.log(`🔄 Tentative d'import avec les variantes:`, titleVariants)
+  
   for (const titleVariant of titleVariants) {
+    console.log(`🔍 Test de la variante: '${titleVariant}'`)
     const importedGame = await searchAndImportGame(titleVariant);
     if (importedGame) {
+      console.log(`✅ Jeu importé avec succès: '${importedGame.title}'`)
+      
       // Si le jeu importé n'a pas d'id (non persisté), on refait un fetch par slug pour garantir la persistance
       if (!importedGame.id && importedGame.slug) {
+        console.log(`🔄 Vérification de la persistance avec le slug: ${importedGame.slug}`)
         const persistedGame = await getGameBySlug(importedGame.slug);
         if (persistedGame) {
+          console.log(`✅ Jeu persistant trouvé: ${persistedGame.title}`)
           return persistedGame;
         }
       }
@@ -55,6 +67,7 @@ async function getGameData(slug: string): Promise<Game> {
     }
   }
 
+  console.log(`❌ Aucun jeu trouvé pour le slug: ${slug}`)
   // 3. Si aucun jeu n'est trouvé, retourner 404
   notFound();
 }

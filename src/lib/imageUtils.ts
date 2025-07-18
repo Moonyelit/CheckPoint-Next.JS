@@ -5,15 +5,20 @@
 /**
  * Nettoie une URL pour éviter les récursions de proxy et les protocoles dupliqués
  * @param url L'URL à nettoyer
- * @returns L'URL nettoyée
+ * @returns L'URL nettoyée ou null si vide
  */
-export function cleanImageUrl(url: string | null | undefined): string {
+export function cleanImageUrl(url: string | null | undefined): string | null {
   if (!url) {
-    return '';
+    return null;
   }
 
   // Supprimer les espaces et caractères invisibles
   let cleanUrl = url.trim();
+  
+  // Si l'URL est vide après nettoyage, retourner null
+  if (!cleanUrl) {
+    return null;
+  }
   
   // Vérifier si c'est déjà une URL proxy malformée
   if (cleanUrl.includes('/api/proxy-image')) {
@@ -48,14 +53,18 @@ export function cleanImageUrl(url: string | null | undefined): string {
  * Améliore automatiquement la qualité d'une URL d'image IGDB
  * @param url - L'URL originale de l'image
  * @param size - La taille désirée (défaut: t_cover_big)
- * @returns L'URL avec une meilleure qualité
+ * @returns L'URL avec une meilleure qualité ou null si vide
  */
-export function improveIgdbImageQuality(url: string | null | undefined, size: string = 't_cover_big'): string {
+export function improveIgdbImageQuality(url: string | null | undefined, size: string = 't_cover_big'): string | null {
   if (!url) {
-    return '';
+    return null;
   }
 
   const cleanUrl = cleanImageUrl(url);
+  
+  if (!cleanUrl) {
+    return null;
+  }
   
   // Si ce n'est pas une URL IGDB, retourner l'URL telle quelle
   if (!cleanUrl.includes('images.igdb.com')) {
@@ -96,26 +105,26 @@ export const IGDB_IMAGE_SIZES = {
 /**
  * Hook React pour améliorer automatiquement les URLs d'images
  */
-export function useOptimizedImageUrl(url: string, size?: string): string {
-  if (!url) return '';
+export function useOptimizedImageUrl(url: string, size?: string): string | null {
+  if (!url) return null;
   return improveIgdbImageQuality(url, size);
 }
 
 /**
  * Transforme une URL IGDB en URL proxy pour éviter les problèmes CORS
  * @param url L'URL originale de l'image
- * @returns L'URL proxy ou l'URL originale si ce n'est pas une image IGDB
+ * @returns L'URL proxy, l'URL originale si ce n'est pas une image IGDB, ou null si vide
  */
-export function getImageUrl(url: string | null | undefined): string {
+export function getImageUrl(url: string | null | undefined): string | null {
   if (!url) {
-    return '';
+    return null;
   }
 
   const cleanUrl = cleanImageUrl(url);
   
-  // Si l'URL est vide après nettoyage, retourner une image par défaut
+  // Si l'URL est vide après nettoyage, retourner null
   if (!cleanUrl) {
-    return '/images/placeholder-cover.jpg';
+    return null;
   }
   
   // Si c'est une URL locale ou déjà une URL proxy, la retourner telle quelle

@@ -488,7 +488,12 @@ export function useSearch() {
    */
   const handleSearch = (newQuery: string) => {
     if (newQuery.trim() !== query) {
-      window.location.search = `?query=${encodeURIComponent(newQuery.trim())}&page=1`;
+      // Utiliser pushState au lieu de window.location.search pour éviter le rechargement
+      const url = new URL(window.location.href);
+      url.searchParams.set('query', newQuery.trim());
+      url.searchParams.set('page', '1');
+      window.history.pushState({}, '', url.toString());
+      // La nouvelle requête sera déclenchée automatiquement par l'effet qui écoute les changements d'URL
     }
   };
 

@@ -108,11 +108,28 @@ export default function FicheSection2({ game }: FicheSection2Props) {
           className="fiche-section2__lightbox"
           onClick={closeLightbox}
         >
-          <img
-            src={getImageUrl(lightboxImg)}
-            alt="Screenshot en grand"
-            onClick={e => e.stopPropagation()}
-          />
+          {getImageUrl(lightboxImg) ? (
+            <img
+              src={getImageUrl(lightboxImg)!}
+              alt="Screenshot en grand"
+              onClick={e => e.stopPropagation()}
+            />
+          ) : (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#f0f0f0',
+                color: '#666',
+                fontSize: '16px',
+                textAlign: 'center',
+                padding: '20px'
+              }}
+            >
+              Image non disponible
+            </div>
+          )}
           <button
             onClick={closeLightbox}
             aria-label="Fermer la popup"

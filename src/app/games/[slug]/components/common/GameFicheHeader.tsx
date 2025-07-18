@@ -99,14 +99,22 @@ export default function GameFicheHeader({ title, year, studio, developer, coverU
   return (
     <div className="game-fiche-header">
       <div className="game-fiche-header__cover-container">
-        <img 
-          className="game-fiche-header__cover" 
-          src={cleanCoverUrl} 
-          alt={title} 
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = "/images/placeholder-cover.jpg";
-          }}
-        />
+        {cleanCoverUrl ? (
+          <img 
+            className="game-fiche-header__cover" 
+            src={cleanCoverUrl} 
+            alt={title} 
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = "/images/placeholder-cover.jpg";
+            }}
+          />
+        ) : (
+          <img 
+            className="game-fiche-header__cover" 
+            src="/images/placeholder-cover.jpg" 
+            alt={title} 
+          />
+        )}
       </div>
       <div className="game-fiche-header__content">
         <h1 className="game-fiche-header__title">

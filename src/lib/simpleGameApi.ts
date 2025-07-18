@@ -14,7 +14,16 @@ export async function getGameBySlug(slug: string): Promise<Game | null> {
     const response = await api.get(`/api/custom/games/${slug}`)
     return response.data
   } catch (error) {
-    console.error('Erreur lors de la récupération du jeu:', error)
+    // Gestion spécifique des erreurs HTTP
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        console.log(`Jeu non trouvé pour le slug: ${slug}`)
+        return null
+      }
+      console.error(`Erreur HTTP ${error.response?.status} lors de la récupération du jeu:`, error.response?.data)
+    } else {
+      console.error('Erreur lors de la récupération du jeu:', error)
+    }
     return null
   }
 }
@@ -32,7 +41,16 @@ export async function searchAndImportGame(title: string): Promise<Game | null> {
     
     return null
   } catch (error) {
-    console.error('Erreur lors de la recherche/import du jeu:', error)
+    // Gestion spécifique des erreurs HTTP
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        console.log(`Aucun jeu trouvé pour la recherche: ${title}`)
+        return null
+      }
+      console.error(`Erreur HTTP ${error.response?.status} lors de la recherche/import:`, error.response?.data)
+    } else {
+      console.error('Erreur lors de la recherche/import du jeu:', error)
+    }
     return null
   }
 } 
