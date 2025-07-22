@@ -36,12 +36,19 @@ const Pagination: React.FC<PaginationProps> = ({ pagination, totalPages, onPageC
           className={`search-page__pagination-number${currentPage === 1 ? ' active' : ''}`}
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1}
+          aria-label="Aller à la première page"
+          aria-current={currentPage === 1 ? 'page' : undefined}
+          type="button"
         >
           1
         </button>
       );
       if (startPage > 2) {
-        pages.push(<span key="start-ellipsis" className="search-page__pagination-ellipsis">...</span>);
+        pages.push(
+          <span key="start-ellipsis" className="search-page__pagination-ellipsis" aria-hidden="true">
+            ...
+          </span>
+        );
       }
     }
 
@@ -54,6 +61,9 @@ const Pagination: React.FC<PaginationProps> = ({ pagination, totalPages, onPageC
             className={`search-page__pagination-number${currentPage === i ? ' active' : ''}`}
             onClick={() => onPageChange(i)}
             disabled={currentPage === i}
+            aria-label={`Aller à la page ${i}`}
+            aria-current={currentPage === i ? 'page' : undefined}
+            type="button"
           >
             {i}
           </button>
@@ -64,7 +74,11 @@ const Pagination: React.FC<PaginationProps> = ({ pagination, totalPages, onPageC
     // Toujours afficher la dernière page
     if (endPage < totalPages) {
       if (endPage < totalPages - 1) {
-        pages.push(<span key="end-ellipsis" className="search-page__pagination-ellipsis">...</span>);
+        pages.push(
+          <span key="end-ellipsis" className="search-page__pagination-ellipsis" aria-hidden="true">
+            ...
+          </span>
+        );
       }
       pages.push(
         <button
@@ -72,6 +86,9 @@ const Pagination: React.FC<PaginationProps> = ({ pagination, totalPages, onPageC
           className={`search-page__pagination-number${currentPage === totalPages ? ' active' : ''}`}
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages}
+          aria-label={`Aller à la dernière page (page ${totalPages})`}
+          aria-current={currentPage === totalPages ? 'page' : undefined}
+          type="button"
         >
           {totalPages}
         </button>
@@ -81,41 +98,50 @@ const Pagination: React.FC<PaginationProps> = ({ pagination, totalPages, onPageC
   };
 
   return (
-    <div className="search-page__pagination">
-      <button
-        className="search-page__pagination-button"
-        onClick={() => onPageChange(1)}
-        disabled={pagination.currentPage === 1}
-        aria-label="Première page"
-      >
-        <i className='bx bx-chevrons-left'></i>
-      </button>
-      <button
-        className="search-page__pagination-button"
-        onClick={() => onPageChange(pagination.currentPage - 1)}
-        disabled={pagination.currentPage === 1}
-        aria-label="Page précédente"
-      >
-        <i className='bx bx-chevron-left'></i>
-      </button>
-      {renderPageNumbers()}
-      <button
-        className="search-page__pagination-button"
-        onClick={() => onPageChange(pagination.currentPage + 1)}
-        disabled={pagination.currentPage === totalPages}
-        aria-label="Page suivante"
-      >
-        <i className='bx bx-chevron-right'></i>
-      </button>
-      <button
-        className="search-page__pagination-button"
-        onClick={() => onPageChange(totalPages)}
-        disabled={pagination.currentPage === totalPages}
-        aria-label="Dernière page"
-      >
-        <i className='bx bx-chevrons-right'></i>
-      </button>
-    </div>
+    <nav className="search-page__pagination" role="navigation" aria-label="Pagination des résultats">
+      <div className="search-page__pagination-info" aria-live="polite">
+        Page {pagination.currentPage} sur {totalPages}
+      </div>
+      <div className="search-page__pagination-controls">
+        <button
+          className="search-page__pagination-button"
+          onClick={() => onPageChange(1)}
+          disabled={pagination.currentPage === 1}
+          aria-label="Aller à la première page"
+          type="button"
+        >
+          <i className='bx bx-chevrons-left' aria-hidden="true"></i>
+        </button>
+        <button
+          className="search-page__pagination-button"
+          onClick={() => onPageChange(pagination.currentPage - 1)}
+          disabled={pagination.currentPage === 1}
+          aria-label="Aller à la page précédente"
+          type="button"
+        >
+          <i className='bx bx-chevron-left' aria-hidden="true"></i>
+        </button>
+        {renderPageNumbers()}
+        <button
+          className="search-page__pagination-button"
+          onClick={() => onPageChange(pagination.currentPage + 1)}
+          disabled={pagination.currentPage === totalPages}
+          aria-label="Aller à la page suivante"
+          type="button"
+        >
+          <i className='bx bx-chevron-right' aria-hidden="true"></i>
+        </button>
+        <button
+          className="search-page__pagination-button"
+          onClick={() => onPageChange(totalPages)}
+          disabled={pagination.currentPage === totalPages}
+          aria-label="Aller à la dernière page"
+          type="button"
+        >
+          <i className='bx bx-chevrons-right' aria-hidden="true"></i>
+        </button>
+      </div>
+    </nav>
   );
 };
 

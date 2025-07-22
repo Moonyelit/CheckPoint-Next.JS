@@ -39,7 +39,7 @@ export interface ApiGame {
   first_release_date?: number;
   summary?: string;
   developer?: string;
-  igdbId?: string;
+  igdbId?: number;
   isPersisted?: boolean;
 }
 

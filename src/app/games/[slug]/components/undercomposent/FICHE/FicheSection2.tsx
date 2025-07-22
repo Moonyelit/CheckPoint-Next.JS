@@ -48,10 +48,10 @@ export default function FicheSection2({ game }: FicheSection2Props) {
   };
 
   return (
-    <div className="fiche-section2">
+    <section className="fiche-section2" aria-label="Médias du jeu">
       <div className="fiche-section2__container">
         {/* Colonne gauche : Vidéo */}
-        <div className="fiche-section2__video-wrapper">
+        <div className="fiche-section2__video-wrapper" role="region" aria-label="Trailer du jeu">
           {embedUrl ? (
             isYoutube ? (
               <iframe
@@ -61,7 +61,7 @@ export default function FicheSection2({ game }: FicheSection2Props) {
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                title={firstVideo?.name || 'Trailer'}
+                title={firstVideo?.name || 'Trailer du jeu'}
                 style={{ width: "100%", height: "100%", border: 0 }}
               />
             ) : (
@@ -69,33 +69,36 @@ export default function FicheSection2({ game }: FicheSection2Props) {
                 src={embedUrl}
                 controls
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                aria-label="Trailer du jeu"
               />
             )
           ) : (
-            <div className="fiche-section2__no-trailer">
+            <div className="fiche-section2__no-trailer" role="status" aria-live="polite">
               Pas de trailer disponible
             </div>
           )}
         </div>
 
         {/* Colonne droite : Screenshots */}
-        <div className="fiche-section2__screenshots-wrapper">
+        <div className="fiche-section2__screenshots-wrapper" role="region" aria-label="Captures d'écran du jeu">
           {screenshots.length > 0 ? (
             screenshots.map((shot, idx) => (
-              <div
+              <button
                 key={idx}
                 className="fiche-section2__screenshot-img-wrapper"
                 onClick={() => openLightbox(shot.image)}
+                aria-label={`Voir la capture d'écran ${idx + 1} en grand format`}
+                type="button"
               >
                 <LazyImage
                   src={shot.image}
-                  alt={`Screenshot ${idx + 1}`}
+                  alt={`Capture d'écran ${idx + 1} du jeu`}
                   className="fiche-section2__screenshot-img"
                 />
-              </div>
+              </button>
             ))
           ) : (
-            <div className="fiche-section2__no-screenshots">
+            <div className="fiche-section2__no-screenshots" role="status" aria-live="polite">
               Pas de screenshots disponibles
             </div>
           )}
@@ -107,11 +110,14 @@ export default function FicheSection2({ game }: FicheSection2Props) {
         <div
           className="fiche-section2__lightbox"
           onClick={closeLightbox}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Vue agrandie de la capture d'écran"
         >
           {getImageUrl(lightboxImg) ? (
             <img
               src={getImageUrl(lightboxImg)!}
-              alt="Screenshot en grand"
+              alt="Capture d'écran du jeu en grand format"
               onClick={e => e.stopPropagation()}
             />
           ) : (
@@ -126,19 +132,22 @@ export default function FicheSection2({ game }: FicheSection2Props) {
                 textAlign: 'center',
                 padding: '20px'
               }}
+              role="status"
+              aria-live="polite"
             >
               Image non disponible
             </div>
           )}
           <button
             onClick={closeLightbox}
-            aria-label="Fermer la popup"
+            aria-label="Fermer la vue agrandie"
+            type="button"
           >
             ×
           </button>
         </div>,
         document.body
       )}
-    </div>
+    </section>
   );
 }

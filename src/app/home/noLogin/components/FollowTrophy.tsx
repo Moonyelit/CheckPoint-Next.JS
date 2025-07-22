@@ -3,14 +3,14 @@ import "./FollowTrophy.scss";
 
 const FollowTrophy = () => {
   return (
-    <section className="followTrophy">
+    <section className="followTrophy" aria-label="Section des défis et trophées">
       <div className="TitleStyle">
         <div className="shapeLeft">
           <h2 className="Title2-Karantina titleTrophy">
             Relève des défis et prouve ta valeur !
           </h2>
         </div>
-        <div className="shapeRight">
+        <div className="shapeRight" aria-hidden="true">
           <div className="stripe stripe1"></div>
           <div className="stripe stripe2"></div>
         </div>
@@ -22,7 +22,7 @@ const FollowTrophy = () => {
           <div className="trophyParagraph">
             <p>
               Crée tes propres défis et partage-les avec la communauté. Affronte
-              d’autres joueurs, teste de nouvelles façons de jouer et prouve ton
+              d&apos;autres joueurs, teste de nouvelles façons de jouer et prouve ton
               talent.
             </p>
 
@@ -32,14 +32,14 @@ const FollowTrophy = () => {
             </p>
           </div>
 
-          <div className="trophyImage-container">
-          <Image
-            src="/images/NoLogin/Trophy.png"
-            alt="Trophy"
-            width={800}
-            height={650}
-            className="trophyImage"
-          />
+          <div className="trophyImage-container" role="img" aria-label="Trophée de défi">
+            <Image
+              src="/images/NoLogin/Trophy.png"
+              alt="Trophée de défi - Symbole de réussite et de challenge"
+              width={800}
+              height={650}
+              className="trophyImage"
+            />
           </div>
           
         </div>

@@ -14,16 +14,22 @@ export default function MediaSection1({ game }: MediaSection1Props) {
   }
 
   return (
-    <div className="media-section1">
+    <section className="media-section1" aria-label="Couverture du jeu">
       <div className="media-content__item">
         <h4 className="media-content__item-title">COUVERTURE</h4>
-        <img 
-          src={game.coverUrl} 
-          alt="Couverture du jeu"
-          className="media-content__item-image"
+        <button
+          className="media-content__item-image-container"
           onClick={() => setOpen(true)}
-          style={{ cursor: "pointer" }}
-        />
+          aria-label="Voir la couverture du jeu en grand format"
+          type="button"
+        >
+          <img 
+            src={game.coverUrl} 
+            alt="Couverture du jeu"
+            className="media-content__item-image"
+            style={{ cursor: "pointer" }}
+          />
+        </button>
         <MediaOverlay
           open={open}
           onClose={() => setOpen(false)}
@@ -32,6 +38,6 @@ export default function MediaSection1({ game }: MediaSection1Props) {
           alt="Couverture du jeu"
         />
       </div>
-    </div>
+    </section>
   );
 }

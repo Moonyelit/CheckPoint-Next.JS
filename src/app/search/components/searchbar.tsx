@@ -79,25 +79,38 @@ const SearchBar: React.FC<SearchBarProps> = ({ initialQuery = "", onSearch }) =>
   };
 
   return (
-    <form className="searchbar" onSubmit={handleSubmit}>
+    <form className="searchbar" onSubmit={handleSubmit} role="search">
       <div className="searchbar__input-container">
+        <label htmlFor="search-input" className="sr-only">
+          Rechercher un jeu
+        </label>
         <input
+          id="search-input"
           type="text"
           placeholder="Rechercher votre jeu"
           value={input}
           onChange={handleInputChange}
           maxLength={100}
-          aria-describedby={error ? "search-error" : undefined}
+          aria-describedby={error ? "search-error" : "search-help"}
+          aria-label="Rechercher un jeu"
+          aria-invalid={!!error}
         />
-        <button type="submit" disabled={!!error}>
-          <i className="bx bx-search"></i>
+        <button 
+          type="submit" 
+          disabled={!!error}
+          aria-label="Lancer la recherche"
+        >
+          <i className="bx bx-search" aria-hidden="true"></i>
         </button>
       </div>
       {error && (
-        <div id="search-error" className="searchbar__error" role="alert">
+        <div id="search-error" className="searchbar__error" role="alert" aria-live="polite">
           {error}
         </div>
       )}
+      <div id="search-help" className="sr-only">
+        Tapez le nom du jeu que vous recherchez et appuyez sur Entrée ou cliquez sur le bouton de recherche
+      </div>
     </form>
   );
 };

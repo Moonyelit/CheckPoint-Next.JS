@@ -15,14 +15,16 @@ export default function FicheSection1({ game }: FicheSection1Props) {
   const isShortSynopsis = synopsisText.length < 50 || synopsisText.includes("Chargement") || synopsisText.includes("Traduction");
 
   return (
-    <div className="fiche-section1">
+    <section className="fiche-section1" aria-label="Informations principales du jeu">
       <div className={`fiche-section1__layout ${isShortSynopsis ? 'fiche-section1__layout--short' : ''}`}>
         <ColonneGaucheJeu />
-        <div className="fiche-section1__synopsis">
+        <div className="fiche-section1__synopsis" role="region" aria-label="Synopsis et taxonomie du jeu">
           <SynopsisEtTaxonomie game={game} />
         </div>
-        <RadarChart ratings={game.detailedRatings || game.ratings || {}} className="fiche-section1__radar" />
+        <div className="fiche-section1__radar" role="region" aria-label="Graphique des évaluations détaillées">
+          <RadarChart ratings={game.detailedRatings || game.ratings || {}} className="fiche-section1__radar" />
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -59,7 +59,12 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`}>
+    <nav 
+      className={`navbar ${isScrolled ? 'navbar--scrolled' : ''}`}
+      role="navigation"
+      aria-label="Navigation principale"
+      id="navigation"
+    >
       {/* Partie gauche : logo */}
       <div className="navbar-left">
         <Logo />
@@ -69,20 +74,34 @@ export default function Navbar() {
       <div className="navbar-right">
         {isAuthenticated ? (
           // Menu pour utilisateur connecté
-          <ul className="navbar-right-links">
-            <li>
-              <Link href="/profile">Mon Profil</Link>
+          <ul className="navbar-right-links" role="menubar" aria-label="Menu utilisateur connecté">
+            <li role="none">
+              <Link href="/profile" role="menuitem" aria-label="Accéder à mon profil">
+                Mon Profil
+              </Link>
             </li>
-            <li>
-            <Link href="/search?query=top100_games">Jeux</Link>            </li>
-            <li>
-              <Link href="/listes">Listes</Link>
+            <li role="none">
+              <Link href="/search?query=top100_games" role="menuitem" aria-label="Voir tous les jeux">
+                Jeux
+              </Link>
             </li>
-            <li>
-              <Link href="/challenges">Challenges</Link>
+            <li role="none">
+              <Link href="/listes" role="menuitem" aria-label="Voir mes listes de jeux">
+                Listes
+              </Link>
             </li>
-            <li>
-              <button onClick={handleLogout} className="navbar-right-auth-link">
+            <li role="none">
+              <Link href="/challenges" role="menuitem" aria-label="Voir les challenges">
+                Challenges
+              </Link>
+            </li>
+            <li role="none">
+              <button 
+                onClick={handleLogout} 
+                className="navbar-right-auth-link"
+                role="menuitem"
+                aria-label="Se déconnecter de mon compte"
+              >
                 Déconnexion
               </button>
             </li>
@@ -90,28 +109,49 @@ export default function Navbar() {
         ) : (
           // Menu pour utilisateur non connecté
           <>
-            <ul className="navbar-right-links">
-              <li>
-                <Link href="/" className="navbar-right-links-home">
+            <ul className="navbar-right-links" role="menubar" aria-label="Menu navigation principale">
+              <li role="none">
+                <Link href="/" className="navbar-right-links-home" role="menuitem" aria-label="Retour à l'accueil">
                   Home
                 </Link>
               </li>
-              <li>
-                <Link href="/search?query=top100_games">Jeux</Link>
+              <li role="none">
+                <Link href="/search?query=top100_games" role="menuitem" aria-label="Voir tous les jeux">
+                  Jeux
+                </Link>
               </li>
-              <li>
-                <Link href="/listes">Listes</Link>
+              <li role="none">
+                <Link href="/listes" role="menuitem" aria-label="Voir les listes de jeux">
+                  Listes
+                </Link>
               </li>
-              <li>
-                <Link href="/challenges">Challenges</Link>
+              <li role="none">
+                <Link href="/challenges" role="menuitem" aria-label="Voir les challenges">
+                  Challenges
+                </Link>
               </li>
             </ul>
-            <div className="navbar-right-auth">
-              <i className="bx bx-search navbar-right-auth-search" onClick={() => setShowSearch(true)}></i>
-              <Link href="/inscription" className="navbar-right-auth-link">
+            <div className="navbar-right-auth" role="group" aria-label="Actions d'authentification">
+              <button 
+                className="navbar-right-auth-search"
+                onClick={() => setShowSearch(true)}
+                aria-label="Ouvrir la recherche de jeux"
+                aria-expanded={showSearch}
+              >
+                <i className="bx bx-search" aria-hidden="true"></i>
+              </button>
+              <Link 
+                href="/inscription" 
+                className="navbar-right-auth-link"
+                aria-label="Créer un compte CheckPoint"
+              >
                 S&apos;inscrire
               </Link>
-              <Link href="/connexion" className="navbar-right-auth-link">
+              <Link 
+                href="/connexion" 
+                className="navbar-right-auth-link"
+                aria-label="Se connecter à mon compte"
+              >
                 Connexion
               </Link>
             </div>

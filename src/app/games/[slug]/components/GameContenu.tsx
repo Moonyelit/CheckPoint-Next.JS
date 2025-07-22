@@ -15,7 +15,7 @@ export default function GameContenu({ game }: GameContenuProps) {
   const [activeTab, setActiveTab] = useState<TabType>("fiche");
 
   return (
-    <div className="game-contenu">
+    <div className="game-contenu" role="region" aria-label={`Contenu du jeu ${game.title}`}>
       <div className="game-contenu__header">
         <GameFicheHeader
           title={game.title}
@@ -26,7 +26,7 @@ export default function GameContenu({ game }: GameContenuProps) {
         />
       </div>
       <GameFichePanel>
-        <div className="game-contenu__main">
+        <div className="game-contenu__main" role="main" aria-label="Contenu principal du jeu">
           <TabsNav 
             activeTab={activeTab} 
             setActiveTab={setActiveTab} 

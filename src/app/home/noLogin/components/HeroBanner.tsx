@@ -99,87 +99,43 @@ export default function HeroBanner() {
         
         if (response.ok) {
           const data = await response.json();
-          console.log('Data reçue:', data);
-          if (data && data.games && data.games.length > 0) {
+          console.log('Données reçues:', data);
+          
+          // Extraire les jeux de la propriété 'games' de la réponse
+          if (data && data.games && Array.isArray(data.games) && data.games.length > 0) {
+            console.log('Jeux extraits:', data.games);
             setCardsData(data.games);
           } else {
-            console.log('Aucun jeu trouvé dans la réponse');
+            console.log('Aucun jeu trouvé dans la réponse ou structure invalide');
             setCardsData([]);
           }
         } else {
           console.error('Erreur HTTP:', response.status, response.statusText);
-          console.error('Problème de CORS ou d\'API. Vérifiez que le serveur Symfony est en cours d\'exécution.');
           setCardsData([]);
         }
-        
-      } catch (err) {
-        console.error('Erreur lors de la récupération des jeux :', err);
-        console.error('Type d\'erreur:', typeof err);
-        console.error('Message d\'erreur:', err instanceof Error ? err.message : 'Erreur inconnue');
-        console.error('Cela peut être dû à :');
-        console.error('1. Le serveur Symfony n\'est pas en cours d\'exécution');
-        console.error('2. Un problème de CORS');
-        console.error('3. Un problème de réseau');
+      } catch (error) {
+        console.error('Erreur lors de la récupération des jeux:', error);
         setCardsData([]);
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     fetchGames();
   }, [isHydrated]);
 
-  // Gestion des gestes de swipe pour le carrousel
+  // Configuration des gestes de swipe
   const handlers = useSwipeable({
-    onSwipedLeft: goToNext || (() => {}),
-    onSwipedRight: goToPrev || (() => {}),
-    trackMouse: true,
+    onSwipedLeft: () => goToNext?.(),
+    onSwipedRight: () => goToPrev?.(),
+    preventDefaultTouchmoveEvent: true,
+    trackMouse: true
   });
 
-  // Si pas encore hydraté, afficher un skeleton
-  if (!isHydrated) {
+  // État de chargement
+  if (!isHydrated || isLoading) {
     return (
-      <section className="hero-banner">
-        <div className="hero-banner__container main-container">
-          <div className="hero-banner__left">
-            <div className="hero-banner__content">
-              <h1 className="Title1-Karantina">Parce que chaque partie mérite d&apos;être sauvegardée</h1>
-              <p className="Paragraphe1">
-                La plateforme gamifiée pour suivre ta progression et gérer ta
-                collection de jeux vidéo
-              </p>
-              <Button label="S'inscrire" />
-            </div>
-          </div>
-          <div className="hero-banner__right">
-            <div className="hero-banner__cards">
-              <div className="hero-banner__cards-wrapper">
-                <div className="hero-banner__card hero-banner__card--active">
-                  <div style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    background: 'linear-gradient(135deg, #748599 0%, #a8bbc5 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    borderRadius: '1rem'
-                  }}>
-                    Chargement...
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Si pas de données, afficher un message ou un skeleton
-  if (isLoading) {
-    return (
-      <section className="hero-banner">
+      <section className="hero-banner" aria-label="Bannière principale">
         <div className="hero-banner__container main-container">
           <div className="hero-banner__left">
             <div className="hero-banner__content">
@@ -220,7 +176,7 @@ export default function HeroBanner() {
   const isReady = isHydrated && !isLoading && cardsData.length > 0;
 
   return (
-    <section className="hero-banner">
+    <section className="hero-banner" aria-label="Bannière principale avec carrousel de jeux">
       <div className="hero-banner__container main-container">
         <div className="hero-banner__left">
           <div className="hero-banner__content">
@@ -233,7 +189,13 @@ export default function HeroBanner() {
           </div>
         </div>
         <div className="hero-banner__right">
-          <div className="hero-banner__cards" {...handlers}>
+          <div 
+            className="hero-banner__cards" 
+            {...handlers}
+            role="region"
+            aria-label="Carrousel des meilleurs jeux de l'année"
+            aria-live="polite"
+          >
             <div className="hero-banner__cards-wrapper">
               {isReady ? (
                 cardsData.map((game, idx) => (
@@ -255,7 +217,7 @@ export default function HeroBanner() {
                   </div>
                 ))
               ) : (
-                <div className="hero-banner__card hero-banner__card--active">
+                <div className="hero-banner__card hero-banner__card--active" role="status" aria-live="polite">
                   <div style={{ 
                     width: '100%', 
                     height: '100%', 
@@ -272,9 +234,23 @@ export default function HeroBanner() {
               )}
             </div>
             {isReady && cardsData.length > 1 && (
-              <div className="hero-banner__controls">
-                <button onClick={goToPrev} className="hero-banner__button">&lt;</button>
-                <button onClick={goToNext} className="hero-banner__button">&gt;</button>
+              <div className="hero-banner__controls" role="group" aria-label="Contrôles du carrousel">
+                <button 
+                  onClick={goToPrev} 
+                  className="hero-banner__button"
+                  aria-label="Jeu précédent"
+                  type="button"
+                >
+                  &lt;
+                </button>
+                <button 
+                  onClick={goToNext} 
+                  className="hero-banner__button"
+                  aria-label="Jeu suivant"
+                  type="button"
+                >
+                  &gt;
+                </button>
               </div>
             )}
           </div>

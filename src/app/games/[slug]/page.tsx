@@ -77,7 +77,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
   const game = await getGameData(slug);
 
   return (
-    <div className="game-page">
+    <div className="game-page" role="main" aria-labelledby="game-title">
       <StyleEnforcer />
       <GameHeader
         name={game.title}
@@ -85,7 +85,7 @@ export default async function GamePage({ params }: { params: Promise<{ slug: str
         backgroundUrl={game.backgroundUrl || game.coverUrl || "/placeholder-background.jpg"}
         firstScreenshotUrl={game.firstScreenshotUrl}
       />
-      <main className="game-fiche-container main-container">
+      <main className="game-fiche-container main-container" role="main" aria-label={`Contenu détaillé du jeu ${game.title}`}>
         <GameContenu game={game} />
       </main>
     </div>

@@ -3,12 +3,12 @@ import "./FollowCollection.scss";
 
 const FollowCollection = () => {
   return (
-    <section className="followCollection main-container">
+    <section className="followCollection main-container" aria-label="Suivi de collection de jeux">
       <div className="followCollection-container">
-        <div className="gameContainer">
+        <div className="gameContainer" role="img" aria-label="Exemple de collection de jeux">
           <Image
             src="/images/NoLogin/Game-Home.png"
-            alt="Games cover"
+            alt="Collection de jeux vidéo - Interface de gestion"
             fill
             style={{ objectFit: "cover" }}
             className="gameImage"

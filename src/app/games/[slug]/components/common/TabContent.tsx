@@ -27,7 +27,13 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
       **********************************************************/
       case "fiche":
         return (
-          <div className="tab-content tab-content--fiche">
+          <div 
+            className="tab-content tab-content--fiche"
+            role="tabpanel"
+            id="tabpanel-fiche"
+            aria-labelledby="tab-fiche"
+            aria-label="Informations détaillées du jeu"
+          >
             <FicheSection1 game={game} />
             <FicheSection2 game={game} />
             <FicheSection3 game={game} />
@@ -40,7 +46,13 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
       **********************************************************/
       case "media":
         return (
-          <div className="tab-content tab-content--media">
+          <div 
+            className="tab-content tab-content--media"
+            role="tabpanel"
+            id="tabpanel-media"
+            aria-labelledby="tab-media"
+            aria-label="Médias du jeu"
+          >
             <div className="media-content__grid">
               <MediaSection1 game={game} />
               <MediaSection2 game={game} />
@@ -59,7 +71,13 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
       **********************************************************/
       case "critiques":
         return (
-          <div className="tab-content tab-content--critiques">
+          <div 
+            className="tab-content tab-content--critiques"
+            role="tabpanel"
+            id="tabpanel-critiques"
+            aria-labelledby="tab-critiques"
+            aria-label="Critiques du jeu"
+          >
             <CritiquesSection1 />
           </div>
         );
@@ -69,7 +87,13 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
       **********************************************************/
       case "challenges":
         return (
-          <div className="tab-content tab-content--challenges">
+          <div 
+            className="tab-content tab-content--challenges"
+            role="tabpanel"
+            id="tabpanel-challenges"
+            aria-labelledby="tab-challenges"
+            aria-label="Challenges du jeu"
+          >
             <ChallengesSection1 />
           </div>
         );
@@ -80,7 +104,7 @@ export default function TabContent({ activeTab, game }: TabContentProps) {
   };
 
   return (
-    <div className="tab-content-wrapper">
+    <div className="tab-content-wrapper" role="region" aria-label="Contenu de l'onglet actif">
       {renderContent()}
     </div>
   );

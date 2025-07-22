@@ -99,14 +99,14 @@ export default function Connexion() {
   };
 
   return (
-    <div className="connexion">
+    <main className="connexion" role="main" aria-label="Page de connexion">
       <div className="connexion__form-container">
         <header className="connexion__header">
           <h1 className="connexion__title">HEY LISTEN</h1>
           <p className="connexion__subtitle">Connectez-vous pour continuer votre aventure...</p>
         </header>
 
-        <form onSubmit={handleSubmit} className="connexion__form">
+        <form onSubmit={handleSubmit} className="connexion__form" role="form" aria-label="Formulaire de connexion">
           {error && (
             <div 
               className="connexion__error-banner" 
@@ -131,7 +131,8 @@ export default function Connexion() {
 
           <div className="connexion__form-group">
             <div className="connexion__input-container">
-              <i className="bx bx-envelope connexion__icon"></i>
+              <i className="bx bx-envelope connexion__icon" aria-hidden="true"></i>
+              <label htmlFor="email" className="sr-only">Adresse e-mail</label>
               <input
                 type="email"
                 id="email"
@@ -141,13 +142,16 @@ export default function Connexion() {
                 onChange={handleChange}
                 required
                 autoComplete="email"
+                aria-describedby={error ? "login-error" : undefined}
+                aria-invalid={!!error}
               />
             </div>
           </div>
 
           <div className="connexion__form-group">
             <div className="connexion__input-container">
-              <i className="bx bx-lock-alt connexion__icon"></i>
+              <i className="bx bx-lock-alt connexion__icon" aria-hidden="true"></i>
+              <label htmlFor="password" className="sr-only">Mot de passe</label>
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
@@ -157,14 +161,17 @@ export default function Connexion() {
                 onChange={handleChange}
                 required
                 autoComplete="current-password"
+                aria-describedby={error ? "login-error" : undefined}
+                aria-invalid={!!error}
               />
               <button
                 type="button"
                 className="connexion__password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                aria-pressed={showPassword}
               >
-                <i className={`bx ${showPassword ? 'bx-show' : 'bx-hide'}`}></i>
+                <i className={`bx ${showPassword ? 'bx-show' : 'bx-hide'}`} aria-hidden="true"></i>
               </button>
             </div>
           </div>
@@ -176,8 +183,12 @@ export default function Connexion() {
               name="rememberMe"
               checked={formData.rememberMe}
               onChange={(e) => setFormData(prev => ({ ...prev, rememberMe: e.target.checked }))}
+              aria-describedby="remember-me-description"
             />
             <label htmlFor="rememberMe">Se souvenir de moi</label>
+            <span id="remember-me-description" className="sr-only">
+              Cocher cette case pour rester connecté sur cet appareil
+            </span>
           </div>
 
           <div className="connexion__form-actions">
@@ -185,17 +196,25 @@ export default function Connexion() {
               type="submit"
               disabled={isLoading}
               className="btn-custom-inverse connexion__submit-button"
+              aria-busy={isLoading}
+              aria-describedby={isLoading ? "loading-description" : undefined}
             >
               {isLoading ? 'Connexion...' : 'Se connecter'}
             </button>
+            {isLoading && (
+              <span id="loading-description" className="sr-only">
+                Connexion en cours, veuillez patienter
+              </span>
+            )}
           </div>
         </form>
 
-        <div className="connexion__links">
+        <nav className="connexion__links" aria-label="Liens de navigation">
           <button
             type="button"
             onClick={() => router.push('/mot-de-passe-oublie')}
             className="connexion__link"
+            aria-label="Récupérer mon mot de passe oublié"
           >
             Mot de passe oublié ?
           </button>
@@ -206,12 +225,13 @@ export default function Connexion() {
               type="button"
               onClick={() => router.push('/inscription')}
               className="connexion__register-link"
+              aria-label="Créer un nouveau compte"
             >
               S&apos;inscrire
             </button>
           </div>
-        </div>
+        </nav>
       </div>
-    </div>
+    </main>
   );
 } 

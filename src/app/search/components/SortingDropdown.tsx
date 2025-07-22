@@ -26,6 +26,18 @@ const SortingDropdown: React.FC<SortingDropdownProps> = ({ onSort }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Gestion du clavier
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
+
   const getOptionLabel = (option: SortOption): string => {
     switch (option) {
       case "note":
@@ -68,8 +80,20 @@ const SortingDropdown: React.FC<SortingDropdownProps> = ({ onSort }) => {
   };
 
   return (
-    <div className="sorting-dropdown" ref={dropdownRef}>
-      <div className="sorting-header" onClick={() => setIsOpen(!isOpen)}>
+    <div className="sorting-dropdown" ref={dropdownRef} role="combobox" aria-expanded={isOpen} aria-haspopup="listbox" aria-controls="sorting-options">
+      <div 
+        className="sorting-header" 
+        onClick={() => setIsOpen(!isOpen)}
+        role="button"
+        tabIndex={0}
+        aria-label={`Trier par ${getOptionLabel(selectedOption)}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsOpen(!isOpen);
+          }
+        }}
+      >
         <span>Trier par : {getOptionLabel(selectedOption)}</span>
         <button 
           className={`direction-button ${getDirectionClass()}`}
@@ -77,17 +101,22 @@ const SortingDropdown: React.FC<SortingDropdownProps> = ({ onSort }) => {
             e.stopPropagation();
             toggleDirection();
           }}
+          aria-label={`Changer la direction de tri (actuellement ${direction === 'asc' ? 'croissant' : 'décroissant'})`}
+          type="button"
         >
-          <i className="bx bx-chevron-up"></i>
+          <i className="bx bx-chevron-up" aria-hidden="true"></i>
         </button>
       </div>
       {isOpen && (
-        <div className="sorting-options">
+        <div id="sorting-options" className="sorting-options" role="listbox" aria-label="Options de tri">
           {["note", "releaseDate", "name"].map((option) => (
             <button
               key={option}
               className={`sort-option ${selectedOption === option ? "active" : ""}`}
               onClick={() => handleOptionSelect(option as SortOption)}
+              role="option"
+              aria-selected={selectedOption === option}
+              type="button"
             >
               {getOptionLabel(option as SortOption)}
             </button>

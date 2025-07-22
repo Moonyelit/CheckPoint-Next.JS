@@ -17,7 +17,7 @@ export default function TabsNav({ activeTab, setActiveTab }: TabsNavProps) {
   ];
 
   return (
-    <div className="tabs-nav">
+    <div className="tabs-nav" role="tablist" aria-label="Navigation des sections du jeu">
       <nav className="tabs-nav__navigation">
         {tabs.map((tab) => (
           <button
@@ -25,12 +25,18 @@ export default function TabsNav({ activeTab, setActiveTab }: TabsNavProps) {
             className={`tabs-nav__button ${activeTab === tab.id ? 'tabs-nav__button--active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
             title={tab.label}
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            aria-controls={`tabpanel-${tab.id}`}
+            id={`tab-${tab.id}`}
+            type="button"
           >
             <span className="tabs-nav__button-text">{tab.label}</span>
             <img 
               src={tab.icon} 
-              alt={tab.label}
+              alt=""
               className="tabs-nav__button-icon"
+              aria-hidden="true"
             />
           </button>
         ))}

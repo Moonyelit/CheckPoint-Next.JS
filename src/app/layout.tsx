@@ -9,6 +9,7 @@ import PagePreloader from '@/components/common/PagePreloader';
 import ServiceWorkerManager from "@/components/common/ServiceWorkerManager";
 import CookieConsent from "@/components/common/CookieConsent";
 import CookieManager from "@/components/common/CookieManager";
+import KeyboardNavigation from "@/components/common/KeyboardNavigation";
 import "@/styles/globals.scss";
 import CleanupProvider from '@/components/common/CleanupProvider';
 
@@ -108,10 +109,20 @@ export default function RootLayout({
         className={`${GeistSans.variable} antialiased min-h-screen flex flex-col`}
         suppressHydrationWarning={true}
       >
+        {/* Skip links pour l'accessibilité */}
+        <a href="#main-content" className="skip-link">
+          Aller au contenu principal
+        </a>
+        <a href="#navigation" className="skip-link">
+          Aller à la navigation
+        </a>
+        
         <ResourcePreloader resources={criticalResources} />
         <PagePreloader>
           <ConditionalLayout>
-            {children}
+            <main id="main-content" role="main">
+              {children}
+            </main>
           </ConditionalLayout>
         </PagePreloader>
         
@@ -120,6 +131,9 @@ export default function RootLayout({
         
         {/* Debugger de cache temporairement désactivé */}
         <CleanupProvider />
+        
+        {/* Détection de la navigation au clavier */}
+        <KeyboardNavigation />
         
         {/* Popup de consentement des cookies */}
         <CookieConsent />

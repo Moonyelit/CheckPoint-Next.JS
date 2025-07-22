@@ -24,23 +24,53 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
    * Description pour les lecteurs d'écran
    */
   ariaDescription?: string;
+  /**
+   * Indique si le bouton est en cours de chargement
+   */
+  loading?: boolean;
+  /**
+   * Indique si le bouton est pressé (pour les boutons toggle)
+   */
+  pressed?: boolean;
 }
 
 export default function Button({ 
   label = "S'inscrire", 
   ariaDescription,
+  loading = false,
+  pressed = false,
+  disabled,
   ...props 
 }: ButtonProps) {
   
+  // Combiner les classes pour l'état de chargement et pressé
+  const buttonClasses = [
+    "btn-custom",
+    loading ? "btn-custom--loading" : "",
+    pressed ? "btn-custom--pressed" : "",
+    disabled ? "btn-custom--disabled" : ""
+  ].filter(Boolean).join(" ");
+  
   return (
     <button 
-      className="btn-custom" 
+      className={buttonClasses}
       aria-label={label}
+      aria-describedby={ariaDescription ? "button-description" : undefined}
+      aria-pressed={pressed}
+      aria-busy={loading}
+      disabled={disabled || loading}
       {...props}
     >
-      {label}
+      {loading && (
+        <span className="btn-custom__loading-indicator" aria-hidden="true">
+          <span className="btn-custom__spinner"></span>
+        </span>
+      )}
+      <span className="btn-custom__text">
+        {label}
+      </span>
       {ariaDescription && (
-        <span className="sr-only">
+        <span id="button-description" className="sr-only">
           {ariaDescription}
         </span>
       )}

@@ -99,12 +99,54 @@ main {
   @include respond-to('medium') {
     font-size: clamp(2rem, 5vw, 2.5rem);
   }
+}
 
-  @include respond-to('small') {
-    font-size: clamp(1.7rem, 3vw, 2.5rem);
-    letter-spacing: 0.1rem;
-  }
-} 
+.Title3-Karantina {
+  font-family: Karantina, sans-serif;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 1.5rem 0;
+}
+
+.Title4-Karantina {
+  font-family: Karantina, sans-serif;
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 1rem 0;
+}
+
+/*****************TEXTE******************/
+/*DM SANS*/
+.Text1-DMSans {
+  font-family: "DM Sans", sans-serif;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0.5rem 0;
+}
+
+.Text2-DMSans {
+  font-family: "DM Sans", sans-serif;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.4;
+  margin: 0.5rem 0;
+}
+
+.Text3-DMSans {
+  font-family: "DM Sans", sans-serif;
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.3;
+  margin: 0.5rem 0;
+}
 
 /*****************PARAGRAPHE******************/
 .Paragraphe1 {
@@ -113,4 +155,309 @@ main {
   font-weight: 600;
   line-height: 1.6;
   margin-bottom: 1.5rem;
+} 
+
+/************************** ACCESSIBILITÉ RGAA ***************************/
+
+/* Skip links pour la navigation au clavier */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--bleu-crystal-fonce);
+  color: var(--white);
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 10000;
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  transition: top 0.3s ease;
+}
+
+.skip-link:focus {
+  top: 6px;
+  outline: 2px solid var(--white);
+  outline-offset: 2px;
+}
+
+/* Classe pour masquer visuellement mais garder accessible aux lecteurs d'écran */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Focus visible uniquement pour la navigation au clavier (RGAA 7.1) */
+/* Cache le focus par défaut */
+*:focus {
+  outline: none;
+}
+
+/* Affiche le focus uniquement lors de la navigation au clavier */
+.keyboard-navigation *:focus {
+  outline: 2px solid var(--bleu-crystal-fonce);
+  outline-offset: 2px;
+}
+
+/* Focus spécifique pour les boutons et liens */
+.keyboard-navigation button:focus,
+.keyboard-navigation input:focus,
+.keyboard-navigation select:focus,
+.keyboard-navigation textarea:focus,
+.keyboard-navigation a:focus {
+  outline: 2px solid var(--bleu-crystal-fonce);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Amélioration du contraste pour les éléments de navigation */
+.keyboard-navigation .navbar a:focus,
+.keyboard-navigation .navbar button:focus {
+  background-color: rgba(12, 96, 185, 0.1);
+  border-radius: 4px;
+}
+
+/* Styles pour les éléments avec aria-expanded */
+[aria-expanded="true"] {
+  background-color: rgba(12, 96, 185, 0.1);
+}
+
+/* Amélioration de l'accessibilité pour les icônes */
+[aria-hidden="true"] {
+  pointer-events: none;
+}
+
+/* Styles pour les dialogues modaux */
+[role="dialog"] {
+  z-index: 1000;
+}
+
+[aria-modal="true"] {
+  z-index: 1001;
+}
+
+/* Amélioration de l'accessibilité pour les menus */
+[role="menu"] {
+  list-style: none;
+}
+
+[role="menuitem"] {
+  cursor: pointer;
+}
+
+.keyboard-navigation [role="menuitem"]:focus {
+  background-color: rgba(12, 96, 185, 0.1);
+  outline: 2px solid var(--bleu-crystal-fonce);
+  outline-offset: 2px;
+}
+
+/* Respect des préférences de réduction de mouvement (RGAA 8.1) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Amélioration du contraste pour les utilisateurs avec des préférences de contraste élevé */
+@media (prefers-contrast: high) {
+  :root {
+    --bleu-crystal-fonce: #000080;
+    --white: #ffffff;
+    --black: #000000;
+  }
+  
+  .keyboard-navigation *:focus {
+    outline: 3px solid var(--bleu-crystal-fonce);
+    outline-offset: 3px;
+  }
+}
+
+/* Styles pour les éléments de navigation au clavier */
+.keyboard-navigation .navbar-right-links a:focus,
+.keyboard-navigation .navbar-right-auth-link:focus,
+.keyboard-navigation .menuBurger button:focus {
+  background-color: rgba(12, 96, 185, 0.15);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+/* Amélioration de l'accessibilité pour les boutons de fermeture */
+.keyboard-navigation .search-overlay__close:focus,
+.keyboard-navigation .menuBurger-menuOverlay-closeIcon:focus,
+.keyboard-navigation .menuBurger-authOverlay-closeIcon:focus {
+  background-color: rgba(12, 96, 185, 0.1);
+  border-radius: 50%;
+  padding: 4px;
+}
+
+/* Styles pour les éléments de recherche */
+.keyboard-navigation .search-overlay__input:focus,
+.keyboard-navigation .searchbar input:focus {
+  border: 2px solid var(--bleu-crystal-fonce);
+  box-shadow: 0 0 0 2px rgba(12, 96, 185, 0.2);
+}
+
+/* Amélioration de l'accessibilité pour les liens du footer */
+.keyboard-navigation .footer a:focus,
+.keyboard-navigation .footer button:focus {
+  background-color: rgba(12, 96, 185, 0.1);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+/* Styles pour la pagination */
+.keyboard-navigation .search-page__pagination button:focus {
+  background-color: rgba(12, 96, 185, 0.1);
+  border-radius: 4px;
+}
+
+/* Styles pour les dropdowns */
+.keyboard-navigation .sorting-dropdown button:focus {
+  background-color: rgba(12, 96, 185, 0.1);
+  border-radius: 4px;
+}
+
+/* Styles pour les filtres */
+.keyboard-navigation .search-page__filters button:focus {
+  background-color: rgba(12, 96, 185, 0.1);
+  border-radius: 4px;
+}
+
+/* Amélioration de l'accessibilité pour les formulaires */
+.keyboard-navigation input:focus,
+.keyboard-navigation select:focus,
+.keyboard-navigation textarea:focus {
+  border-color: var(--bleu-crystal-fonce);
+  box-shadow: 0 0 0 2px rgba(12, 96, 185, 0.2);
+}
+
+/* Styles pour les messages d'erreur */
+[role="alert"] {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
+/* Styles pour les éléments avec aria-current */
+[aria-current="page"] {
+  background-color: var(--bleu-crystal-fonce);
+  color: var(--white);
+  font-weight: bold;
+}
+
+/* Styles pour les éléments avec aria-selected */
+[aria-selected="true"] {
+  background-color: rgba(12, 96, 185, 0.1);
+  font-weight: bold;
+}
+
+/* Amélioration de l'accessibilité pour les images */
+img[alt] {
+  border: 1px solid transparent;
+}
+
+.keyboard-navigation img[alt]:focus {
+  border-color: var(--bleu-crystal-fonce);
+}
+
+/* Styles pour les éléments avec aria-live */
+[aria-live="polite"] {
+  font-weight: 500;
+}
+
+/* Amélioration de l'accessibilité pour les combobox */
+[role="combobox"] {
+  position: relative;
+}
+
+.keyboard-navigation [role="combobox"]:focus-within {
+  outline: 2px solid var(--bleu-crystal-fonce);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Styles pour les listbox */
+[role="listbox"] {
+  border: 1px solid var(--gris-fonce);
+  border-radius: 4px;
+  background: var(--white);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[role="option"] {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+[role="option"]:hover {
+  background-color: rgba(12, 96, 185, 0.05);
+}
+
+.keyboard-navigation [role="option"]:focus {
+  background-color: rgba(12, 96, 185, 0.1);
+  outline: none;
+}
+
+/* Amélioration de l'accessibilité pour les boutons FAB */
+.keyboard-navigation .search-page__filter-fab:focus {
+  background-color: var(--bleu-crystal-fonce);
+  color: var(--white);
+  transform: scale(1.05);
+}
+
+/* Styles pour les overlays */
+.search-page__overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* Amélioration de l'accessibilité pour les icônes dans les boutons */
+button i {
+  pointer-events: none;
+}
+
+/* Styles pour les éléments avec aria-invalid */
+[aria-invalid="true"] {
+  border-color: #d32f2f;
+  box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.2);
+}
+
+/* Amélioration de l'accessibilité pour les éléments avec aria-describedby */
+[aria-describedby] {
+  position: relative;
+}
+
+/* Styles pour les éléments avec aria-label */
+[aria-label] {
+  cursor: pointer;
+}
+
+/* Amélioration de l'accessibilité pour les éléments avec aria-haspopup */
+[aria-haspopup="true"] {
+  position: relative;
+}
+
+[aria-haspopup="true"]::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid currentColor;
 } 

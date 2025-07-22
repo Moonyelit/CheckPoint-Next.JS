@@ -4,7 +4,6 @@ import DOMPurify from 'dompurify';
 import validator from 'validator';
 import LegalModal from '@/components/common/LegalModal';
 import { storePendingUser, sendVerificationEmail } from '@/utils/emailVerification';
-import { safeLocalStorageSet } from '@/utils/auth';
 import '../styles/Step1.scss';
 
 interface FormData {
@@ -38,7 +37,6 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
   const [legalModalTab, setLegalModalTab] = useState<'terms' | 'privacy'>('terms');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
   const [error, setError] = useState('');
 
   // Fonction de sanitisation
@@ -101,73 +99,77 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
       newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
     }
 
-    // Validation des checkboxes
-    if (!formData.isOver16) newErrors.isOver16 = 'Vous devez avoir plus de 16 ans';
-    if (!formData.acceptTerms) newErrors.acceptTerms = 'Vous devez accepter les conditions';
+    // Validation de l'âge
+    if (!formData.isOver16) {
+      newErrors.isOver16 = 'Vous devez avoir plus de 16 ans pour vous inscrire';
+    }
 
-    if (Object.keys(newErrors).length === 0) {
-      // Sanitiser toutes les données avant l'envoi
-      const sanitizedData = {
-        ...formData,
-        pseudo: sanitizeInput(formData.pseudo),
-        email: sanitizeInput(formData.email.toLowerCase()),
-        password: formData.password, // Ne pas sanitiser le mot de passe
-        confirmPassword: formData.confirmPassword
-      };
+    // Validation des conditions
+    if (!formData.acceptTerms) {
+      newErrors.acceptTerms = 'Vous devez accepter les conditions d\'utilisation';
+    }
 
-      // Stocker les données utilisateur pour la vérification avec indicateur d'étape
-      storePendingUser({
-        email: sanitizedData.email,
-        pseudo: sanitizedData.pseudo,
-        isVerified: false
-      });
-      
-      // Marquer qu'on passe à l'étape 2
-      safeLocalStorageSet('inscriptionStep', '2');
-
-      // Envoyer l'email de vérification avec le pseudo
-      const response = await sendVerificationEmail(sanitizedData.email, sanitizedData.pseudo);
-      if (response.success) {
-        setEmailSent(true);
-        setError('');
-        onEmailSent?.();
-      } else {
-        setError(response.message || 'Erreur lors de l\'envoi de l\'email');
-      }
-
-      onSubmit(sanitizedData);
-    } else {
+    if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      return;
+    }
+
+    try {
+      // Stocker les données utilisateur en attente
+      await storePendingUser(formData);
+      
+      // Envoyer l'email de vérification
+      await sendVerificationEmail(formData.email, formData.pseudo);
+      
+      if (onEmailSent) {
+        onEmailSent();
+      }
+      
+      // Soumettre le formulaire
+      onSubmit(formData);
+      
+    } catch (error) {
+      console.error('Erreur lors de l\'inscription:', error);
+      setError('Une erreur est survenue lors de l\'inscription. Veuillez réessayer.');
     }
   };
 
   return (
-    <div className="step1__form-container">
+    <div className="step1" role="region" aria-label="Étape 1 - Création du compte">
       <header className="step1__header">
-        <h1 className="step1__title">Créer votre avatar</h1>
-        <p className="step1__subtitle">Et prenez une pause en sauvegardant votre progression...</p>
+        <h1 className="step1__title">HEY LISTEN</h1>
+        <p className="step1__subtitle">Créez votre compte pour commencer votre aventure...</p>
       </header>
-    
-      <form onSubmit={handleSubmit} className="step1__form">
+
+      {error && (
+        <div className="step1__error-banner" role="alert" aria-live="assertive">
+          {error}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="step1__form" role="form" aria-label="Formulaire d'inscription">
         <div className="step1__form-group">
           <div className="step1__input-container">
-            <i className="bx bx-user step1__icon"></i>
+            <i className="bx bx-user step1__icon" aria-hidden="true"></i>
+            <label htmlFor="pseudo" className="sr-only">Pseudo</label>
             <input
               type="text"
               id="pseudo"
               placeholder="Pseudo"
               value={formData.pseudo}
               onChange={(e) => handleInputChange('pseudo', e.target.value)}
-              maxLength={15}
               autoComplete="username"
+              aria-describedby={errors.pseudo ? "pseudo-error" : undefined}
+              aria-invalid={!!errors.pseudo}
             />
           </div>
-          {errors.pseudo && <span className="step1__error" role="alert" aria-live="polite">{errors.pseudo}</span>}
+          {errors.pseudo && <span id="pseudo-error" className="step1__error" role="alert" aria-live="polite">{errors.pseudo}</span>}
         </div>
 
         <div className="step1__form-group">
           <div className="step1__input-container">
-            <i className="bx bx-envelope step1__icon"></i>
+            <i className="bx bx-envelope step1__icon" aria-hidden="true"></i>
+            <label htmlFor="email" className="sr-only">Adresse e-mail</label>
             <input
               type="email"
               id="email"
@@ -175,37 +177,44 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
               autoComplete="email"
+              aria-describedby={errors.email ? "email-error" : undefined}
+              aria-invalid={!!errors.email}
             />
           </div>
-          {errors.email && <span className="step1__error" role="alert" aria-live="polite">{errors.email}</span>}
+          {errors.email && <span id="email-error" className="step1__error" role="alert" aria-live="polite">{errors.email}</span>}
         </div>
 
         <div className="step1__form-group">
           <div className="step1__input-container">
-            <i className="bx bx-lock-alt step1__icon"></i>
+            <i className="bx bx-lock-alt step1__icon" aria-hidden="true"></i>
+            <label htmlFor="password" className="sr-only">Mot de passe</label>
             <input
               type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Password"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) => handleInputChange('password', e.target.value)}
               autoComplete="new-password"
+              aria-describedby={errors.password ? "password-error" : undefined}
+              aria-invalid={!!errors.password}
             />
             <button
               type="button"
               className="step1__password-toggle"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              aria-pressed={showPassword}
             >
-              <i className={`bx ${showPassword ? 'bx-show' : 'bx-hide'}`}></i>
+              <i className={`bx ${showPassword ? 'bx-show' : 'bx-hide'}`} aria-hidden="true"></i>
             </button>
           </div>
-          {errors.password && <span className="step1__error" role="alert" aria-live="polite">{errors.password}</span>}
+          {errors.password && <span id="password-error" className="step1__error" role="alert" aria-live="polite">{errors.password}</span>}
         </div>
 
         <div className="step1__form-group">
           <div className="step1__input-container">
-            <i className="bx bx-lock-alt step1__icon"></i>
+            <i className="bx bx-lock-alt step1__icon" aria-hidden="true"></i>
+            <label htmlFor="confirmPassword" className="sr-only">Confirmation du mot de passe</label>
             <input
               type={showConfirmPassword ? "text" : "password"}
               id="confirmPassword"
@@ -213,17 +222,20 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
               autoComplete="new-password"
+              aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
+              aria-invalid={!!errors.confirmPassword}
             />
             <button
               type="button"
               className="step1__password-toggle"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              aria-pressed={showConfirmPassword}
             >
-              <i className={`bx ${showConfirmPassword ? 'bx-show' : 'bx-hide'}`}></i>
+              <i className={`bx ${showConfirmPassword ? 'bx-show' : 'bx-hide'}`} aria-hidden="true"></i>
             </button>
           </div>
-          {errors.confirmPassword && <span className="step1__error" role="alert" aria-live="polite">{errors.confirmPassword}</span>}
+          {errors.confirmPassword && <span id="confirm-password-error" className="step1__error" role="alert" aria-live="polite">{errors.confirmPassword}</span>}
         </div>
 
         <div className="step1__checkbox-group">
@@ -232,9 +244,11 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
             id="isOver16"
             checked={formData.isOver16}
             onChange={(e) => setFormData({ ...formData, isOver16: e.target.checked })}
+            aria-describedby={errors.isOver16 ? "age-error" : undefined}
+            aria-invalid={!!errors.isOver16}
           />
           <label htmlFor="isOver16">J&apos;ai plus de 16 ans</label>
-          {errors.isOver16 && <span className="step1__error" role="alert" aria-live="polite">{errors.isOver16}</span>}
+          {errors.isOver16 && <span id="age-error" className="step1__error" role="alert" aria-live="polite">{errors.isOver16}</span>}
         </div>
 
         <div className="step1__checkbox-group">
@@ -243,6 +257,8 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
             id="acceptTerms"
             checked={formData.acceptTerms}
             onChange={(e) => setFormData({ ...formData, acceptTerms: e.target.checked })}
+            aria-describedby={errors.acceptTerms ? "terms-error" : undefined}
+            aria-invalid={!!errors.acceptTerms}
           />
           <label htmlFor="acceptTerms">
             Je suis d&apos;accord avec les{' '}
@@ -253,6 +269,7 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
                 setIsLegalModalOpen(true);
               }}
               className="step1__legal-link"
+              aria-label="Lire les conditions d'utilisation"
             >
               conditions d&apos;utilisation
             </button>
@@ -264,17 +281,18 @@ const Step1 = ({ onSubmit, initialData, onEmailSent }: Step1Props) => {
                 setIsLegalModalOpen(true);
               }}
               className="step1__legal-link"
+              aria-label="Lire la politique de confidentialité"
             >
               politique de confidentialité
             </button>
           </label>
-          {errors.acceptTerms && <span className="step1__error" role="alert" aria-live="polite">{errors.acceptTerms}</span>}
+          {errors.acceptTerms && <span id="terms-error" className="step1__error" role="alert" aria-live="polite">{errors.acceptTerms}</span>}
         </div>
 
         <div className="step1_endform">
-        <button type="submit" className="btn-custom-inverse step1__submit-button">
-          S&apos;inscrire
-        </button>
+          <button type="submit" className="btn-custom-inverse step1__submit-button">
+            S&apos;inscrire
+          </button>
         </div>
         
       </form>

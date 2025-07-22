@@ -31,15 +31,15 @@ export default function GameHeader({
     const processedBackgroundUrl = backgroundImageUrl.startsWith('/') ? backgroundImageUrl : getImageUrl(backgroundImageUrl);
 
     return (
-        <header className="game-header">
-            <div className="game-header__background">
+        <header className="game-header" role="banner" aria-label={`En-tête du jeu ${name}`}>
+            <div className="game-header__background" role="img" aria-label={`Image de fond pour ${name}`}>
                 <LazyImage
-                    src={processedBackgroundUrl}
+                    src={processedBackgroundUrl || "/images/Game/Default game.jpg"}
                     alt={`Image de fond pour ${name}`}
                     className="game-header__background-image"
                 />
             </div>
-            <div className="game-header__overlay"></div>
+            <div className="game-header__overlay" aria-hidden="true"></div>
         </header>
     );
 } 

@@ -113,44 +113,46 @@ export default function Inscription() {
 
   if (isLoading) {
     return (
-      <div className="inscription">
-        <div className="inscription__loading">
+      <main className="inscription" role="main" aria-label="Page d'inscription">
+        <div className="inscription__loading" role="status" aria-live="polite">
           <p>Chargement...</p>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="inscription">
-      {currentStep === 1 && (
-        <Step1 
-          onSubmit={handleStep1Submit}
-          initialData={formData}
-        />
-      )}
-      {currentStep === 2 && (
-        <Step2 onNext={handleStep2Next} />
-      )}
-      {currentStep === 3 && (
-        <Step3 
-          email={formData.email}
-          pseudo={formData.pseudo}
-          onEmailVerified={handleEmailVerified}
-        />
-      )}
-      {currentStep === 4 && (
-        <Step4 />
-      )}
-      {currentStep === 5 && (
-        <Step5 onNext={handleStep5Next} />
-      )}
-      {currentStep === 6 && (
-        <Step6 onNext={handleStep6Next} />
-      )}
-      {currentStep === 7 && (
-        <Step7 />
-      )}
-    </div>
+    <main className="inscription" role="main" aria-label="Page d'inscription">
+      <div role="region" aria-label={`Étape ${currentStep} de l'inscription`} aria-live="polite">
+        {currentStep === 1 && (
+          <Step1 
+            onSubmit={handleStep1Submit}
+            initialData={formData}
+          />
+        )}
+        {currentStep === 2 && (
+          <Step2 onNext={handleStep2Next} />
+        )}
+        {currentStep === 3 && (
+          <Step3 
+            email={formData.email}
+            pseudo={formData.pseudo}
+            onEmailVerified={handleEmailVerified}
+          />
+        )}
+        {currentStep === 4 && (
+          <Step4 />
+        )}
+        {currentStep === 5 && (
+          <Step5 onNext={handleStep5Next} />
+        )}
+        {currentStep === 6 && (
+          <Step6 onNext={handleStep6Next} />
+        )}
+        {currentStep === 7 && (
+          <Step7 />
+        )}
+      </div>
+    </main>
   );
 } 
