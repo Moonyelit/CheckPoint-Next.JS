@@ -30,7 +30,7 @@
     background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
       var(--gris-fonce);
     border-radius: 16px;
-    border: 2px solid var(--bleu-crystal-normal);
+    border: 2px solid var(--bleu-crystal-fonce);
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     @include flex(column, flex-start, stretch);
     animation: slideInUp 0.4s ease-out;
@@ -64,7 +64,7 @@
     font-size: clamp(1.8rem, 3vw, 2.5rem);
     font-family: "Karantina", cursive;
     font-weight: 700;
-    color: var(--bleu-crystal-normal);
+    color: var(--bleu-crystal-fonce);
     margin: 0;
   }
 
@@ -89,11 +89,11 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--bleu-crystal-normal);
+      background: var(--bleu-crystal-fonce);
       border-radius: 4px;
 
       &:hover {
-        background: var(--bleu-crystal-light);
+        background: var(--bleu-crystal-normal);
       }
     }
 
@@ -128,7 +128,7 @@
       color: var(--white);
       margin-bottom: 1rem;
       padding-left: 1rem;
-      border-left: 4px solid var(--bleu-crystal-normal);
+      border-left: 4px solid var(--bleu-crystal-fonce);
 
       @include respond-to("medium") {
         font-size: 1.1rem;
@@ -152,7 +152,7 @@
         }
 
         &::marker {
-          color: var(--bleu-crystal-normal);
+          color: var(--bleu-crystal-fonce);
         }
 
         strong {
@@ -199,7 +199,7 @@
 
   &__btn {
     padding: 0.75rem 1.5rem;
-    border: 2px solid var(--bleu-crystal-normal);
+    border: 2px solid var(--bleu-crystal-fonce);
     background: transparent;
     color: var(--white);
     font-family: var(--font-base);
@@ -219,6 +219,7 @@
 
     &:hover {
       background: var(--bleu-crystal-normal);
+      border-color: var(--bleu-crystal-normal);
       transform: translateY(-2px);
     }
 
@@ -227,11 +228,11 @@
     }
 
     &--accept {
-      background: var(--bleu-crystal-normal);
+      background: var(--bleu-crystal-fonce);
       color: var(--white);
 
       &:hover {
-        background: var(--bleu-crystal-fonce);
+        background: var(--bleu-crystal-normal);
       }
     }
 
@@ -275,7 +276,7 @@
   &__link {
     background: none;
     border: none;
-    color: var(--bleu-crystal-normal);
+    color: var(--bleu-crystal-fonce);
     text-decoration: underline;
     font-weight: 600;
     font-size: inherit;

@@ -27,7 +27,7 @@
     font-size: clamp(2.5rem, 4vw, 4rem);
     font-family: "Karantina", cursive;
     font-weight: 700;
-    color: var(--bleu-crystal-normal);
+    color: var(--bleu-crystal-fonce);
     margin-bottom: 2rem;
     letter-spacing: 2px;
   }
@@ -45,7 +45,7 @@
 
   &__nav-button {
     padding: 0.75rem 1.5rem;
-    border: 2px solid var(--bleu-crystal-normal);
+    border: 2px solid var(--bleu-crystal-fonce);
     background: transparent;
     color: var(--white);
     font-family: var(--font-base);
@@ -62,11 +62,13 @@
 
     &:hover {
       background: var(--bleu-crystal-normal);
+      border-color: var(--bleu-crystal-normal);
       transform: translateY(-2px);
     }
 
     &--active {
-      background: var(--bleu-crystal-normal);
+      background: var(--bleu-crystal-fonce);
+      border-color: var(--bleu-crystal-fonce);
       color: var(--white);
     }
 
@@ -92,7 +94,7 @@
       font-size: clamp(1.8rem, 3vw, 2.5rem);
       font-family: "Karantina", cursive;
       font-weight: 700;
-      color: var(--bleu-crystal-normal);
+      color: var(--bleu-crystal-fonce);
       margin-bottom: 2rem;
       text-align: center;
     }
@@ -115,7 +117,7 @@
       color: var(--white);
       margin-bottom: 1rem;
       padding-left: 1rem;
-      border-left: 4px solid var(--bleu-crystal-normal);
+      border-left: 4px solid var(--bleu-crystal-fonce);
     }
 
     p {
@@ -135,12 +137,12 @@
       }
 
       a {
-        color: var(--bleu-crystal-normal);
+        color: var(--bleu-crystal-fonce);
         text-decoration: underline;
         @include transition(color, 0.3s, ease);
 
         &:hover {
-          color: var(--bleu-crystal-light);
+          color: var(--bleu-crystal-normal);
         }
       }
     }
@@ -158,7 +160,7 @@
         position: relative;
 
         &::marker {
-          color: var(--bleu-crystal-normal);
+          color: var(--bleu-crystal-fonce);
         }
 
         strong {

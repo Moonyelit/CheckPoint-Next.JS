@@ -8,7 +8,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: var(--bleu-crystal-normal);
+    background: var(--bleu-crystal-fonce);
     border: 2px solid var(--bleu-crystal-fonce);
     color: white;
     font-size: 20px;
@@ -20,7 +20,7 @@
     &:hover {
       transform: scale(1.1);
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-      background: var(--bleu-crystal-fonce);
+      background: var(--bleu-crystal-normal);
     }
 
     &:active {
@@ -46,7 +46,7 @@
     transform: translate(-50%, -50%);
     background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
       var(--gris-fonce);
-    border: 2px solid var(--bleu-crystal-normal);
+    border: 2px solid var(--bleu-crystal-fonce);
     border-radius: 16px;
     padding: 2rem;
     max-width: 500px;
@@ -73,7 +73,7 @@
 
     h3 {
       margin: 0;
-      color: var(--bleu-crystal-normal);
+      color: var(--bleu-crystal-fonce);
       font-size: 1.5rem;
       font-family: "Karantina", cursive;
       font-weight: 700;
@@ -183,7 +183,7 @@
         font-family: var(--font-base);
 
         &::marker {
-          color: var(--bleu-crystal-normal);
+          color: var(--bleu-crystal-fonce);
         }
       }
     }
@@ -201,7 +201,7 @@
 
   &__btn {
     padding: 0.75rem 1.5rem;
-    border: 2px solid var(--bleu-crystal-normal);
+    border: 2px solid var(--bleu-crystal-fonce);
     background: transparent;
     color: var(--white);
     font-family: var(--font-base);
@@ -221,6 +221,7 @@
 
     &:hover {
       background: var(--bleu-crystal-normal);
+      border-color: var(--bleu-crystal-normal);
       transform: translateY(-2px);
     }
 
@@ -229,11 +230,11 @@
     }
 
     &--secondary {
-      background: var(--bleu-crystal-normal);
+      background: var(--bleu-crystal-fonce);
       color: var(--white);
 
       &:hover {
-        background: var(--bleu-crystal-fonce);
+        background: var(--bleu-crystal-normal);
       }
     }
   }
